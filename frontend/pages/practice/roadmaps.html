@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training Roadmaps & Visualizer - Struct-Learn | Demon Slayer Code Corps</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 10% 20%, #0a0512, #020006);
+            color: #f0e9e1;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .demon-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 3rem;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid #ff4d2e;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-icon { font-size: 2rem; color: #ff4d2e; filter: drop-shadow(0 0 6px #ff4d2e); }
+        .logo-text { font-weight: 800; font-size: 1.5rem; background: linear-gradient(135deg, #f7b42c, #fc575e); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: #cbd5e1; font-weight: 600; transition: 0.2s; font-size: 0.9rem; }
+        .nav-links a:hover { color: #ff8c5a; }
+        .nav-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #ff4d2e, #ff8c5a); display: flex; align-items: center; justify-content: center; font-weight: 700; color: black; cursor: pointer; }
+
+        .main-container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
+
+        .header-section { text-align: center; margin-bottom: 2.5rem; }
+        .header-section h1 { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #fff, #ff7b42); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .header-section p { color: #94a3b8; font-size: 1.1rem; margin-top: 8px; }
+
+        .layout-split { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        @media (max-width: 900px) {
+            .layout-split { grid-template-columns: 1fr; }
+        }
+
+        .panel-card {
+            background: rgba(15, 8, 25, 0.85);
+            border: 1px solid rgba(255, 77, 46, 0.15);
+            border-radius: 28px;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+        .panel-title { font-size: 1.4rem; font-weight: 800; color: #ff7b42; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 8px; }
+
+        /* Visualizer Box styling */
+        .visualizer-screen {
+            background: #020005;
+            border: 1px solid rgba(255, 77, 46, 0.3);
+            border-radius: 20px;
+            height: 280px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 10px;
+            gap: 4px;
+            overflow: hidden;
+            margin-bottom: 1.2rem;
+        }
+
+        /* Sorting array bars */
+        .array-bar {
+            background: linear-gradient(to top, #ff4d2e, #ff8c5a);
+            width: 25px;
+            border-radius: 4px 4px 0 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: black;
+            font-weight: bold;
+            transition: height 0.3s, background-color 0.2s;
+        }
+        .array-bar.compare { background: #f59e0b; }
+        .array-bar.swap { background: #ef4444; }
+        .array-bar.sorted { background: #10b981; }
+
+        /* Tree Node Visualization styling */
+        .tree-node-canvas {
+            background: #020005;
+            border: 1px solid rgba(255, 77, 46, 0.3);
+            border-radius: 20px;
+            height: 280px;
+            width: 100%;
+            position: relative;
+            margin-bottom: 1.2rem;
+        }
+
+        .node-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ff4d2e;
+            color: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85rem;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            border: 2px solid white;
+            box-shadow: 0 0 8px #ff4d2e;
+        }
+
+        .controls-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem; }
+        .btn-action { background: #1e112b; border: 1px solid rgba(255, 77, 46, 0.4); color: white; padding: 8px 16px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-action:hover { background: #ff4d2e; color: black; border-color: #ff4d2e; }
+
+        /* Roadmap nodes flow */
+        .roadmap-flow { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; position: relative; margin-top: 1rem; }
+        .roadmap-node {
+            background: rgba(15, 8, 25, 0.9);
+            border: 2px solid rgba(255, 77, 46, 0.3);
+            border-radius: 20px;
+            width: 250px;
+            padding: 1rem;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+        .roadmap-node:hover { transform: scale(1.05); border-color: #ff4d2e; box-shadow: 0 0 15px rgba(255,77,46,0.3); }
+        .roadmap-node.completed { border-color: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
+        .roadmap-node-connector { width: 4px; height: 30px; background: rgba(255, 77, 46, 0.3); }
+        .node-title { font-weight: 800; color: #fff; font-size: 1.1rem; }
+        .node-subtitle { font-size: 0.75rem; color: #ff8c5a; text-transform: uppercase; margin-top: 2px; }
+        .node-progress { font-size: 0.8rem; color: #94a3b8; margin-top: 6px; }
+
+        /* Cursor trail */
+        .cursor-glow { width: 30px; height: 30px; background: radial-gradient(circle, rgba(255,80,40,0.4) 0%, rgba(255,40,0,0) 80%); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); }
+    </style>
+</head>
+<body>
+
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- Navigation Header -->
+<nav class="demon-nav">
+    <a href="/index.html" class="logo-area">
+        <i class="fas fa-dragon logo-icon"></i>
+        <div>
+            <div class="logo-text">STRUCT-LEARN</div>
+            <div class="logo-sub">Demon Slayer Code Corps</div>
+        </div>
+    </a>
+    <div class="nav-links">
+        <a href="/index.html"><i class="fas fa-home"></i> Home</a>
+        <a href="/pages/dashboard/dashboard.html"><i class="fas fa-chalkboard-teacher"></i> Dashboard</a>
+        <a href="/pages/quiz/quiz.html"><i class="fas fa-book"></i> Quiz</a>
+        <a href="/pages/practice/practice.html"><i class="fas fa-keyboard"></i> Practice</a>
+        <a href="/pages/practice/contests.html"><i class="fas fa-trophy"></i> Contests</a>
+        <a href="/pages/practice/roadmaps.html" class="active"><i class="fas fa-map-signs"></i> Roadmaps</a>
+        <a href="/pages/profile/profile.html"><i class="fas fa-user-ninja"></i> Profile</a>
+    </div>
+    <div class="nav-avatar" id="navAvatar">U</div>
+</nav>
+
+<div class="main-container">
+    <header class="header-section">
+        <h1>🗺️ Practice Roadmaps & Visualizer 🗺️</h1>
+        <p>Follow the training master path of the Hashiras. Animate sorting layers and search trees in real-time.</p>
+    </header>
+
+    <div class="layout-split">
+        <!-- Left Panel: Sorting and Trees animations -->
+        <section>
+            <!-- 1. Array Sorting Animation -->
+            <div class="panel-card">
+                <div class="panel-title"><i class="fas fa-layer-group"></i> Array Sorting Visualizer</div>
+                <div class="visualizer-screen" id="sortingScreen">
+                    <!-- Bars loaded dynamically -->
+                </div>
+                <div class="controls-row">
+                    <button class="btn-action" onclick="generateRandomArray()"><i class="fas fa-random"></i> Generate Array</button>
+                    <button class="btn-action" onclick="startBubbleSort()"><i class="fas fa-play"></i> Sort (Bubble)</button>
+                </div>
+            </div>
+
+            <!-- 2. BST Binary Search Tree Animation -->
+            <div class="panel-card">
+                <div class="panel-title"><i class="fas fa-tree"></i> BST Binary Search Tree Visualizer</div>
+                <div class="tree-node-canvas" id="treeScreen">
+                    <!-- Tree circles dynamically placed -->
+                </div>
+                <div class="controls-row">
+                    <input type="number" id="nodeValueInput" placeholder="Val (e.g. 50)" style="background:#130920; border:1px solid rgba(255,77,46,0.3); color:white; padding:8px; border-radius:10px; width:100px; outline:none;">
+                    <button class="btn-action" onclick="insertBSTNode()"><i class="fas fa-plus"></i> Insert Node</button>
+                    <button class="btn-action" onclick="clearTree()"><i class="fas fa-trash-alt"></i> Clear</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Panel: Roadmap nodes path -->
+        <section class="panel-card">
+            <div class="panel-title"><i class="fas fa-road"></i> Hashira Training Path</div>
+            <div class="roadmap-flow" id="roadmapFlowContainer">
+                <!-- Roadmap items loaded dynamically -->
+            </div>
+        </section>
+    </div>
+</div>
+
+<script src="../../config/config.js"></script>
+<script src="../../assets/js/api.js"></script>
+<script>
+    // Theme links
+    const themeStyles = {
+        flame: { primary: '#ff4d2e' },
+        water: { primary: '#2e9eff' },
+        thunder: { primary: '#ffd966' },
+        mist: { primary: '#b8a9ff' },
+        wind: { primary: '#5fdc7a' },
+        sun: { primary: '#ffaa33' }
+    };
+
+    function applyDojoTheme(styleName) {
+        if (!styleName) return;
+        const key = styleName.toLowerCase();
+        const theme = themeStyles[key];
+        if (!theme) return;
+        
+        const nav = document.querySelector('.demon-nav');
+        if (nav) nav.style.borderColor = theme.primary;
+        document.querySelectorAll('.panel-title').forEach(el => el.style.color = theme.primary);
+    }
+
+    document.addEventListener('mousemove', (e) => {
+        const glow = document.getElementById('cursorGlow');
+        glow.style.left = e.clientX + 'px';
+        glow.style.top = e.clientY + 'px';
+    });
+
+    // ---------------- SORTING VISUALIZER ----------------
+    let array = [];
+    const MAX_VAL = 90;
+    const MIN_VAL = 10;
+    const NUM_BARS = 12;
+
+    function generateRandomArray() {
+        array = [];
+        for (let i = 0; i < NUM_BARS; i++) {
+            array.push(Math.floor(Math.random() * (MAX_VAL - MIN_VAL + 1)) + MIN_VAL);
+        }
+        renderArray();
+    }
+
+    function renderArray(compareIndices = [], swapIndices = [], sortedIndices = []) {
+        const screen = document.getElementById('sortingScreen');
+        screen.innerHTML = array.map((val, idx) => {
+            let stateClass = '';
+            if (compareIndices.includes(idx)) stateClass = 'compare';
+            if (swapIndices.includes(idx)) stateClass = 'swap';
+            if (sortedIndices.includes(idx)) stateClass = 'sorted';
+
+            return `<div class="array-bar ${stateClass}" style="height: ${val * 2.5}px;">${val}</div>`;
+        }).join('');
+    }
+
+    // Async Sleep utility
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    async function startBubbleSort() {
+        const len = array.length;
+        const sorted = [];
+        for (let i = 0; i < len; i++) {
+            for (let j = 0; j < len - i - 1; j++) {
+                renderArray([j, j + 1], []);
+                await sleep(400);
+
+                if (array[j] > array[j + 1]) {
+                    // Swap
+                    const temp = array[j];
+                    array[j] = array[j + 1];
+                    array[j + 1] = temp;
+                    renderArray([], [j, j + 1]);
+                    await sleep(400);
+                }
+            }
+            sorted.push(len - i - 1);
+            renderArray([], [], sorted);
+        }
+        renderArray([], [], Array.from({length: len}, (_, i) => i));
+    }
+
+    // ---------------- BST VISUALIZER ----------------
+    let treeRoot = null;
+
+    class TreeNode {
+        constructor(val, x, y) {
+            this.val = val;
+            this.x = x;
+            this.y = y;
+            this.left = null;
+            this.right = null;
+        }
+    }
+
+    function insertBSTNode() {
+        const input = document.getElementById('nodeValueInput');
+        const val = parseInt(input.value);
+        if (isNaN(val)) return;
+        input.value = '';
+
+        if (!treeRoot) {
+            treeRoot = new TreeNode(val, 150, 40); // Root coordinates
+        } else {
+            addNode(treeRoot, val, 150, 40, 70); // Recursive add
+        }
+
+        renderTree();
+    }
+
+    function addNode(node, val, parentX, parentY, spacing) {
+        if (val < node.val) {
+            if (!node.left) {
+                node.left = new TreeNode(val, parentX - spacing, parentY + 50);
+            } else {
+                addNode(node.left, val, parentX - spacing, parentY + 50, spacing * 0.6);
+            }
+        } else {
+            if (!node.right) {
+                node.right = new TreeNode(val, parentX + spacing, parentY + 50);
+            } else {
+                addNode(node.right, val, parentX + spacing, parentY + 50, spacing * 0.6);
+            }
+        }
+    }
+
+    function clearTree() {
+        treeRoot = null;
+        renderTree();
+    }
+
+    function renderTree() {
+        const screen = document.getElementById('treeScreen');
+        screen.innerHTML = '';
+        if (!treeRoot) return;
+
+        traverseAndDraw(treeRoot, screen);
+    }
+
+    function traverseAndDraw(node, screen) {
+        if (!node) return;
+
+        // Draw node circle
+        const circle = document.createElement('div');
+        circle.className = 'node-circle';
+        // Normalize screen coordinates relative to canvas height/width
+        circle.style.left = `${(node.x / 300) * 100}%`;
+        circle.style.top = `${node.y}px`;
+        circle.innerText = node.val;
+        screen.appendChild(circle);
+
+        traverseAndDraw(node.left, screen);
+        traverseAndDraw(node.right, screen);
+    }
+
+    // ---------------- ROADMAP LOADER ----------------
+    const roadmapPaths = [
+        { title: 'Arrays Form', breathing: 'Water Breathing · 1st Form', topic: 'arrays', progress: 75, completed: false },
+        { title: 'Linked List Form', breathing: 'Mist Breathing · 3rd Form', topic: 'linked-list', progress: 40, completed: false },
+        { title: 'Stacks Form', breathing: 'Thunder Breathing · 1st Form', topic: 'stacks', progress: 0, completed: false },
+        { title: 'Queues Form', breathing: 'Flame Breathing · 2nd Form', topic: 'queues', progress: 0, completed: false },
+        { title: 'Tree Form', breathing: 'Wind Breathing · 5th Form', topic: 'trees', progress: 0, completed: false },
+        { title: 'Graph Form', breathing: 'Sun Breathing · Final Form', topic: 'graphs', progress: 0, completed: false }
+    ];
+
+    async function initPage() {
+        // Authenticate
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const profile = await Auth.getProfile();
+                applyDojoTheme(profile.breathingStyle);
+                
+                const avatar = document.getElementById('navAvatar');
+                if (profile.avatar) {
+                    avatar.innerHTML = `<img src="${profile.avatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                } else {
+                    avatar.innerText = profile.username.charAt(0).toUpperCase();
+                }
+
+                // Update roadmap values with database progress
+                const progressRecords = await Progress.getProgress();
+                roadmapPaths.forEach(node => {
+                    const record = progressRecords.find(r => 
+                        r.topic.toLowerCase().replace(/[\s-]/g, '') === node.topic.replace('-', '')
+                    );
+                    if (record) {
+                        node.progress = record.score || 0;
+                        node.completed = record.completed || false;
+                    } else {
+                        node.progress = 0;
+                        node.completed = false;
+                    }
+                });
+
+            } catch (err) {}
+        }
+
+        renderRoadmap();
+        generateRandomArray();
+    }
+
+    function renderRoadmap() {
+        const container = document.getElementById('roadmapFlowContainer');
+        container.innerHTML = roadmapPaths.map((node, i) => {
+            const completedClass = node.completed ? 'completed' : '';
+            const checkIcon = node.completed ? '<i class="fas fa-check-circle" style="color:#10b981;"></i>' : '<i class="far fa-circle"></i>';
+
+            let connectHtml = '';
+            if (i > 0) {
+                connectHtml = `<div class="roadmap-node-connector"></div>`;
+            }
+
+            return `
+                ${connectHtml}
+                <div class="roadmap-node ${completedClass}" onclick="navigateToTopic('${node.topic}')">
+                    <div class="node-title">${node.title}</div>
+                    <div class="node-subtitle">${node.breathing}</div>
+                    <div class="node-progress">${checkIcon} ${node.progress}% Completed</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function navigateToTopic(topic) {
+        window.location.href = `problems.html?topic=${topic}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', initPage);
+</script>
+</body>
+</html>

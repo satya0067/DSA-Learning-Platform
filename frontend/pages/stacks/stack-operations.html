@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Stack Operations - Interactive | Struct-Learn Dojo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 20% 30%, #1a0a2e 0%, #0a0512 45%, #020006 100%);
+            color: #f0e9e1;
+            min-height: 100vh;
+        }
+
+        /* ===== ANIMATED BACKGROUND ===== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.3), rgba(0, 212, 255, 0));
+            border-radius: 50%;
+            animation: floatParticle linear infinite;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: orbPulse 6s ease-in-out infinite;
+        }
+
+        @keyframes orbPulse {
+            0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.3; }
+            50% { transform: scale(1.2) translate(50px, -30px); opacity: 0.6; }
+        }
+
+        /* ===== NAVIGATION ===== */
+        .top-nav {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+            color: #00d4ff;
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.4));
+        }
+
+        .logo span {
+            font-weight: 800;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #00d4ff;
+        }
+
+        .nav-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+            position: relative;
+            z-index: 5;
+        }
+
+        /* Back Link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #00d4ff;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .back-link:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: translateX(-4px);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: rgba(10, 5, 25, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 32px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.1), transparent);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            background: rgba(0, 212, 255, 0.15);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 40px;
+            font-size: 0.8rem;
+            color: #00d4ff;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-section h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .hero-section p {
+            color: #cbd5e1;
+            max-width: 600px;
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        /* ===== OPERATIONS LAYOUT ===== */
+        .operations-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .operations-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== VISUALIZATION PANEL ===== */
+        .vis-panel {
+            background: rgba(10, 5, 25, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 28px;
+            padding: 1.8rem;
+        }
+
+        .vis-panel h2 {
+            color: #00d4ff;
+            font-size: 1.3rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .stack-visual {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            padding: 1.5rem;
+            min-height: 380px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 212, 255, 0.08);
+        }
+
+        .stack-container {
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            gap: 6px;
+            min-height: 280px;
+            width: 200px;
+        }
+
+        .stack-element {
+            width: 160px;
+            height: 46px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2);
+        }
+
+        .stack-element.peek {
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            box-shadow: 0 4px 25px rgba(255, 215, 0, 0.4);
+            transform: scale(1.05);
+        }
+
+        .stack-element.pop-out {
+            animation: popOut 0.3s ease forwards;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes popOut {
+            from { transform: scale(1); opacity: 1; }
+            to { transform: scale(1.1) translateY(-20px); opacity: 0; }
+        }
+
+        .stack-base {
+            width: 180px;
+            height: 6px;
+            background: linear-gradient(90deg, #4a5568, #718096);
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+
+        .empty-message {
+            color: #64748b;
+            font-style: italic;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        /* ===== STATUS PANEL ===== */
+        .status-panel {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 1rem 1.2rem;
+            margin-top: 1.2rem;
+            border-left: 4px solid #00d4ff;
+        }
+
+        .status-message {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .status-details {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-top: 0.2rem;
+        }
+
+        /* ===== CONTROLS PANEL ===== */
+        .controls-panel {
+            background: rgba(10, 5, 25, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 28px;
+            padding: 1.8rem;
+        }
+
+        .controls-panel h2 {
+            color: #00d4ff;
+            font-size: 1.3rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 0.8rem 1.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
+            color: #e2e8f0;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.15);
+        }
+
+        .input-group input::placeholder {
+            color: #64748b;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1rem;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-push {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-push:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-pop {
+            background: linear-gradient(135deg, #f87171, #ef4444);
+            color: white;
+        }
+
+        .btn-pop:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-peek {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #1a0a2e;
+        }
+
+        .btn-peek:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-size {
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            color: white;
+        }
+
+        .btn-size:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+
+        .btn-reset:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn:disabled {
+            background: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ===== INFO CARDS ===== */
+        .info-section {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .info-section h3 {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.8rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.8rem;
+        }
+
+        .info-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.8rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .info-card h4 {
+            color: #94a3b8;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-card p {
+            color: #00d4ff;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 0.2rem;
+        }
+
+        /* ===== LOG ===== */
+        .log-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 0.8rem;
+            max-height: 150px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            margin-top: 0.8rem;
+        }
+
+        .log-container::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .log-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .log-container::-webkit-scrollbar-thumb {
+            background: #00d4ff;
+            border-radius: 10px;
+        }
+
+        .log-entry {
+            color: #94a3b8;
+            padding: 0.2rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .log-entry .time {
+            color: #64748b;
+        }
+
+        .log-entry .op-push { color: #34d399; }
+        .log-entry .op-pop { color: #f87171; }
+        .log-entry .op-peek { color: #fbbf24; }
+        .log-entry .op-size { color: #60a5fa; }
+        .log-entry .op-error { color: #f87171; }
+
+        @media (max-width: 600px) {
+            .btn-grid {
+                grid-template-columns: 1fr;
+            }
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .hero-section h1 {
+                font-size: 1.8rem;
+            }
+            .stack-element {
+                width: 120px;
+                height: 40px;
+                font-size: 0.85rem;
+            }
+            .stack-container {
+                width: 150px;
+            }
+            .stack-base {
+                width: 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== ANIMATED BACKGROUND ===== -->
+<div class="bg-animation" id="bgAnimation"></div>
+
+<!-- ===== NAVIGATION ===== -->
+<nav class="top-nav">
+    <div class="logo">
+        <i class="fas fa-layer-group"></i>
+        <span>STRUCT-LEARN</span>
+    </div>
+    <div class="nav-links">
+        <a href="#"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="#"><i class="fas fa-code"></i> Topics</a>
+        <a href="#"><i class="fas fa-trophy"></i> Achievements</a>
+        <div class="nav-avatar">U</div>
+    </div>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="main-container">
+    <a class="back-link" href="stacks.html">
+        <i class="fas fa-arrow-left"></i> Back to Stacks
+    </a>
+
+    <!-- Hero -->
+    <div class="hero-section">
+        <div class="hero-content">
+            <div class="hero-badge"><i class="fas fa-layer-group"></i> Interactive Practice</div>
+            <h1><i class="fas fa-hand-pointer"></i> Stack Operations Dojo</h1>
+            <p>Push, Pop, and Peek — practice stack operations with live visualization and instant feedback.</p>
+        </div>
+    </div>
+
+    <!-- Operations Grid -->
+    <div class="operations-grid">
+        <!-- Visualization Panel -->
+        <div class="vis-panel">
+            <h2><i class="fas fa-eye"></i> Live Visualization</h2>
+            <div class="stack-visual">
+                <div class="stack-container" id="stackContainer">
+                    <div class="empty-message">⚔️ Stack is empty. Push some elements!</div>
+                </div>
+                <div class="stack-base"></div>
+            </div>
+            <div class="status-panel">
+                <div class="status-message" id="statusMessage">⚔️ Stack is empty. Ready to push.</div>
+                <div class="status-details" id="statusDetails"></div>
+            </div>
+        </div>
+
+        <!-- Controls Panel -->
+        <div class="controls-panel">
+            <h2><i class="fas fa-gamepad"></i> Operations</h2>
+
+            <div class="input-group">
+                <input type="number" id="valueInput" placeholder="Enter value (1-100)" min="1" max="100">
+                <button class="btn btn-push" id="pushBtn"><i class="fas fa-plus-circle"></i> Push</button>
+            </div>
+
+            <div class="btn-grid">
+                <button class="btn btn-pop" id="popBtn" disabled><i class="fas fa-arrow-up"></i> Pop</button>
+                <button class="btn btn-peek" id="peekBtn" disabled><i class="fas fa-eye"></i> Peek</button>
+                <button class="btn btn-size" id="sizeBtn"><i class="fas fa-ruler"></i> Size</button>
+                <button class="btn btn-reset" id="resetBtn"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+
+            <div class="info-section">
+                <h3>📊 Stack Information</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h4>Size</h4>
+                        <p id="sizeDisplay">0</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>Max Size</h4>
+                        <p id="maxSizeDisplay">10</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>Empty?</h4>
+                        <p id="isEmptyDisplay">Yes</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>Full?</h4>
+                        <p id="isFullDisplay">No</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3>📝 Operation Log</h3>
+                <div class="log-container" id="operationLog">
+                    <div class="log-entry">⚔️ No operations yet. Start pushing!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==================== BACKGROUND ANIMATION ====================
+    const bg = document.getElementById('bgAnimation');
+
+    for (let i = 0; i < 35; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'bg-particle';
+        const size = Math.random() * 8 + 3;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDuration = (Math.random() * 12 + 8) + 's';
+        particle.style.animationDelay = (Math.random() * 6) + 's';
+        bg.appendChild(particle);
+    }
+
+    const orbColors = ['#00d4ff', '#0099cc', '#006699'];
+    orbColors.forEach((color, i) => {
+        const orb = document.createElement('div');
+        orb.className = 'bg-orb';
+        orb.style.width = (200 + Math.random() * 150) + 'px';
+        orb.style.height = orb.style.width;
+        orb.style.background = color;
+        orb.style.left = (10 + i * 30) + '%';
+        orb.style.top = (10 + i * 20) + '%';
+        orb.style.animationDelay = (i * 1.5) + 's';
+        bg.appendChild(orb);
+    });
+
+    // ==================== STACK OPERATIONS ====================
+    class StackDojo {
+        constructor() {
+            this.stack = [];
+            this.maxSize = 10;
+            this.container = document.getElementById('stackContainer');
+            this.statusMessage = document.getElementById('statusMessage');
+            this.statusDetails = document.getElementById('statusDetails');
+            this.valueInput = document.getElementById('valueInput');
+            this.popBtn = document.getElementById('popBtn');
+            this.peekBtn = document.getElementById('peekBtn');
+            this.logContainer = document.getElementById('operationLog');
+            this.logs = [];
+
+            this.updateUI();
+        }
+
+        push() {
+            const value = parseInt(this.valueInput.value);
+
+            if (isNaN(value) || value < 1 || value > 100) {
+                this.statusMessage.textContent = '⚠️ Invalid! Enter a number between 1-100';
+                this.statusMessage.style.color = '#f87171';
+                this.logOperation('error', `Invalid input: ${this.valueInput.value}`);
+                return;
+            }
+
+            if (this.stack.length >= this.maxSize) {
+                this.statusMessage.textContent = '⚠️ Stack Overflow! Max capacity reached.';
+                this.statusMessage.style.color = '#f87171';
+                this.logOperation('error', 'Push failed - Stack overflow');
+                return;
+            }
+
+            this.stack.push(value);
+            this.valueInput.value = '';
+            this.statusMessage.textContent = `✅ Pushed: ${value}`;
+            this.statusMessage.style.color = '#34d399';
+            this.statusDetails.textContent = `Stack size: ${this.stack.length}`;
+            this.logOperation('push', `Pushed ${value} (size: ${this.stack.length})`);
+            this.updateUI();
+        }
+
+        pop() {
+            if (this.stack.length === 0) {
+                this.statusMessage.textContent = '⚠️ Stack Underflow! Nothing to pop.';
+                this.statusMessage.style.color = '#f87171';
+                this.logOperation('error', 'Pop failed - Stack is empty');
+                return;
+            }
+
+            const value = this.stack.pop();
+            this.statusMessage.textContent = `🗑️ Popped: ${value}`;
+            this.statusMessage.style.color = '#fbbf24';
+            this.statusDetails.textContent = `Stack size: ${this.stack.length}`;
+            this.logOperation('pop', `Popped ${value} (size: ${this.stack.length})`);
+            this.updateUI();
+        }
+
+        peek() {
+            if (this.stack.length === 0) {
+                this.statusMessage.textContent = '⚠️ Stack is empty! Nothing to peek.';
+                this.statusMessage.style.color = '#f87171';
+                this.logOperation('error', 'Peek failed - Stack is empty');
+                return;
+            }
+
+            const value = this.stack[this.stack.length - 1];
+            this.statusMessage.textContent = `👀 Top element: ${value}`;
+            this.statusMessage.style.color = '#ffd700';
+            this.statusDetails.textContent = `Position: ${this.stack.length}`;
+            this.logOperation('peek', `Peeked ${value} at top`);
+            this.updateUI(true);
+        }
+
+        getSize() {
+            const size = this.stack.length;
+            const isEmpty = size === 0 ? 'Yes' : 'No';
+            const isFull = size === this.maxSize ? 'Yes' : 'No';
+
+            this.statusMessage.textContent = `📏 Stack Size: ${size} / ${this.maxSize}`;
+            this.statusMessage.style.color = '#60a5fa';
+            this.statusDetails.textContent = `Empty: ${isEmpty} | Full: ${isFull}`;
+            this.logOperation('size', `Size check: ${size} elements`);
+        }
+
+        reset() {
+            this.stack = [];
+            this.valueInput.value = '';
+            this.statusMessage.textContent = '🔄 Stack reset. Ready to push.';
+            this.statusMessage.style.color = '#94a3b8';
+            this.statusDetails.textContent = '';
+            this.logs = [];
+            this.logContainer.innerHTML = '<div class="log-entry">⚔️ Stack reset. Ready for operations.</div>';
+            this.updateUI();
+        }
+
+        updateUI(isPeek = false) {
+            this.renderStack(isPeek);
+            this.updateInfoCards();
+            this.popBtn.disabled = this.stack.length === 0;
+            this.peekBtn.disabled = this.stack.length === 0;
+        }
+
+        renderStack(isPeek = false) {
+            this.container.innerHTML = '';
+
+            if (this.stack.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'empty-message';
+                empty.textContent = '⚔️ Stack is empty. Push some elements!';
+                this.container.appendChild(empty);
+                return;
+            }
+
+            this.stack.forEach((value, index) => {
+                const element = document.createElement('div');
+                element.className = 'stack-element';
+                if (isPeek && index === this.stack.length - 1) {
+                    element.classList.add('peek');
+                }
+                element.textContent = value;
+                this.container.appendChild(element);
+            });
+        }
+
+        updateInfoCards() {
+            document.getElementById('sizeDisplay').textContent = this.stack.length;
+            document.getElementById('maxSizeDisplay').textContent = this.maxSize;
+            document.getElementById('isEmptyDisplay').textContent = this.stack.length === 0 ? 'Yes' : 'No';
+            document.getElementById('isFullDisplay').textContent = this.stack.length === this.maxSize ? 'Yes' : 'No';
+        }
+
+        logOperation(type, message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logClass = `op-${type}`;
+            this.logs.unshift(`<div class="log-entry"><span class="time">[${timestamp}]</span> <span class="${logClass}">${message}</span></div>`);
+
+            if (this.logs.length > 15) {
+                this.logs.pop();
+            }
+
+            this.logContainer.innerHTML = this.logs.join('');
+        }
+    }
+
+    // ==================== INITIALIZE ====================
+    const stackDojo = new StackDojo();
+
+    document.getElementById('pushBtn').addEventListener('click', () => stackDojo.push());
+    document.getElementById('popBtn').addEventListener('click', () => stackDojo.pop());
+    document.getElementById('peekBtn').addEventListener('click', () => stackDojo.peek());
+    document.getElementById('sizeBtn').addEventListener('click', () => stackDojo.getSize());
+    document.getElementById('resetBtn').addEventListener('click', () => stackDojo.reset());
+
+    document.getElementById('valueInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') stackDojo.push();
+    });
+
+    console.log('%c📚 STACK OPERATIONS DOJO 📚\nPractice Push, Pop, and Peek with live visualization!', 'color: #00d4ff; font-size: 14px; font-weight: bold;');
+</script>
+</body>
+</html>

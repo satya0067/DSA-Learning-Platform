@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contest Hall - Struct-Learn | Demon Slayer Code Corps</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 10% 20%, #0a0512, #020006);
+            color: #f0e9e1;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .demon-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 3rem;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid #ff4d2e;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-icon { font-size: 2rem; color: #ff4d2e; filter: drop-shadow(0 0 6px #ff4d2e); }
+        .logo-text { font-weight: 800; font-size: 1.5rem; background: linear-gradient(135deg, #f7b42c, #fc575e); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: #cbd5e1; font-weight: 600; transition: 0.2s; font-size: 0.9rem; }
+        .nav-links a:hover { color: #ff8c5a; }
+        .nav-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #ff4d2e, #ff8c5a); display: flex; align-items: center; justify-content: center; font-weight: 700; color: black; cursor: pointer; }
+
+        .main-container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
+
+        /* Title Area */
+        .contest-header { text-align: center; margin-bottom: 2.5rem; }
+        .contest-header h1 { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #fff, #ff7b42); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .contest-header p { color: #94a3b8; font-size: 1.1rem; margin-top: 8px; }
+
+        /* Contests Grid panels */
+        .contest-section { margin-bottom: 3rem; }
+        .section-title { font-size: 1.5rem; font-weight: 800; color: #ff7b42; margin-bottom: 1rem; border-left: 4px solid #ff4d2e; padding-left: 10px; }
+
+        .contests-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+
+        .contest-card {
+            background: rgba(15, 8, 25, 0.85);
+            border: 1px solid rgba(255, 77, 46, 0.15);
+            border-radius: 28px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .contest-card:hover { transform: translateY(-4px); border-color: #ff4d2e; box-shadow: 0 12px 30px rgba(255,77,46,0.15); }
+        .contest-card.live { border-color: #fbbf24; animation: borderPulse 2s infinite; }
+
+        @keyframes borderPulse {
+            0% { box-shadow: 0 0 5px rgba(251, 191, 36, 0.2); }
+            50% { box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); }
+            100% { box-shadow: 0 0 5px rgba(251, 191, 36, 0.2); }
+        }
+
+        .status-tag { position: absolute; top: 1.2rem; right: 1.2rem; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; padding: 4px 10px; border-radius: 12px; }
+        .status-tag.live { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+        .status-tag.upcoming { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .status-tag.completed { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; }
+
+        .contest-title { font-size: 1.25rem; font-weight: 800; margin-bottom: 0.5rem; max-width: 75%; }
+        .contest-desc { font-size: 0.85rem; color: #94a3b8; line-height: 1.5; margin-bottom: 1rem; }
+        
+        .contest-meta { margin-bottom: 1.2rem; display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: #cbd5e1; }
+        .contest-meta i { margin-right: 6px; color: #ff8c5a; }
+
+        .btn-contest { width: 100%; border: none; padding: 10px; border-radius: 16px; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; font-size: 0.9rem; transition: 0.2s; }
+        .btn-live { background: #fbbf24; color: black; }
+        .btn-live:hover { background: #fcd34d; }
+        .btn-upcoming { background: #ff4d2e; color: white; }
+        .btn-upcoming:hover { background: #ff6a4f; }
+        .btn-completed { background: rgba(255,255,255,0.06); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-completed:hover { background: rgba(255,255,255,0.12); }
+
+        .timer-badge { font-family: monospace; font-size: 1rem; color: #ff4d2e; font-weight: bold; }
+
+        /* Cursor trail */
+        .cursor-glow { width: 30px; height: 30px; background: radial-gradient(circle, rgba(255,80,40,0.4) 0%, rgba(255,40,0,0) 80%); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); }
+    </style>
+</head>
+<body>
+
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- Navigation Header -->
+<nav class="demon-nav">
+    <a href="/index.html" class="logo-area">
+        <i class="fas fa-dragon logo-icon"></i>
+        <div>
+            <div class="logo-text">STRUCT-LEARN</div>
+            <div class="logo-sub">Demon Slayer Code Corps</div>
+        </div>
+    </a>
+    <div class="nav-links">
+        <a href="/index.html"><i class="fas fa-home"></i> Home</a>
+        <a href="/pages/dashboard/dashboard.html"><i class="fas fa-chalkboard-teacher"></i> Dashboard</a>
+        <a href="/pages/quiz/quiz.html"><i class="fas fa-book"></i> Quiz</a>
+        <a href="/pages/practice/practice.html"><i class="fas fa-keyboard"></i> Practice</a>
+        <a href="/pages/practice/contests.html" class="active"><i class="fas fa-trophy"></i> Contests</a>
+        <a href="/pages/practice/roadmaps.html"><i class="fas fa-map-signs"></i> Roadmaps</a>
+        <a href="/pages/profile/profile.html"><i class="fas fa-user-ninja"></i> Profile</a>
+    </div>
+    <div class="nav-avatar" id="navAvatar">U</div>
+</nav>
+
+<div class="main-container">
+    <header class="contest-header">
+        <h1>⚔️ Grand Tournament Arena ⚔️</h1>
+        <p>Demon Selection Tournaments and Live Combat Challenges. Prove your Code Breathing mastery.</p>
+    </header>
+
+    <!-- 1. Live Contests -->
+    <section class="contest-section">
+        <div class="section-title"><i class="fas fa-circle" style="color:#fbbf24; font-size:0.8rem; animation: blink 1s infinite;"></i> Active Live Contests</div>
+        <div class="contests-grid" id="liveContestsContainer">
+            <div style="opacity:0.6; padding:1rem;"><i class="fas fa-spinner fa-spin"></i> Checking live tourneys...</div>
+        </div>
+    </section>
+
+    <!-- 2. Upcoming Contests -->
+    <section class="contest-section">
+        <div class="section-title"><i class="fas fa-hourglass-start"></i> Upcoming Final Selection Tournaments</div>
+        <div class="contests-grid" id="upcomingContestsContainer">
+            <div style="opacity:0.6; padding:1rem;"><i class="fas fa-spinner fa-spin"></i> Scanning upcoming schedules...</div>
+        </div>
+    </section>
+
+    <!-- 3. Completed Contests -->
+    <section class="contest-section">
+        <div class="section-title"><i class="fas fa-history"></i> Completed Tournaments Archive</div>
+        <div class="contests-grid" id="completedContestsContainer">
+            <div style="opacity:0.6; padding:1rem;"><i class="fas fa-spinner fa-spin"></i> Gathering histories...</div>
+        </div>
+    </section>
+</div>
+
+<script src="../../config/config.js"></script>
+<script src="../../assets/js/api.js"></script>
+<script>
+    // Theme links
+    const themeStyles = {
+        flame: { primary: '#ff4d2e' },
+        water: { primary: '#2e9eff' },
+        thunder: { primary: '#ffd966' },
+        mist: { primary: '#b8a9ff' },
+        wind: { primary: '#5fdc7a' },
+        sun: { primary: '#ffaa33' }
+    };
+
+    function applyDojoTheme(styleName) {
+        if (!styleName) return;
+        const key = styleName.toLowerCase();
+        const theme = themeStyles[key];
+        if (!theme) return;
+        
+        const nav = document.querySelector('.demon-nav');
+        if (nav) nav.style.borderColor = theme.primary;
+        document.querySelectorAll('.section-title').forEach(el => el.style.color = theme.primary);
+    }
+
+    document.addEventListener('mousemove', (e) => {
+        const glow = document.getElementById('cursorGlow');
+        glow.style.left = e.clientX + 'px';
+        glow.style.top = e.clientY + 'px';
+    });
+
+    async function loadAllContests() {
+        // Authenticate
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const profile = await Auth.getProfile();
+                applyDojoTheme(profile.breathingStyle);
+                
+                const avatar = document.getElementById('navAvatar');
+                if (profile.avatar) {
+                    avatar.innerHTML = `<img src="${profile.avatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                } else {
+                    avatar.innerText = profile.username.charAt(0).toUpperCase();
+                }
+            } catch (err) {}
+        }
+
+        try {
+            const list = await Contests.getContests();
+
+            const liveDiv = document.getElementById('liveContestsContainer');
+            const upcomingDiv = document.getElementById('upcomingContestsContainer');
+            const completedDiv = document.getElementById('completedContestsContainer');
+
+            const liveList = list.filter(c => c.status === 'live');
+            const upcomingList = list.filter(c => c.status === 'upcoming');
+            const completedList = list.filter(c => c.status === 'completed');
+
+            // Render Live
+            if (liveList.length === 0) {
+                liveDiv.innerHTML = `<div style="opacity:0.6; font-size:0.9rem;">No active contests currently live. Rest in the safehouse.</div>`;
+            } else {
+                liveDiv.innerHTML = liveList.map(c => `
+                    <div class="contest-card live">
+                        <span class="status-tag live"><i class="fas fa-play"></i> Live</span>
+                        <div>
+                            <h3 class="contest-title">${c.title}</h3>
+                            <p class="contest-desc">${c.description}</p>
+                            <div class="contest-meta">
+                                <span><i class="fas fa-stopwatch"></i> Ends: ${new Date(c.endTime).toLocaleString()}</span>
+                                <span><i class="fas fa-users"></i> Slayers: ${c.participants?.length || 0} registered</span>
+                            </div>
+                        </div>
+                        <button class="btn-contest btn-live" onclick="enterContest('${c._id}')">Enter Arena <i class="fas fa-khanda"></i></button>
+                    </div>
+                `).join('');
+            }
+
+            // Render Upcoming
+            if (upcomingList.length === 0) {
+                upcomingDiv.innerHTML = `<div style="opacity:0.6; font-size:0.9rem;">No upcoming tournaments listed. Check back tomorrow!</div>`;
+            } else {
+                upcomingDiv.innerHTML = upcomingList.map(c => `
+                    <div class="contest-card">
+                        <span class="status-tag upcoming"><i class="fas fa-hourglass"></i> Upcoming</span>
+                        <div>
+                            <h3 class="contest-title">${c.title}</h3>
+                            <p class="contest-desc">${c.description}</p>
+                            <div class="contest-meta">
+                                <span><i class="fas fa-calendar-alt"></i> Start: ${new Date(c.startTime).toLocaleString()}</span>
+                                <span><i class="fas fa-clock"></i> Duration: ${c.duration || 120} minutes</span>
+                            </div>
+                        </div>
+                        <button class="btn-contest btn-upcoming" onclick="registerContest('${c._id}', this)">Register Tournament</button>
+                    </div>
+                `).join('');
+            }
+
+            // Render Completed
+            if (completedList.length === 0) {
+                completedDiv.innerHTML = `<div style="opacity:0.6; font-size:0.9rem;">No completed tournaments found in the archive.</div>`;
+            } else {
+                completedDiv.innerHTML = completedList.map(c => `
+                    <div class="contest-card">
+                        <span class="status-tag completed"><i class="fas fa-check"></i> Completed</span>
+                        <div>
+                            <h3 class="contest-title">${c.title}</h3>
+                            <p class="contest-desc">${c.description}</p>
+                            <div class="contest-meta">
+                                <span><i class="fas fa-calendar-check"></i> Concluded: ${new Date(c.endTime).toLocaleString()}</span>
+                                <span><i class="fas fa-trophy"></i> Winner: ${c.participants?.[0]?.userId || 'None'}</span>
+                            </div>
+                        </div>
+                        <button class="btn-contest btn-completed" onclick="viewContestResults('${c._id}')">View Standings</button>
+                    </div>
+                `).join('');
+            }
+
+        } catch (err) {
+            console.error('Failed to load contests:', err);
+        }
+    }
+
+    async function registerContest(contestId, button) {
+        try {
+            await Contests.joinContest(contestId);
+            button.innerText = '✓ Registered';
+            button.disabled = true;
+            button.style.background = '#10b981';
+            button.style.color = 'black';
+            alert('🎉 Tournament Registration successful! Prepare your total concentration form.');
+        } catch (err) {
+            alert('Registration failed: ' + err.message);
+        }
+    }
+
+    function enterContest(contestId) {
+        alert('⚔️ Entering Contest Area! Live scoring initiated.');
+        // Go to contest problem page
+        window.location.href = `problems.html?contestId=${contestId}`;
+    }
+
+    function viewContestResults(contestId) {
+        // Go to standings page or leaderboard
+        window.location.href = `leaderboard.html?contestId=${contestId}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', loadAllContests);
+</script>
+</body>
+</html>

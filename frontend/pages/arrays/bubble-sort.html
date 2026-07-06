@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubble Sort Mastery | Struct-Learn - Tower Visualization</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 10% 20%, #0a0512, #020006);
+            color: #f0e9e1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Main layout with sidebar */
+        .main-layout {
+            display: flex;
+            max-width: 1400px;
+            margin: 1.5rem auto;
+            padding: 0 2rem;
+            gap: 2rem;
+            flex: 1;
+        }
+
+        /* Sidebar */
+        #sidebar {
+            width: 280px;
+            background: rgba(10, 5, 20, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        #sidebar h3 {
+            color: #f59e0b;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            border-left: 3px solid #f59e0b;
+            padding-left: 0.8rem;
+        }
+
+        #sidebar ul {
+            list-style: none;
+        }
+
+        #sidebar ul li {
+            margin: 0.8rem 0;
+        }
+
+        #sidebar ul li a {
+            color: #cbc3b0;
+            text-decoration: none;
+            transition: 0.2s;
+            display: block;
+            padding: 0.3rem 0;
+        }
+
+        #sidebar ul li a:hover {
+            color: #f59e0b;
+            transform: translateX(5px);
+        }
+
+        #sidebar ul li a.active {
+            color: #f59e0b;
+            background: rgba(245, 158, 11, 0.15);
+            padding: 0.5rem 0.8rem;
+            border-radius: 12px;
+            border-left: 3px solid #f59e0b;
+        }
+
+        .top-nav {
+            background: rgba(0, 0, 0, 0.9);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            border-bottom: 2px solid #f59e0b;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+            color: #f59e0b;
+        }
+
+        .logo span {
+            font-weight: 800;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #fbbf24;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 1.5rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero-section h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #f59e0b, #fbbf24, #10b981);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .complexity-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .complexity-card {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 20px;
+            padding: 1rem 1.5rem;
+            text-align: center;
+            min-width: 140px;
+        }
+
+        .complexity-card .big-o {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fbbf24;
+        }
+
+        .viz-card {
+            background: rgba(10, 20, 30, 0.7);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 2px solid #f59e0b;
+            border-radius: 32px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Tower Visualization */
+        .tower-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 1.5rem;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 28px;
+            margin: 1.5rem 0;
+            min-height: 320px;
+            flex-wrap: wrap;
+        }
+
+        .tower {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .tower-bar {
+            width: 70px;
+            background: linear-gradient(180deg, #f59e0b, #d97706);
+            border-radius: 12px 12px 4px 4px;
+            transition: height 0.3s ease, background 0.2s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .tower-bar.comparing {
+            background: linear-gradient(180deg, #fbbf24, #f59e0b);
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.8);
+            transform: scale(1.02);
+        }
+
+        .tower-bar.swapping {
+            background: linear-gradient(180deg, #ef4444, #dc2626);
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.7);
+            animation: shake 0.3s ease-in-out;
+        }
+
+        .tower-bar.sorted {
+            background: linear-gradient(180deg, #10b981, #059669);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        .tower-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            background: #1e293b;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .tower-index {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+
+        /* Controls */
+        .control-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .input-wrapper label {
+            display: block;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 40px;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: #f59e0b;
+        }
+
+        .btn {
+            padding: 0.9rem 1.8rem;
+            border-radius: 40px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+
+        .btn-secondary {
+            background: #334155;
+            color: white;
+        }
+
+        .step-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 1rem 0;
+        }
+
+        .step-btn {
+            padding: 0.7rem 1.3rem;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 40px;
+            cursor: pointer;
+            color: white;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .step-btn:hover {
+            background: #f59e0b;
+            border-color: #f59e0b;
+        }
+
+        /* Status Panel */
+        .status-panel {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 1.2rem;
+            margin: 1rem 0;
+            border-left: 5px solid #f59e0b;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 0.8rem;
+        }
+
+        .status-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.6rem;
+            border-radius: 12px;
+        }
+
+        .status-label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+
+        .status-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fbbf24;
+        }
+
+        /* Algorithm & Implementation Sections */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .info-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            padding: 1.2rem;
+            border: 1px solid #334155;
+        }
+
+        .info-card h3 {
+            color: #fbbf24;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .example-steps {
+            background: #0a0a1a;
+            padding: 1rem;
+            border-radius: 16px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            margin-top: 0.8rem;
+        }
+
+        pre {
+            background: #0a0a1a;
+            padding: 1rem;
+            border-radius: 16px;
+            overflow-x: auto;
+            font-size: 0.8rem;
+            font-family: 'Courier New', monospace;
+            margin-top: 0.5rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            border-top: 1px solid #334155;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 800px) {
+            .tower-bar {
+                width: 45px;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="top-nav">
+    <div class="logo">
+        <i class="fas fa-chart-simple"></i>
+        <span>STRUCT-LEARN</span>
+    </div>
+    <div class="nav-links">
+        <a href="../dashboard/dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="array.html"><i class="fas fa-chart-line"></i> Algorithms</a>
+        <a href="../editor/editor.html"><i class="fas fa-laptop-code"></i> Practice</a>
+    </div>
+</nav>
+
+<div class="main-layout">
+    <aside id="sidebar">
+        <h3>Array Topics</h3>
+        <ul>
+            <li><a href="array.html">Arrays Basics · First Form</a></li>
+            <li><a href="bubble-sort.html" class="active">Bubble Sort · Second Form</a></li>
+            <li><a href="insertion-sort.html">Insertion Sort · Third Form</a></li>
+            <li><a href="selection-sort.html">Selection Sort · Fourth Form</a></li>
+            <li><a href="merge-sort.html">Merge Sort · Fifth Form</a></li>
+            <li><a href="quick-sort.html">Quick Sort · Sixth Form</a></li>
+            <li><a href="heap-sort.html">Heap Sort · Seventh Form</a></li>
+            <li><a href="binary-search.html">Binary Search · Eighth Form</a></li>
+            <li><a href="linear-search.html">Linear Search · Ninth Form</a></li>
+        </ul>
+    </aside>
+
+<div class="main-container">
+    <div class="hero-section">
+        <h1><i class="fas fa-chart-simple"></i> Bubble Sort · Tower Visualization</h1>
+        <p>Watch larger towers "bubble up" to the end — Complete learning platform with algorithm, example, and implementation</p>
+    </div>
+
+    <div class="complexity-grid">
+        <div class="complexity-card"><span class="big-o">O(n²)</span><br>Worst Case</div>
+        <div class="complexity-card"><span class="big-o">O(n)</span><br>Best Case</div>
+        <div class="complexity-card"><span class="big-o">O(1)</span><br>Space</div>
+        <div class="complexity-card"><span class="big-o">Stable</span><br>Algorithm</div>
+    </div>
+
+    <!-- Visualization Section -->
+    <div class="viz-card">
+        <h2><i class="fas fa-chart-simple"></i> Live Tower Visualization</h2>
+        <p>🔵 Taller towers = Larger numbers | 🟠 Orange = Comparing | 🔴 Red = Swapping | 🟢 Green = Sorted</p>
+
+        <div id="towerContainer" class="tower-container"></div>
+
+        <div class="control-group">
+            <div class="input-wrapper">
+                <label><i class="fas fa-edit"></i> Custom Array (comma separated)</label>
+                <input type="text" id="arrayInput" placeholder="e.g., 64, 34, 25, 12, 22, 11, 90">
+            </div>
+            <button id="updateArrayBtn" class="btn btn-secondary"><i class="fas fa-sync-alt"></i> Update</button>
+            <button id="randomArrayBtn" class="btn btn-secondary"><i class="fas fa-dice"></i> Random</button>
+        </div>
+
+        <div class="control-group">
+            <div class="input-wrapper">
+                <label><i class="fas fa-tachometer-alt"></i> Speed</label>
+                <input type="range" id="speedSlider" min="400" max="1500" value="700" step="50" title="Adjust sorting animation speed">
+                <span id="speedValue" style="margin-left: 10px;">700ms</span>
+            </div>
+        </div>
+
+        <div class="step-buttons">
+            <button id="stepBtn" class="step-btn"><i class="fas fa-step-forward"></i> Step</button>
+            <button id="autoBtn" class="step-btn"><i class="fas fa-play"></i> Auto Sort</button>
+            <button id="resetBtn" class="step-btn"><i class="fas fa-undo-alt"></i> Reset</button>
+            <button id="stopBtn" class="step-btn"><i class="fas fa-stop"></i> Stop</button>
+        </div>
+
+        <div class="status-panel">
+            <strong><i class="fas fa-info-circle"></i> Sorting Status</strong>
+            <div id="sortMessage" style="margin-top: 0.5rem;">✅ Ready! Click "Step" or "Auto Sort" to begin.</div>
+            
+            <div class="status-grid">
+                <div class="status-item"><div class="status-label">Current Pass</div><div class="status-value" id="passNum">0</div></div>
+                <div class="status-item"><div class="status-label">Comparisons</div><div class="status-value" id="comparisonsCount">0</div></div>
+                <div class="status-item"><div class="status-label">Swaps</div><div class="status-value" id="swapsCount">0</div></div>
+                <div class="status-item"><div class="status-label">Sorted Elements</div><div class="status-value" id="sortedCount">0</div></div>
+            </div>
+            
+            <div id="stepDetails" style="margin-top: 0.8rem; font-size: 0.85rem; color: #94a3b8; border-top: 1px solid #334155; padding-top: 0.8rem;"></div>
+            <div id="arrayState" style="margin-top: 0.5rem; font-family: monospace; font-size: 0.8rem;"></div>
+        </div>
+    </div>
+
+    <!-- Algorithm & Implementation Section -->
+    <div class="info-grid">
+        <!-- Algorithm Explanation Card -->
+        <div class="info-card">
+            <h3><i class="fas fa-list-ol"></i> Algorithm with Example</h3>
+            <p><strong>Bubble Sort Algorithm:</strong></p>
+            <div class="example-steps">
+                <strong>📝 Step-by-Step (Array: [5, 3, 8, 4, 2]):</strong><br><br>
+                <strong>Pass 1:</strong><br>
+                • Compare 5 and 3 → 5 > 3 → Swap → [3, 5, 8, 4, 2]<br>
+                • Compare 5 and 8 → 5 ≤ 8 → No swap → [3, 5, 8, 4, 2]<br>
+                • Compare 8 and 4 → 8 > 4 → Swap → [3, 5, 4, 8, 2]<br>
+                • Compare 8 and 2 → 8 > 2 → Swap → [3, 5, 4, 2, 8] ← 8 bubbled to end!<br><br>
+                <strong>Pass 2:</strong><br>
+                • Compare 3 and 5 → No swap → [3, 5, 4, 2, 8]<br>
+                • Compare 5 and 4 → Swap → [3, 4, 5, 2, 8]<br>
+                • Compare 5 and 2 → Swap → [3, 4, 2, 5, 8]<br><br>
+                <strong>Pass 3:</strong><br>
+                • Compare 3 and 4 → No swap<br>
+                • Compare 4 and 2 → Swap → [3, 2, 4, 5, 8]<br><br>
+                <strong>Pass 4:</strong><br>
+                • Compare 3 and 2 → Swap → [2, 3, 4, 5, 8] ✅ SORTED!
+            </div>
+        </div>
+
+        <!-- Implementation Card -->
+        <div class="info-card">
+            <h3><i class="fas fa-code"></i> Implementation</h3>
+            <p><strong>JavaScript Implementation:</strong></p>
+            <pre>function bubbleSort(arr) {
+    let n = arr.length;
+    let swapped;
+    
+    for (let i = 0; i < n - 1; i++) {
+        swapped = false;
+        
+        for (let j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                // Swap elements
+                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+                swapped = true;
+            }
+        }
+        
+        // If no swaps, array is sorted
+        if (!swapped) break;
+    }
+    return arr;
+}
+
+// Example usage
+const array = [64, 34, 25, 12, 22, 11, 90];
+const sorted = bubbleSort([...array]);
+console.log(sorted); // [11, 12, 22, 25, 34, 64, 90]</pre>
+            
+            <p style="margin-top: 0.8rem;"><strong>📌 Key Points:</strong></p>
+            <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                <li>Largest element "bubbles up" to the end in each pass</li>
+                <li>Optimized with <code>swapped</code> flag to stop early</li>
+                <li>Stable sort — preserves order of equal elements</li>
+                <li>In-place sorting — no extra space needed</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Additional Example Card -->
+    <div class="viz-card" style="margin-top: 0;">
+        <h3><i class="fas fa-chalkboard-user"></i> Visual Example: Sorting [5, 3, 8, 4, 2]</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; margin-top: 1rem;">
+            <div>
+                <strong>Pass 1:</strong>
+                <pre style="background:#1a1a2e; padding: 0.5rem; margin-top: 0.3rem;">[5, 3, 8, 4, 2]
+[3, 5, 8, 4, 2]
+[3, 5, 4, 8, 2]
+[3, 5, 4, 2, 8] ✅</pre>
+            </div>
+            <div>
+                <strong>Pass 2:</strong>
+                <pre style="background:#1a1a2e; padding: 0.5rem; margin-top: 0.3rem;">[3, 5, 4, 2, 8]
+[3, 4, 5, 2, 8]
+[3, 4, 2, 5, 8] ✅</pre>
+            </div>
+            <div>
+                <strong>Pass 3:</strong>
+                <pre style="background:#1a1a2e; padding: 0.5rem; margin-top: 0.3rem;">[3, 4, 2, 5, 8]
+[3, 2, 4, 5, 8] ✅</pre>
+            </div>
+            <div>
+                <strong>Pass 4:</strong>
+                <pre style="background:#1a1a2e; padding: 0.5rem; margin-top: 0.3rem;">[3, 2, 4, 5, 8]
+[2, 3, 4, 5, 8] 🎉</pre>
+            </div>
+        </div>
+        <p style="margin-top: 1rem; text-align: center; color: #fbbf24;">✨ After 4 passes, the array is completely sorted! ✨</p>
+    </div>
+</div>
+</div>
+
+<footer class="footer">
+    <p><i class="fas fa-chart-simple"></i> Bubble Sort — Complete Learning Platform | Algorithm + Example + Implementation + Tower Visualization</p>
+</footer>
+
+<script>
+    // ==================== BUBBLE SORT WITH TOWER VISUALIZATION ====================
+    let currentArray = [64, 34, 25, 12, 22, 11, 90];
+    let originalArray = [...currentArray];
+    let sortActive = false;
+    let i = 0, j = 0;
+    let comparingIdx = -1;
+    let swappingIdx = -1;
+    let sortedIndices = [];
+    let autoInterval = null;
+    let speed = 700;
+    let comparisons = 0;
+    let swaps = 0;
+
+    const towerContainer = document.getElementById('towerContainer');
+    const sortMessageDiv = document.getElementById('sortMessage');
+    const stepDetailsDiv = document.getElementById('stepDetails');
+    const arrayStateDiv = document.getElementById('arrayState');
+    const arrayInput = document.getElementById('arrayInput');
+    const speedSlider = document.getElementById('speedSlider');
+    const speedValue = document.getElementById('speedValue');
+    const passNumSpan = document.getElementById('passNum');
+    const comparisonsSpan = document.getElementById('comparisonsCount');
+    const swapsSpan = document.getElementById('swapsCount');
+    const sortedCountSpan = document.getElementById('sortedCount');
+
+    function getMaxValue() {
+        return Math.max(...currentArray, 100);
+    }
+
+    function renderTowers() {
+        const maxVal = getMaxValue();
+        towerContainer.innerHTML = '';
+        
+        currentArray.forEach((value, idx) => {
+            const tower = document.createElement('div');
+            tower.className = 'tower';
+            
+            const bar = document.createElement('div');
+            bar.className = 'tower-bar';
+            const heightPercent = (value / maxVal) * 200;
+            bar.style.height = Math.max(40, heightPercent) + 'px';
+            bar.style.width = '70px';
+            
+            if (sortedIndices.includes(idx)) bar.classList.add('sorted');
+            if (comparingIdx === idx || comparingIdx === idx + 1) bar.classList.add('comparing');
+            if (swappingIdx === idx || swappingIdx === idx + 1) bar.classList.add('swapping');
+            
+            const valueLabel = document.createElement('div');
+            valueLabel.className = 'tower-value';
+            valueLabel.innerText = value;
+            
+            const indexLabel = document.createElement('div');
+            indexLabel.className = 'tower-index';
+            indexLabel.innerText = `[${idx}]`;
+            
+            tower.appendChild(bar);
+            tower.appendChild(valueLabel);
+            tower.appendChild(indexLabel);
+            towerContainer.appendChild(tower);
+        });
+        
+        arrayStateDiv.innerHTML = `📊 Current Array: [${currentArray.join(', ')}]`;
+        sortedCountSpan.innerText = sortedIndices.length;
+    }
+
+    function updateStats() {
+        passNumSpan.innerText = i;
+        comparisonsSpan.innerText = comparisons;
+        swapsSpan.innerText = swaps;
+        sortedCountSpan.innerText = sortedIndices.length;
+    }
+
+    function resetSort(keepArray = false) {
+        if (autoInterval) { clearInterval(autoInterval); autoInterval = null; }
+        sortActive = false;
+        i = 0; j = 0;
+        comparingIdx = -1; swappingIdx = -1;
+        comparisons = 0; swaps = 0;
+        
+        if (!keepArray) {
+            currentArray = [...originalArray];
+            sortedIndices = [];
+        } else {
+            sortedIndices = [];
+        }
+        
+        renderTowers();
+        updateStats();
+        sortMessageDiv.innerHTML = '✅ Ready! Click "Step" or "Auto Sort" to begin Bubble Sort.';
+        stepDetailsDiv.innerHTML = '';
+    }
+
+    function performStep() {
+        const n = currentArray.length;
+        
+        if (!sortActive && i === 0 && j === 0) {
+            sortActive = true;
+            i = 0; j = 0;
+            sortedIndices = [];
+            comparisons = 0; swaps = 0;
+            sortMessageDiv.innerHTML = '🔍 Starting Bubble Sort... Comparing adjacent towers!';
+            updateStats();
+            renderTowers();
+        }
+        
+        if (i >= n - 1) {
+            sortActive = false;
+            sortMessageDiv.innerHTML = '🎉 SORTING COMPLETE! All towers are in correct order! 🎉';
+            stepDetailsDiv.innerHTML = `✨ Final sorted array: [${currentArray.join(', ')}] ✨`;
+            if (autoInterval) clearInterval(autoInterval);
+            renderTowers();
+            return false;
+        }
+        
+        if (j >= n - i - 1) {
+            sortedIndices.push(n - i - 1);
+            i++; j = 0;
+            renderTowers(); updateStats();
+            
+            if (i < n - 1) {
+                sortMessageDiv.innerHTML = `✅ Pass ${i} complete! Tower value ${currentArray[n - i]} is now at its correct position.`;
+                stepDetailsDiv.innerHTML = `Starting pass ${i + 1}...`;
+            }
+            return true;
+        }
+        
+        comparingIdx = j;
+        renderTowers();
+        comparisons++;
+        
+        const currentVal = currentArray[j];
+        const nextVal = currentArray[j + 1];
+        
+        sortMessageDiv.innerHTML = `🔍 Pass ${i+1}: Comparing tower ${j} (${currentVal}) and tower ${j+1} (${nextVal})`;
+        
+        if (currentVal > nextVal) {
+            stepDetailsDiv.innerHTML = `⚠️ ${currentVal} > ${nextVal} → SWAPPING! Taller tower moves right.`;
+            swappingIdx = j;
+            renderTowers();
+            
+            [currentArray[j], currentArray[j + 1]] = [currentArray[j + 1], currentArray[j]];
+            swaps++;
+            updateStats();
+            
+            setTimeout(() => { swappingIdx = -1; renderTowers(); }, 200);
+        } else {
+            stepDetailsDiv.innerHTML = `✓ ${currentVal} ≤ ${nextVal} → No swap needed. Moving to next comparison.`;
+        }
+        
+        j++;
+        updateStats();
+        
+        setTimeout(() => { comparingIdx = -1; renderTowers(); }, 200);
+        return true;
+    }
+
+    function startAutoSort() {
+        if (autoInterval) { clearInterval(autoInterval); autoInterval = null; }
+        resetSort(true);
+        sortActive = true;
+        
+        autoInterval = setInterval(() => {
+            const continuing = performStep();
+            if (!continuing || !sortActive) { if (autoInterval) clearInterval(autoInterval); }
+        }, speed);
+    }
+
+    function updateArray() {
+        let inputVal = arrayInput.value.trim();
+        if (inputVal) {
+            let newArray = inputVal.split(',').map(item => { const num = parseInt(item.trim()); return isNaN(num) ? null : num; }).filter(item => item !== null);
+            if (newArray.length > 0) { currentArray = newArray; originalArray = [...newArray]; }
+            else { currentArray = [64, 34, 25, 12, 22, 11, 90]; originalArray = [...currentArray]; }
+        } else { currentArray = [64, 34, 25, 12, 22, 11, 90]; originalArray = [...currentArray]; }
+        
+        if (autoInterval) clearInterval(autoInterval);
+        sortActive = false; i = 0; j = 0; sortedIndices = []; comparisons = 0; swaps = 0;
+        comparingIdx = -1; swappingIdx = -1;
+        renderTowers(); updateStats();
+        sortMessageDiv.innerHTML = `✅ Array updated! [${currentArray.join(', ')}]`;
+        stepDetailsDiv.innerHTML = 'Click "Step" or "Auto Sort" to begin sorting.';
+        arrayInput.value = currentArray.join(', ');
+    }
+
+    function randomArray() {
+        const length = Math.floor(Math.random() * 8) + 5;
+        const newArray = [];
+        for (let i = 0; i < length; i++) newArray.push(Math.floor(Math.random() * 90) + 10);
+        currentArray = newArray; originalArray = [...newArray];
+        if (autoInterval) clearInterval(autoInterval);
+        sortActive = false; i = 0; j = 0; sortedIndices = []; comparisons = 0; swaps = 0;
+        comparingIdx = -1; swappingIdx = -1;
+        renderTowers(); updateStats();
+        sortMessageDiv.innerHTML = `🎲 Random array: [${currentArray.join(', ')}]`;
+        stepDetailsDiv.innerHTML = 'Click "Step" or "Auto Sort" to begin sorting.';
+        arrayInput.value = currentArray.join(', ');
+    }
+
+    speedSlider.addEventListener('input', (e) => {
+        speed = parseInt(e.target.value);
+        speedValue.innerText = speed + 'ms';
+        if (autoInterval && sortActive) {
+            clearInterval(autoInterval);
+            autoInterval = setInterval(() => { const continuing = performStep(); if (!continuing || !sortActive) clearInterval(autoInterval); }, speed);
+        }
+    });
+
+    document.getElementById('stepBtn').addEventListener('click', () => { if (autoInterval) clearInterval(autoInterval); if (!sortActive && i === 0 && j === 0) resetSort(true); performStep(); });
+    document.getElementById('autoBtn').addEventListener('click', startAutoSort);
+    document.getElementById('resetBtn').addEventListener('click', () => resetSort(false));
+    document.getElementById('stopBtn').addEventListener('click', () => { if (autoInterval) clearInterval(autoInterval); sortActive = false; sortMessageDiv.innerHTML = '⏹️ Sorting stopped. Click "Reset" to start over.'; });
+    document.getElementById('updateArrayBtn').addEventListener('click', updateArray);
+    document.getElementById('randomArrayBtn').addEventListener('click', randomArray);
+    
+    arrayInput.value = currentArray.join(', ');
+    renderTowers();
+    
+    console.log('%c🗼 BUBBLE SORT - COMPLETE LEARNING PLATFORM 🗼\nAlgorithm + Example + Implementation + Tower Visualization', 'color: #f59e0b; font-size: 14px; font-weight: bold;');
+</script>
+</body>
+</html>

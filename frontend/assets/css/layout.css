@@ -1,0 +1,109 @@
+/* Navbar and Sidebar Layout */
+
+/* Navbar */
+nav {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+nav .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+nav .nav-back-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    color: white;
+    padding: 0.65rem 1rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+nav .nav-back-btn:hover {
+    opacity: 0.9;
+    transform: translateX(-2px);
+}
+
+nav a {
+    color: white;
+    margin: 0 15px;
+    transition: var(--transition);
+}
+
+nav a:hover {
+    opacity: 0.8;
+}
+
+nav .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+nav .nav-links {
+    display: flex;
+    list-style: none;
+}
+
+nav .nav-links li {
+    margin: 0 10px;
+}
+
+/* Sidebar */
+aside {
+    width: 250px;
+    background-color: var(--light-bg);
+    height: 100vh;
+    padding: 20px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+}
+
+aside ul {
+    list-style: none;
+}
+
+aside ul li {
+    margin: 10px 0;
+}
+
+aside ul li a {
+    display: block;
+    padding: 10px 15px;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+aside ul li a:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Main Layout */
+.main-layout {
+    display: flex;
+}
+
+.main-layout main {
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* Footer */
+footer {
+    background-color: var(--dark-bg);
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+}

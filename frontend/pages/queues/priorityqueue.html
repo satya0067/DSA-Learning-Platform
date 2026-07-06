@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Priority Queue - Struct-Learn Dojo Visualization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #dc2626;
+            --primary-dark: #b91c1c;
+            --primary-glow: rgba(220, 38, 38, 0.3);
+            --secondary: #ea580c;
+            --accent: #f59e0b;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --bg-dark: #0a0512;
+            --bg-card: rgba(10, 5, 25, 0.85);
+            --text-light: #f0e9e1;
+            --text-muted: #b9ac9c;
+            --border-glow: rgba(220, 38, 38, 0.2);
+            --border-radius: 16px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 20% 30%, #2e0a0a 0%, #0a0512 45%, #020006 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            background: rgba(220, 38, 38, 0.1);
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .back:hover {
+            background: rgba(220, 38, 38, 0.2);
+            transform: translateX(-4px);
+        }
+
+        header {
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #dc2626, #ea580c, #f59e0b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        h1 i {
+            color: var(--primary);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-glow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            transition: border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(220, 38, 38, 0.4);
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        input {
+            padding: 0.7rem 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.2);
+        }
+
+        input::placeholder {
+            color: #6a5e4e;
+        }
+
+        #val {
+            width: 140px;
+        }
+
+        #prio {
+            width: 100px;
+        }
+
+        .btn {
+            padding: 0.7rem 1.4rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #ea580c, #c2410c);
+            color: white;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(234, 88, 12, 0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #0a0512;
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f87171, #ef4444);
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn:disabled {
+            background: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .queue-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 2px dashed rgba(220, 38, 38, 0.15);
+            min-height: 200px;
+        }
+
+        .list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .item {
+            padding: 0.9rem 1.2rem;
+            border-radius: var(--border-radius);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
+            animation: fadeIn 0.3s ease both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            border-radius: 4px 0 0 4px;
+            transition: all 0.3s ease;
+        }
+
+        .item.priority-high::before {
+            background: linear-gradient(to bottom, #dc2626, #b91c1c);
+        }
+
+        .item.priority-medium::before {
+            background: linear-gradient(to bottom, #ea580c, #c2410c);
+        }
+
+        .item.priority-low::before {
+            background: linear-gradient(to bottom, #f59e0b, #d97706);
+        }
+
+        .item:hover {
+            transform: translateX(4px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .item-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .item-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #f0e9e1;
+        }
+
+        .item-priority {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .priority-badge {
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .priority-high .priority-badge {
+            background: rgba(220, 38, 38, 0.2);
+            color: #f87171;
+        }
+
+        .priority-medium .priority-badge {
+            background: rgba(234, 88, 12, 0.2);
+            color: #fb923c;
+        }
+
+        .priority-low .priority-badge {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+
+        .item-position {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .item.next-item {
+            border-color: rgba(220, 38, 38, 0.3);
+        }
+
+        .item.next-item::after {
+            content: '⚔️ NEXT';
+            position: absolute;
+            top: -10px;
+            right: -6px;
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(220, 38, 38, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.4;
+        }
+
+        .priority-explanation {
+            margin-top: 1rem;
+            padding: 0.8rem 1.2rem;
+            background: rgba(220, 38, 38, 0.05);
+            border-radius: var(--border-radius);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border: 1px solid rgba(220, 38, 38, 0.08);
+        }
+
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-glow);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .info-card h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: #dc2626;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status {
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.8rem 1rem;
+            border-radius: var(--border-radius);
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+        }
+
+        .meta-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.8rem;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.6rem 1rem;
+            background: rgba(220, 38, 38, 0.05);
+            border-radius: var(--border-radius);
+            flex: 1;
+            border: 1px solid rgba(220, 38, 38, 0.08);
+        }
+
+        .meta-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #dc2626;
+        }
+
+        .log-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+
+        .log-container::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .log-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .log-container::-webkit-scrollbar-thumb {
+            background: #dc2626;
+            border-radius: 10px;
+        }
+
+        .op-log {
+            line-height: 1.6;
+        }
+
+        .legend {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .page-nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .page-nav-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.65rem 1rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 700;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .page-nav-link:hover {
+            background: rgba(255, 255, 255, 0.14);
+            transform: translateY(-1px);
+        }
+
+        .legend-high { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+        .legend-medium { background: linear-gradient(135deg, #ea580c, #c2410c); }
+        .legend-low { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .controls { flex-direction: column; align-items: stretch; }
+            .input-group { width: 100%; }
+            input { flex: 1; width: auto; }
+            .btn { justify-content: center; }
+            .info-panel { grid-template-columns: 1fr; }
+            .item { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+            .item-position { align-self: flex-end; }
+            h1 { font-size: 1.8rem; }
+            #val, #prio { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a class="back" href="queue-operations.html">
+            <i class="fas fa-arrow-left"></i> Back to Queue Operations
+        </a>
+
+        <div class="page-nav-links">
+            <a class="page-nav-link" href="queue-operations.html">Queue Operations</a>
+            <a class="page-nav-link" href="linearqueue.html">Linear Queue</a>
+            <a class="page-nav-link" href="circular-queue.html">Circular Queue</a>
+            <a class="page-nav-link" href="Dequeue-queue.html">Deque</a>
+            <a class="page-nav-link" href="priorityqueue.html">Priority Queue</a>
+            <a class="page-nav-link" href="queues.html">Queue Topic</a>
+        </div>
+
+        <header>
+            <h1><i class="fas fa-sort-amount-down"></i> Priority Queue · Dojo Visualization</h1>
+            <p class="subtitle">Elements are processed based on priority (lower number = higher priority). Higher priority items are dequeued first.</p>
+        </header>
+
+        <div class="card">
+            <div class="controls">
+                <div class="input-group">
+                    <input id="val" type="text" placeholder="Value (e.g., Task A)">
+                    <input id="prio" type="number" min="0" max="100" placeholder="Priority (0-100)">
+                    <button id="enqueue" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Enqueue
+                    </button>
+                </div>
+                <button id="dequeue" class="btn btn-warning" disabled>
+                    <i class="fas fa-minus-circle"></i> Dequeue
+                </button>
+                <button id="size" class="btn btn-secondary">
+                    <i class="fas fa-ruler"></i> Size
+                </button>
+                <button id="reset" class="btn btn-danger">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+            </div>
+
+            <div class="queue-container">
+                <div class="list" id="list">
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>Priority queue is empty. Add some elements to get started.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="priority-explanation">
+                <i class="fas fa-info-circle"></i> <strong>Priority Note:</strong> Lower numbers indicate higher priority.
+                Priority <span style="color:#dc2626; font-weight:700;">0</span> is the highest, priority <span style="color:#f59e0b; font-weight:700;">100</span> is the lowest.
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color legend-high"></div>
+                    <span>High Priority (0-33)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-medium"></div>
+                    <span>Medium Priority (34-66)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-low"></div>
+                    <span>Low Priority (67-100)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <div class="info-card">
+                <h3><i class="fas fa-info-circle"></i> Queue Status</h3>
+                <div id="status" class="status">⚔️ Ready. Queue is empty.</div>
+                <div class="meta-row">
+                    <div class="meta-item">
+                        <span class="meta-label">Current Size</span>
+                        <span id="sizeDisplay" class="meta-value">0</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Next Item</span>
+                        <span id="nextDisplay" class="meta-value">—</span>
+                    </div>
+                </div>
+                <div class="meta-row">
+                    <div class="meta-item">
+                        <span class="meta-label">Highest Priority</span>
+                        <span id="highestPrioDisplay" class="meta-value">—</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Lowest Priority</span>
+                        <span id="lowestPrioDisplay" class="meta-value">—</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3><i class="fas fa-history"></i> Operation Log</h3>
+                <div class="log-container">
+                    <div id="log" class="op-log">⚔️ No operations yet</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class PriorityQueue {
+            constructor() {
+                this.arr = [];
+                this.list = document.getElementById('list');
+                this.status = document.getElementById('status');
+                this.sizeDisplay = document.getElementById('sizeDisplay');
+                this.nextDisplay = document.getElementById('nextDisplay');
+                this.highestPrioDisplay = document.getElementById('highestPrioDisplay');
+                this.lowestPrioDisplay = document.getElementById('lowestPrioDisplay');
+                this.log = document.getElementById('log');
+                this.logs = [];
+                this.attach();
+                this.render();
+            }
+
+            attach() {
+                document.getElementById('enqueue').addEventListener('click', () => this.enqueue());
+                document.getElementById('dequeue').addEventListener('click', () => this.dequeue());
+                document.getElementById('size').addEventListener('click', () => this.size());
+                document.getElementById('reset').addEventListener('click', () => this.reset());
+                document.getElementById('val').addEventListener('keypress', e => {
+                    if (e.key === 'Enter') this.enqueue();
+                });
+                document.getElementById('prio').addEventListener('keypress', e => {
+                    if (e.key === 'Enter') this.enqueue();
+                });
+            }
+
+            logOp(msg, color = "#dc2626") {
+                const t = new Date().toLocaleTimeString();
+                this.logs.unshift(`<span style="color: ${color}">[${t}] ${msg}</span>`);
+                this.logs = this.logs.slice(0, 10);
+                this.log.innerHTML = this.logs.join('<br>');
+            }
+
+            enqueue() {
+                const v = document.getElementById('val').value.trim();
+                const p = Number(document.getElementById('prio').value);
+
+                if (!v || Number.isNaN(p)) {
+                    this._setStatus('⚠️ Please enter both value and priority', '#f87171');
+                    return;
+                }
+
+                if (p < 0 || p > 100) {
+                    this._setStatus('⚠️ Priority must be between 0 and 100', '#f87171');
+                    return;
+                }
+
+                const node = { v, p };
+                // Insert sorted by priority (lower first)
+                let idx = this.arr.findIndex(x => x.p > p);
+                if (idx === -1) {
+                    this.arr.push(node);
+                } else {
+                    this.arr.splice(idx, 0, node);
+                }
+
+                this._setStatus(`✅ Enqueued: ${v} (Priority: ${p})`, '#34d399');
+                this.logOp(`ENQUEUE ${v} (Priority: ${p})`, '#34d399');
+                document.getElementById('val').value = '';
+                document.getElementById('prio').value = '';
+                this.render('enqueue');
+            }
+
+            dequeue() {
+                if (this.arr.length === 0) {
+                    this._setStatus('⚠️ Queue Underflow - Queue is empty', '#f87171');
+                    this.logOp('DEQUEUE FAILED: underflow', '#f87171');
+                    return;
+                }
+                const node = this.arr.shift();
+                this._setStatus(`🗑️ Dequeued: ${node.v} (Priority: ${node.p})`, '#fbbf24');
+                this.logOp(`DEQUEUE ${node.v} (Priority: ${node.p})`, '#fbbf24');
+                this.render('dequeue');
+            }
+
+            size() {
+                this._setStatus(`📏 Current size: ${this.arr.length}`, '#dc2626');
+            }
+
+            reset() {
+                this.arr = [];
+                this.logs = [];
+                this.log.innerHTML = '⚔️ No operations yet';
+                this._setStatus('🔄 Queue has been reset', '#94a3b8');
+                this.render();
+            }
+
+            _setStatus(msg, color) {
+                this.status.textContent = msg;
+                this.status.style.color = color;
+                this.status.style.backgroundColor = color === '#f87171' ? 'rgba(248, 113, 113, 0.1)' :
+                    color === '#34d399' ? 'rgba(52, 211, 153, 0.1)' :
+                    color === '#fbbf24' ? 'rgba(251, 191, 36, 0.1)' :
+                    color === '#dc2626' ? 'rgba(220, 38, 38, 0.1)' :
+                    color === '#94a3b8' ? 'rgba(148, 163, 184, 0.1)' : 'rgba(255,255,255,0.05)';
+            }
+
+            getPriorityClass(p) {
+                if (p <= 33) return 'priority-high';
+                if (p <= 66) return 'priority-medium';
+                return 'priority-low';
+            }
+
+            render(operation = null) {
+                this.list.innerHTML = '';
+
+                if (this.arr.length === 0) {
+                    this.list.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>Priority queue is empty. Add some elements to get started.</p>
+                        </div>
+                    `;
+                } else {
+                    this.arr.forEach((n, i) => {
+                        const el = document.createElement('div');
+                        el.className = `item ${this.getPriorityClass(n.p)}`;
+                        if (i === 0) el.classList.add('next-item');
+
+                        el.style.animationDelay = `${i * 50}ms`;
+                        el.innerHTML = `
+                            <div class="item-content">
+                                <span class="item-value">${n.v}</span>
+                                <div class="item-priority">
+                                    <span>Priority:</span>
+                                    <span class="priority-badge">${n.p}</span>
+                                </div>
+                            </div>
+                            <div class="item-position">
+                                <i class="fas fa-sort-numeric-down"></i>
+                                <span>Position: ${i+1}</span>
+                            </div>
+                        `;
+                        this.list.appendChild(el);
+                    });
+                }
+
+                // Update displays
+                this.sizeDisplay.textContent = this.arr.length;
+                this.nextDisplay.textContent = this.arr.length > 0 ? this.arr[0].v : '—';
+                this.highestPrioDisplay.textContent = this.arr.length > 0 ? this.arr[0].p : '—';
+                this.lowestPrioDisplay.textContent = this.arr.length > 0 ? this.arr[this.arr.length - 1].p : '—';
+
+                document.getElementById('dequeue').disabled = this.arr.length === 0;
+            }
+        }
+
+        // Initialize the priority queue
+        new PriorityQueue();
+    </script>
+</body>
+</html>

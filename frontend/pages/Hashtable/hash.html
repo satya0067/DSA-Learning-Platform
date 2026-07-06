@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash Table - Struct-Learn Dojo Visualization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #f59e0b;
+            --primary-dark: #d97706;
+            --primary-glow: rgba(245, 158, 11, 0.3);
+            --secondary: #8b5cf6;
+            --secondary-glow: rgba(139, 92, 246, 0.3);
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --bg-dark: #0a0512;
+            --bg-card: rgba(10, 5, 25, 0.85);
+            --text-light: #f0e9e1;
+            --text-muted: #b9ac9c;
+            --border-glow: rgba(245, 158, 11, 0.2);
+            --border-radius: 16px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 20% 30%, #1a0a2e 0%, #0a0512 45%, #020006 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .back:hover {
+            background: rgba(245, 158, 11, 0.2);
+            transform: translateX(-4px);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+        }
+
+        header {
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #f59e0b, #8b5cf6, #34d399);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        h1 i {
+            color: var(--primary);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.3)); }
+            50% { filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.6)); }
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-glow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(245, 158, 11, 0.4);
+            box-shadow: 0 0 40px rgba(245, 158, 11, 0.05);
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        input {
+            padding: 0.7rem 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        input::placeholder {
+            color: #6a5e4e;
+        }
+
+        #keyInput, #valueInput {
+            width: 140px;
+        }
+
+        .btn {
+            padding: 0.7rem 1.4rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #0a0512;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f87171, #ef4444);
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #0a0512;
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn:disabled {
+            background: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Hash Table Visualization */
+        .hash-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 2px dashed rgba(245, 158, 11, 0.15);
+        }
+
+        .hash-table {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .bucket {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 0.3rem 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            min-height: 52px;
+        }
+
+        .bucket:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .bucket-index {
+            min-width: 50px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-family: monospace;
+        }
+
+        .bucket-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            flex: 1;
+            padding: 0.3rem 0;
+        }
+
+        .bucket-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            padding: 0.35rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #0a0512;
+            animation: itemAppear 0.3s ease both;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .bucket-item .key {
+            color: #0a0512;
+            font-weight: 700;
+        }
+
+        .bucket-item .arrow {
+            color: rgba(10, 5, 18, 0.5);
+        }
+
+        .bucket-item .value {
+            color: #0a0512;
+            font-weight: 700;
+        }
+
+        .bucket-item .delete-btn {
+            background: none;
+            border: none;
+            color: rgba(10, 5, 18, 0.5);
+            cursor: pointer;
+            padding: 0 4px;
+            font-size: 0.7rem;
+            transition: all 0.2s;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bucket-item .delete-btn:hover {
+            background: rgba(10, 5, 18, 0.15);
+            color: #dc2626;
+        }
+
+        .bucket-item.highlight {
+            animation: highlightPulse 0.6s ease 3;
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.5);
+        }
+
+        .bucket-item.collision {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+
+        .bucket-item.collision .key,
+        .bucket-item.collision .value {
+            color: white;
+        }
+
+        .bucket-item.collision .delete-btn {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .bucket-item.collision .delete-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #f87171;
+        }
+
+        .bucket-empty {
+            color: #64748b;
+            font-size: 0.8rem;
+            font-style: italic;
+            padding: 0.2rem 0;
+        }
+
+        @keyframes itemAppear {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes highlightPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Status */
+        .status-panel {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            padding: 0.8rem 1rem;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            min-height: 52px;
+        }
+
+        .status-message {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .status-message.success { color: #34d399; }
+        .status-message.warning { color: #fbbf24; }
+        .status-message.error { color: #f87171; }
+
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.6rem 1rem;
+            background: rgba(245, 158, 11, 0.05);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(245, 158, 11, 0.08);
+        }
+
+        .info-item .label {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-item .value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #f59e0b;
+        }
+
+        /* Hash Function Display */
+        .hash-function {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 0.8rem 1.2rem;
+            margin-top: 1rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .hash-function .highlight {
+            color: #f59e0b;
+            font-weight: 700;
+        }
+
+        .log-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            max-height: 150px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+        }
+
+        .log-container::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .log-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .log-container::-webkit-scrollbar-thumb {
+            background: #f59e0b;
+            border-radius: 10px;
+        }
+
+        .log-entry {
+            padding: 0.2rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .legend {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            border-radius: 6px;
+        }
+
+        .legend-normal { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .legend-collision { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .controls { flex-direction: column; align-items: stretch; }
+            .input-group { width: 100%; }
+            input { flex: 1; width: auto; }
+            .btn { justify-content: center; }
+            #keyInput, #valueInput { width: 100%; }
+            .bucket { flex-wrap: wrap; padding: 0.5rem; }
+            .bucket-index { min-width: 40px; font-size: 0.7rem; }
+            .hash-function { font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a class="back" href="index.html">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+
+        <header>
+            <h1><i class="fas fa-table"></i> Hash Table · Dojo Visualization</h1>
+            <p class="subtitle">A hash table maps keys to values using a hash function. Collisions are handled with chaining.</p>
+        </header>
+
+        <div class="card">
+            <div class="controls">
+                <div class="input-group">
+                    <input id="keyInput" type="text" placeholder="Key (e.g., 'apple')">
+                    <input id="valueInput" type="text" placeholder="Value (e.g., 'fruit')">
+                    <button id="insertBtn" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Insert
+                    </button>
+                </div>
+                <button id="getBtn" class="btn btn-secondary">
+                    <i class="fas fa-search"></i> Get
+                </button>
+                <button id="deleteBtn" class="btn btn-danger">
+                    <i class="fas fa-trash-alt"></i> Delete
+                </button>
+                <button id="resetBtn" class="btn btn-warning">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+            </div>
+
+            <!-- Hash Table Visualization -->
+            <div class="hash-container">
+                <div class="hash-table" id="hashTable"></div>
+            </div>
+
+            <!-- Hash Function Display -->
+            <div class="hash-function" id="hashFunctionDisplay">
+                <span><i class="fas fa-calculator"></i> Hash Function: </span>
+                <span id="hashDetails">h(key) = key.length % 10</span>
+            </div>
+
+            <!-- Status -->
+            <div class="status-panel">
+                <div class="status-message" id="statusMessage">⚔️ Ready. Hash table is empty.</div>
+                <div class="info-panel">
+                    <div class="info-item">
+                        <span class="label">Size</span>
+                        <span class="value" id="sizeDisplay">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Capacity</span>
+                        <span class="value" id="capacityDisplay">10</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Collisions</span>
+                        <span class="value" id="collisionsDisplay">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Load Factor</span>
+                        <span class="value" id="loadFactorDisplay">0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color legend-normal"></div>
+                    <span>Normal Entry</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-collision"></div>
+                    <span>Collision (Chaining)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Operation Log -->
+        <div class="card">
+            <h3 style="color: #f59e0b; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-history"></i> Operation Log
+            </h3>
+            <div class="log-container" id="logContainer">
+                <div class="log-entry">⚔️ No operations yet</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== HASH TABLE IMPLEMENTATION ====================
+        class HashTable {
+            constructor(capacity = 10) {
+                this.capacity = capacity;
+                this.table = new Array(capacity).fill(null).map(() => []);
+                this.size = 0;
+                this.collisions = 0;
+                this.logs = [];
+            }
+
+            // Simple hash function: sum of character codes % capacity
+            hash(key) {
+                const str = String(key);
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    hash = (hash + str.charCodeAt(i) * 31) % this.capacity;
+                }
+                return hash;
+            }
+
+            // Insert key-value pair
+            insert(key, value) {
+                const index = this.hash(key);
+                const bucket = this.table[index];
+
+                // Check if key already exists
+                for (let i = 0; i < bucket.length; i++) {
+                    if (bucket[i][0] === key) {
+                        const oldValue = bucket[i][1];
+                        bucket[i][1] = value;
+                        this.log(`UPDATE: ${key} = ${value} (was ${oldValue})`, '#fbbf24');
+                        return { index, action: 'update', oldValue };
+                    }
+                }
+
+                // New insertion
+                bucket.push([key, value]);
+                this.size++;
+                if (bucket.length > 1) this.collisions++;
+                this.log(`INSERT: ${key} → ${value} at index ${index}`, '#34d399');
+                return { index, action: 'insert' };
+            }
+
+            // Get value by key
+            get(key) {
+                const index = this.hash(key);
+                const bucket = this.table[index];
+
+                for (let i = 0; i < bucket.length; i++) {
+                    if (bucket[i][0] === key) {
+                        this.log(`GET: ${key} → ${bucket[i][1]} (found at index ${index})`, '#8b5cf6');
+                        return { found: true, value: bucket[i][1], index, position: i };
+                    }
+                }
+
+                this.log(`GET: ${key} not found`, '#f87171');
+                return { found: false, index };
+            }
+
+            // Delete key-value pair
+            delete(key) {
+                const index = this.hash(key);
+                const bucket = this.table[index];
+
+                for (let i = 0; i < bucket.length; i++) {
+                    if (bucket[i][0] === key) {
+                        const value = bucket[i][1];
+                        bucket.splice(i, 1);
+                        this.size--;
+                        if (bucket.length === 0) this.collisions--;
+                        this.log(`DELETE: ${key} (value: ${value}) removed from index ${index}`, '#f87171');
+                        return { found: true, value, index };
+                    }
+                }
+
+                this.log(`DELETE: ${key} not found`, '#f87171');
+                return { found: false, index };
+            }
+
+            // Reset the hash table
+            reset() {
+                this.table = new Array(this.capacity).fill(null).map(() => []);
+                this.size = 0;
+                this.collisions = 0;
+                this.logs = [];
+                this.log('🔄 Hash table has been reset', '#94a3b8');
+            }
+
+            // Get all entries for display
+            getAllEntries() {
+                return this.table.map((bucket, idx) => ({
+                    index: idx,
+                    entries: bucket.map(([key, value]) => ({ key, value }))
+                }));
+            }
+
+            // Get load factor
+            getLoadFactor() {
+                return this.size / this.capacity;
+            }
+
+            // Log operation
+            log(message, color = '#94a3b8') {
+                const timestamp = new Date().toLocaleTimeString();
+                this.logs.unshift({
+                    message: `<span style="color: ${color}">[${timestamp}] ${message}</span>`,
+                    raw: `[${timestamp}] ${message}`
+                });
+                if (this.logs.length > 50) this.logs.pop();
+            }
+
+            // Get logs for display
+            getLogs() {
+                return this.logs;
+            }
+        }
+
+        // ==================== UI CONTROLLER ====================
+        const hashTable = new HashTable(10);
+
+        // DOM Elements
+        const hashTableEl = document.getElementById('hashTable');
+        const statusMessage = document.getElementById('statusMessage');
+        const sizeDisplay = document.getElementById('sizeDisplay');
+        const capacityDisplay = document.getElementById('capacityDisplay');
+        const collisionsDisplay = document.getElementById('collisionsDisplay');
+        const loadFactorDisplay = document.getElementById('loadFactorDisplay');
+        const logContainer = document.getElementById('logContainer');
+        const hashDetails = document.getElementById('hashDetails');
+
+        const keyInput = document.getElementById('keyInput');
+        const valueInput = document.getElementById('valueInput');
+        const insertBtn = document.getElementById('insertBtn');
+        const getBtn = document.getElementById('getBtn');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // Render the hash table
+        function render() {
+            hashTableEl.innerHTML = '';
+            const entries = hashTable.getAllEntries();
+
+            entries.forEach(({ index, entries: bucketEntries }) => {
+                const bucketDiv = document.createElement('div');
+                bucketDiv.className = 'bucket';
+
+                const indexSpan = document.createElement('span');
+                indexSpan.className = 'bucket-index';
+                indexSpan.textContent = `[${index}]`;
+                bucketDiv.appendChild(indexSpan);
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'bucket-content';
+
+                if (bucketEntries.length === 0) {
+                    const emptySpan = document.createElement('span');
+                    emptySpan.className = 'bucket-empty';
+                    emptySpan.textContent = '—';
+                    contentDiv.appendChild(emptySpan);
+                } else {
+                    bucketEntries.forEach(({ key, value }, pos) => {
+                        const item = document.createElement('div');
+                        item.className = `bucket-item${bucketEntries.length > 1 ? ' collision' : ''}`;
+                        item.dataset.index = index;
+                        item.dataset.position = pos;
+
+                        item.innerHTML = `
+                            <span class="key">${escapeHtml(key)}</span>
+                            <span class="arrow">→</span>
+                            <span class="value">${escapeHtml(value)}</span>
+                            <button class="delete-btn" data-key="${escapeHtml(key)}" title="Delete this entry">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+
+                        // Delete button handler
+                        const delBtn = item.querySelector('.delete-btn');
+                        delBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const keyToDelete = delBtn.dataset.key;
+                            handleDelete(keyToDelete);
+                        });
+
+                        contentDiv.appendChild(item);
+                    });
+                }
+
+                bucketDiv.appendChild(contentDiv);
+                hashTableEl.appendChild(bucketDiv);
+            });
+
+            updateStats();
+        }
+
+        // Escape HTML for safe display
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // Update stats
+        function updateStats() {
+            sizeDisplay.textContent = hashTable.size;
+            capacityDisplay.textContent = hashTable.capacity;
+            collisionsDisplay.textContent = hashTable.collisions;
+            loadFactorDisplay.textContent = hashTable.getLoadFactor().toFixed(2);
+        }
+
+        // Update logs
+        function renderLogs() {
+            const logs = hashTable.getLogs();
+            logContainer.innerHTML = logs.length > 0
+                ? logs.map(log => `<div class="log-entry">${log.message}</div>`).join('')
+                : '<div class="log-entry">⚔️ No operations yet</div>';
+        }
+
+        // Set status message
+        function setStatus(message, type = 'info') {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status-message';
+            if (type === 'success') statusMessage.classList.add('success');
+            else if (type === 'warning') statusMessage.classList.add('warning');
+            else if (type === 'error') statusMessage.classList.add('error');
+        }
+
+        // Handle insert
+        function handleInsert() {
+            const key = keyInput.value.trim();
+            const value = valueInput.value.trim();
+
+            if (!key) {
+                setStatus('⚠️ Please enter a key', 'error');
+                return;
+            }
+
+            if (!value) {
+                setStatus('⚠️ Please enter a value', 'error');
+                return;
+            }
+
+            const result = hashTable.insert(key, value);
+            render();
+            renderLogs();
+
+            const hashVal = hashTable.hash(key);
+            const bucket = hashTable.table[hashVal];
+            const isCollision = bucket.length > 1;
+
+            if (result.action === 'update') {
+                setStatus(`✅ Updated: ${key} → ${value} (was ${result.oldValue})`, 'success');
+            } else {
+                if (isCollision) {
+                    setStatus(`⚔️ Inserted ${key} → ${value} (Collision at index ${hashVal}, chained)`, 'warning');
+                } else {
+                    setStatus(`✅ Inserted ${key} → ${value} at index ${hashVal}`, 'success');
+                }
+            }
+
+            // Highlight the inserted item
+            setTimeout(() => highlightItem(hashVal), 100);
+
+            keyInput.value = '';
+            valueInput.value = '';
+            keyInput.focus();
+        }
+
+        // Handle get
+        function handleGet() {
+            const key = keyInput.value.trim();
+
+            if (!key) {
+                setStatus('⚠️ Please enter a key to search', 'error');
+                return;
+            }
+
+            const result = hashTable.get(key);
+            render();
+            renderLogs();
+
+            if (result.found) {
+                setStatus(`🔍 Found: ${key} → ${result.value} (index ${result.index})`, 'success');
+                highlightItem(result.index);
+            } else {
+                setStatus(`❌ Key "${key}" not found in hash table`, 'error');
+            }
+
+            keyInput.value = '';
+        }
+
+        // Handle delete
+        function handleDelete(key) {
+            if (!key) {
+                key = keyInput.value.trim();
+                if (!key) {
+                    setStatus('⚠️ Please enter a key to delete', 'error');
+                    return;
+                }
+            }
+
+            const result = hashTable.delete(key);
+            render();
+            renderLogs();
+
+            if (result.found) {
+                setStatus(`🗑️ Deleted: ${key} (value: ${result.value})`, 'warning');
+            } else {
+                setStatus(`❌ Key "${key}" not found for deletion`, 'error');
+            }
+
+            keyInput.value = '';
+            keyInput.focus();
+        }
+
+        // Handle reset
+        function handleReset() {
+            hashTable.reset();
+            render();
+            renderLogs();
+            setStatus('🔄 Hash table has been reset', 'info');
+            keyInput.value = '';
+            valueInput.value = '';
+            keyInput.focus();
+        }
+
+        // Highlight a bucket
+        function highlightItem(index) {
+            const buckets = document.querySelectorAll('.bucket');
+            if (buckets[index]) {
+                const items = buckets[index].querySelectorAll('.bucket-item');
+                items.forEach(item => {
+                    item.classList.add('highlight');
+                    setTimeout(() => item.classList.remove('highlight'), 1800);
+                });
+            }
+        }
+
+        // Update hash function display
+        function updateHashDisplay() {
+            const key = keyInput.value.trim() || 'key';
+            const hashVal = hashTable.hash(key);
+            hashDetails.innerHTML = `h("${escapeHtml(key)}") = ${hashVal} &nbsp; <span style="color:#f59e0b;">(key.length × 31) % 10</span>`;
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        insertBtn.addEventListener('click', handleInsert);
+        getBtn.addEventListener('click', handleGet);
+        deleteBtn.addEventListener('click', () => handleDelete(null));
+        resetBtn.addEventListener('click', handleReset);
+
+        keyInput.addEventListener('input', updateHashDisplay);
+        keyInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                if (valueInput.value.trim()) {
+                    handleInsert();
+                } else {
+                    valueInput.focus();
+                }
+            }
+        });
+
+        valueInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleInsert();
+            }
+        });
+
+        // ==================== INITIALIZE ====================
+        // Sample data for demonstration
+        const sampleData = [
+            ['apple', 'fruit'],
+            ['banana', 'fruit'],
+            ['carrot', 'vegetable'],
+            ['date', 'fruit'],
+            ['eggplant', 'vegetable'],
+            ['fig', 'fruit'],
+            ['grape', 'fruit'],
+            ['honey', 'sweetener']
+        ];
+
+        sampleData.forEach(([key, value]) => {
+            hashTable.insert(key, value);
+        });
+
+        render();
+        renderLogs();
+        setStatus('⚔️ Ready. Sample data loaded.', 'info');
+        updateHashDisplay();
+
+        console.log('%c🗃️ HASH TABLE VISUALIZATION 🗃️\nMaster key-value mapping with collision handling!', 'color: #f59e0b; font-size: 14px; font-weight: bold;');
+    </script>
+</body>
+</html>

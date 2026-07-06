@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trees - Struct-Learn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/theme.css">
+    <link rel="stylesheet" href="../../assets/css/layout.css">
+    <link rel="stylesheet" href="../../assets/css/animations.css">
+    <style>
+        body {
+            background: radial-gradient(circle at 20% 30%, #06121a, #010406);
+            color: #e2f1f8;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .demon-slayer-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.12;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1200"><path fill="%2300f0ff" d="M100,200 Q200,150 300,200 T500,200 T700,200" stroke="%2300f0ff" stroke-width="1" fill="none" opacity="0.4"/><circle cx="200" cy="400" r="100" fill="none" stroke="%230088ff" stroke-width="2" stroke-dasharray="10 10"/><text x="400" y="600" font-size="60" fill="%2300f0ff" font-family="monospace" opacity="0.3">無</text><path d="M600,800 Q500,850 400,800 T200,800" stroke="%2300f0ff" stroke-width="2" fill="none" opacity="0.3"/><path fill="%2300f0ff" d="M150 900 C 200 880, 250 880, 300 900 C 350 920, 400 920, 450 900" stroke="%230088ff" stroke-width="1.5" fill="none" opacity="0.25"/></svg>');
+            background-repeat: repeat;
+            background-size: 200px;
+        }
+
+        nav {
+            background: rgba(10, 20, 28, 0.85) !important;
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 240, 255, 0.5) !important;
+            border-radius: 32px;
+            margin: 1.5rem 1.8rem 0rem 1.8rem !important;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 0 12px rgba(0, 240, 255, 0.3);
+            padding: 1rem 1.8rem !important;
+        }
+
+        nav .logo {
+            font-size: 1.8rem !important;
+            font-weight: 800 !important;
+            background: linear-gradient(135deg, #a5f3fc, #00f0ff, #0088ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent !important;
+            letter-spacing: -0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        nav .logo::before {
+            content: "⚔️";
+            font-size: 1.8rem;
+            color: #00f0ff;
+        }
+
+        nav a {
+            color: #e2f1f8 !important;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        nav a:hover {
+            color: #00f0ff !important;
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+        }
+
+        nav .nav-back-btn {
+            border-color: #00f0ff !important;
+            background: rgba(10, 22, 30, 0.9) !important;
+            color: #e2f1f8 !important;
+            font-weight: 600;
+        }
+
+        nav .nav-back-btn:hover {
+            background: #00f0ff !important;
+            color: black !important;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            align-items: start;
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        aside {
+            background: rgba(6, 15, 22, 0.7) !important;
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            border-radius: 28px;
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            margin: 1.5rem 1rem 1.5rem 1.8rem;
+            box-shadow: 0 6px 14px black;
+            color: #e2f1f8;
+            height: auto !important;
+            min-height: 400px;
+            align-self: flex-start;
+            padding: 1.5rem !important;
+        }
+
+        aside h3 {
+            font-size: 1.1rem;
+            border-left: 4px solid #00f0ff;
+            padding-left: 12px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #a5f3fc;
+        }
+
+        aside ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        aside ul li {
+            margin: 12px 0 !important;
+        }
+
+        aside ul li a {
+            display: block;
+            background: #0b1a24;
+            color: #e2f1f8 !important;
+            padding: 12px 18px !important;
+            border-radius: 20px !important;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            border-left: 3px solid #0088ff;
+            font-weight: 600;
+        }
+
+        aside ul li a:hover, aside ul li a.active {
+            background: #00f0ff !important;
+            color: black !important;
+            border-left-color: #a5f3fc;
+            box-shadow: 0 0 8px #00f0ff;
+        }
+
+        main.container {
+            background: rgba(6, 15, 22, 0.7);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            border-radius: 28px;
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            box-shadow: 0 6px 14px black;
+            padding: 2.5rem;
+            margin: 1.5rem 1.8rem 1.5rem 1rem !important;
+            max-width: unset !important;
+        }
+
+        main h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a5f3fc, #00f0ff, #0088ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+            margin-bottom: 1rem;
+        }
+
+        main h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #a5f3fc;
+            margin-top: 1.8rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid #00f0ff;
+            padding-left: 10px;
+        }
+
+        main p {
+            color: #b0cddb;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        main ul {
+            list-style: none;
+            margin-bottom: 1.5rem;
+            padding-left: 10px;
+        }
+
+        main ul li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 8px;
+            color: #b0cddb;
+        }
+
+        main ul li::before {
+            content: "🌫️";
+            position: absolute;
+            left: 0;
+            color: #00f0ff;
+        }
+
+        /* Visualization Section styling */
+        .visualization-section {
+            background: rgba(8, 18, 26, 0.8) !important;
+            border: 1px solid rgba(0, 240, 255, 0.4) !important;
+            border-radius: 24px;
+            padding: 2rem !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .visualization-controls {
+            display: flex !important;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .visualization-controls label {
+            color: #a5f3fc !important;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-right: 12px;
+        }
+
+        .visualization-controls input[type="number"] {
+            background: #0b1a24 !important;
+            border: 1px solid #0088ff !important;
+            border-radius: 20px !important;
+            color: #e2f1f8 !important;
+            font-size: 1rem !important;
+            padding: 10px 18px !important;
+            outline: none;
+            transition: all 0.2s;
+            max-width: 300px;
+        }
+
+        .visualization-controls input[type="number"]:focus {
+            border-color: #00f0ff !important;
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.5) !important;
+        }
+
+        .operation-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 0.5rem;
+        }
+
+        .operation-actions button {
+            background: rgba(10, 22, 30, 0.9) !important;
+            border: 1px solid #00f0ff !important;
+            color: #e2f1f8 !important;
+            padding: 10px 20px !important;
+            border-radius: 60px !important;
+            font-weight: 600 !important;
+            cursor: pointer;
+            transition: all 0.2s ease !important;
+            font-size: 0.9rem !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            width: auto !important;
+            min-height: unset !important;
+        }
+
+        .operation-actions button:hover {
+            background: #00f0ff !important;
+            color: black !important;
+            border-color: #a5f3fc !important;
+            transform: scale(0.98);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.7);
+        }
+
+        .operation-actions button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: rgba(10, 20, 30, 0.5) !important;
+            border-color: #555 !important;
+            color: #777 !important;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+
+        .tree-canvas-container {
+            width: 100%;
+            background: rgba(8, 18, 26, 0.85);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: inset 0 0 20px rgba(0, 240, 255, 0.1), 0 8px 24px rgba(0,0,0,0.6);
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        #treeSvg {
+            background: transparent;
+            display: block;
+        }
+
+        /* SVG visualizer styles */
+        .tree-edge {
+            stroke: #0284c7;
+            stroke-width: 3px;
+            stroke-linecap: round;
+            transition: all 0.4s ease;
+            opacity: 0.6;
+        }
+        
+        .tree-edge.highlighted {
+            stroke: #00f0ff;
+            stroke-width: 5px;
+            filter: drop-shadow(0 0 8px #00f0ff);
+            opacity: 1;
+        }
+
+        .tree-node-circle {
+            fill: #0b1a24;
+            stroke: #0088ff;
+            stroke-width: 3px;
+            transition: all 0.4s ease, r 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tree-node-circle:hover {
+            fill: #0f2c3d;
+            stroke: #00f0ff;
+        }
+
+        .tree-node-circle.active-node {
+            fill: #0c2330;
+            stroke: #00f0ff;
+            stroke-width: 4px;
+            filter: drop-shadow(0 0 8px #00f0ff);
+        }
+
+        .tree-node-circle.highlighted-path {
+            stroke: #fbbf24;
+            stroke-width: 4px;
+            filter: drop-shadow(0 0 8px #fbbf24);
+        }
+
+        .tree-node-circle.success-node {
+            fill: #15803d;
+            stroke: #4ade80;
+            stroke-width: 4px;
+            filter: drop-shadow(0 0 12px #4ade80);
+        }
+
+        .tree-node-circle.traversal-node {
+            fill: #1e3a8a;
+            stroke: #38bdf8;
+            stroke-dasharray: 4 2;
+            animation: pulse-border 1s infinite alternate;
+        }
+
+        @keyframes pulse-border {
+            0% {
+                stroke-width: 3px;
+            }
+            100% {
+                stroke-width: 5px;
+                filter: drop-shadow(0 0 6px #38bdf8);
+            }
+        }
+
+        .tree-node-text {
+            fill: #e2f1f8;
+            font-family: 'Fira Code', monospace;
+            font-weight: 700;
+            font-size: 14px;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .array-message {
+            background: rgba(8, 18, 26, 0.8) !important;
+            border: 1px solid rgba(0, 240, 255, 0.3) !important;
+            color: #e2f1f8 !important;
+            border-radius: 18px !important;
+            padding: 1rem 1.5rem !important;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            margin-top: 1rem;
+        }
+
+        .btn-primary.btn {
+            background: linear-gradient(135deg, #00f0ff, #0088ff) !important;
+            color: black !important;
+            border: none !important;
+            font-weight: 700 !important;
+            padding: 12px 30px !important;
+            border-radius: 40px !important;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 1.5rem;
+            transition: all 0.2s ease !important;
+            text-decoration: none;
+        }
+
+        .btn-primary.btn:hover {
+            transform: scale(0.98);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
+            color: black !important;
+        }
+
+        .btn-primary.btn::before {
+            content: "⚔️";
+        }
+
+        @media (max-width: 960px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            aside {
+                margin: 1.5rem 1.8rem 0rem 1.8rem;
+                width: auto;
+                height: auto !important;
+                min-height: unset;
+            }
+            main.container {
+                margin: 1.5rem 1.8rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demon-slayer-bg"></div>
+    <navbar id="navbar"></navbar>
+    
+    <div class="main-layout">
+        <aside id="sidebar">
+            <h3>🌫️ Tree Topics</h3>
+            <ul>
+                <li><a href="trees.html" class="active">Tree Basics & BST</a></li>
+            </ul>
+        </aside>
+        <main class="container">
+            <h1>Trees · Mist Breathing First Form</h1>
+            <p>A tree is a hierarchical data structure consisting of nodes connected by edges. The Binary Search Tree (BST) organizes nodes such that for any parent, the left subtree holds lesser values, and the right subtree holds greater values — like the clear, layered mist separating heaven and earth.</p>
+            
+            <h2>Mist Breathing Technique Rules</h2>
+            <ul>
+                <li>Left Branch: Concentration levels lesser than the parent node flow to the left.</li>
+                <li>Right Branch: Concentration levels greater than the parent node flow to the right.</li>
+                <li>No Duplicates: No two strikes can share the same strength level.</li>
+                <li>Mist Traversals: Reveal all hidden branches sequentially using pre-order, in-order, or post-order breaths.</li>
+            </ul>
+
+            <section class="visualization-section">
+                <div class="visualization-controls">
+                    <div>
+                        <label for="treeValue">Mist Concentration Value (Node Strength)</label>
+                        <input type="number" id="treeValue" placeholder="Enter node value (e.g. 50)" min="1" max="99">
+                    </div>
+                    <div class="operation-actions">
+                        <button id="treeInsert">Insert Node</button>
+                        <button id="treeDelete">Delete Node</button>
+                        <button id="treeSearch">Search Node</button>
+                        <button id="treeTraverseIn">In-Order Traversal</button>
+                        <button id="treeTraversePre">Pre-Order Traversal</button>
+                        <button id="treeTraversePost">Post-Order Traversal</button>
+                        <button id="treeReset">Reset Tree</button>
+                    </div>
+                </div>
+                
+                <div class="tree-canvas-container">
+                    <svg id="treeSvg" viewBox="0 0 800 400" width="800" height="400"></svg>
+                </div>
+                
+                <div id="arrayMessage" class="array-message">Focus your mind and execute your Mist Breathing strikes.</div>
+            </section>
+
+            <a href="../../pages/editor/editor.html" class="btn btn-primary">Practice Code in Dojo</a>
+        </main>
+    </div>
+
+    <script src="../../config/config.js"></script>
+    <script src="../../assets/js/main.js"></script>
+    <script>
+        class Node {
+            constructor(val) {
+                this.val = val;
+                this.left = null;
+                this.right = null;
+                this.x = 0;
+                this.y = 0;
+            }
+        }
+
+        class BST {
+            constructor() {
+                this.root = null;
+            }
+
+            insert(val) {
+                const newNode = new Node(val);
+                if (this.root === null) {
+                    this.root = newNode;
+                    return true;
+                }
+                return this._insertNode(this.root, newNode);
+            }
+
+            _insertNode(node, newNode) {
+                if (newNode.val === node.val) return false;
+                if (newNode.val < node.val) {
+                    if (node.left === null) {
+                        node.left = newNode;
+                        return true;
+                    }
+                    return this._insertNode(node.left, newNode);
+                } else {
+                    if (node.right === null) {
+                        node.right = newNode;
+                        return true;
+                    }
+                    return this._insertNode(node.right, newNode);
+                }
+            }
+
+            delete(val) {
+                let deleted = false;
+                const removeNode = (node, key) => {
+                    if (node === null) return null;
+                    if (key < node.val) {
+                        node.left = removeNode(node.left, key);
+                        return node;
+                    } else if (key > node.val) {
+                        node.right = removeNode(node.right, key);
+                        return node;
+                    } else {
+                        deleted = true;
+                        if (node.left === null && node.right === null) {
+                            return null;
+                        }
+                        if (node.left === null) return node.right;
+                        if (node.right === null) return node.left;
+                        
+                        const successor = this._findMin(node.right);
+                        node.val = successor.val;
+                        node.right = removeNode(node.right, successor.val);
+                        return node;
+                    }
+                };
+                this.root = removeNode(this.root, val);
+                return deleted;
+            }
+
+            _findMin(node) {
+                while (node.left !== null) {
+                    node = node.left;
+                }
+                return node;
+            }
+        }
+
+        let bst = new BST();
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        function getDepth(node) {
+            if (!node) return 0;
+            return 1 + Math.max(getDepth(node.left), getDepth(node.right));
+        }
+
+        function getInsertDepth(node, val, currentDepth = 1) {
+            if (!node) return currentDepth;
+            if (val === node.val) return currentDepth;
+            if (val < node.val) {
+                return getInsertDepth(node.left, val, currentDepth + 1);
+            } else {
+                return getInsertDepth(node.right, val, currentDepth + 1);
+            }
+        }
+
+        function calculatePositions(node, x, y, dx, level = 0) {
+            if (!node) return;
+            node.x = x;
+            node.y = y;
+            
+            const nextY = y + 80;
+            const nextDx = dx * 0.5;
+            
+            calculatePositions(node.left, x - dx, nextY, nextDx, level + 1);
+            calculatePositions(node.right, x + dx, nextY, nextDx, level + 1);
+        }
+
+        function drawTree(highlightedNodes = {}, highlightedEdges = {}) {
+            const svg = document.getElementById('treeSvg');
+            svg.innerHTML = '';
+            
+            const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+            defs.innerHTML = `
+                <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="5" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+            `;
+            svg.appendChild(defs);
+            
+            if (!bst.root) {
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", "400");
+                text.setAttribute("y", "200");
+                text.setAttribute("fill", "#e0f2fe");
+                text.setAttribute("text-anchor", "middle");
+                text.setAttribute("font-size", "16");
+                text.textContent = "The Mist is clear. Strike to insert a node!";
+                svg.appendChild(text);
+                return;
+            }
+            
+            calculatePositions(bst.root, 400, 50, 180);
+            
+            const edgesGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            const nodesGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            svg.appendChild(edgesGroup);
+            svg.appendChild(nodesGroup);
+            
+            function traverseDraw(node) {
+                if (!node) return;
+                
+                if (node.left) {
+                    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    line.setAttribute("x1", node.x);
+                    line.setAttribute("y1", node.y);
+                    line.setAttribute("x2", node.left.x);
+                    line.setAttribute("y2", node.left.y);
+                    
+                    const edgeKey = `${node.val}-${node.left.val}`;
+                    if (highlightedEdges[edgeKey]) {
+                        line.setAttribute("class", "tree-edge highlighted");
+                    } else {
+                        line.setAttribute("class", "tree-edge");
+                    }
+                    edgesGroup.appendChild(line);
+                    traverseDraw(node.left);
+                }
+                
+                if (node.right) {
+                    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    line.setAttribute("x1", node.x);
+                    line.setAttribute("y1", node.y);
+                    line.setAttribute("x2", node.right.x);
+                    line.setAttribute("y2", node.right.y);
+                    
+                    const edgeKey = `${node.val}-${node.right.val}`;
+                    if (highlightedEdges[edgeKey]) {
+                        line.setAttribute("class", "tree-edge highlighted");
+                    } else {
+                        line.setAttribute("class", "tree-edge");
+                    }
+                    edgesGroup.appendChild(line);
+                    traverseDraw(node.right);
+                }
+                
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", node.x);
+                circle.setAttribute("cy", node.y);
+                circle.setAttribute("r", "20");
+                
+                let className = "tree-node-circle";
+                if (highlightedNodes[node.val]) {
+                    className += " " + highlightedNodes[node.val];
+                }
+                circle.setAttribute("class", className);
+                nodesGroup.appendChild(circle);
+                
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", node.x);
+                text.setAttribute("y", node.y);
+                text.setAttribute("dy", "5");
+                text.setAttribute("text-anchor", "middle");
+                text.setAttribute("class", "tree-node-text");
+                text.textContent = node.val;
+                nodesGroup.appendChild(text);
+            }
+            
+            traverseDraw(bst.root);
+        }
+
+        function setButtonsDisabled(disabled) {
+            const buttons = [
+                'treeInsert', 'treeDelete', 'treeSearch', 
+                'treeTraverseIn', 'treeTraversePre', 'treeTraversePost', 
+                'treeReset'
+            ];
+            buttons.forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) btn.disabled = disabled;
+            });
+            const input = document.getElementById('treeValue');
+            if (input) input.disabled = disabled;
+        }
+
+        async function animateInsert(val) {
+            if (isNaN(val) || val < 1 || val > 99) {
+                document.getElementById('arrayMessage').textContent = '⚠️ Please enter a concentration value between 1 and 99.';
+                return;
+            }
+            
+            setButtonsDisabled(true);
+            
+            const potentialDepth = getInsertDepth(bst.root, val);
+            if (potentialDepth > 4) {
+                document.getElementById('arrayMessage').textContent = '⚠️ Mist concentration too deep! Max tree depth is 4 (levels 0-3) to ensure visibility.';
+                setButtonsDisabled(false);
+                return;
+            }
+
+            const highlightedNodes = {};
+            const highlightedEdges = {};
+            
+            document.getElementById('arrayMessage').textContent = `🌫️ Starting Mist Breathing insertion of node ${val} at the Root...`;
+            
+            if (bst.root === null) {
+                bst.insert(val);
+                drawTree();
+                document.getElementById('arrayMessage').textContent = `✨ Root node ${val} created with Mist Breathing First Form!`;
+                setButtonsDisabled(false);
+                return;
+            }
+            
+            let current = bst.root;
+            let parent = null;
+            
+            while (current !== null) {
+                highlightedNodes[current.val] = 'active-node';
+                drawTree(highlightedNodes, highlightedEdges);
+                await sleep(800);
+                
+                if (val === current.val) {
+                    document.getElementById('arrayMessage').textContent = `⚠️ Node ${val} already exists! No duplicate strikes allowed.`;
+                    drawTree();
+                    setButtonsDisabled(false);
+                    return;
+                }
+                
+                parent = current;
+                if (val < current.val) {
+                    document.getElementById('arrayMessage').textContent = `🔍 ${val} < ${current.val}. Moving left...`;
+                    highlightedNodes[current.val] = 'highlighted-path';
+                    const nextNode = current.left;
+                    if (nextNode) {
+                        highlightedEdges[`${current.val}-${nextNode.val}`] = true;
+                    }
+                    current = current.left;
+                } else {
+                    document.getElementById('arrayMessage').textContent = `🔍 ${val} > ${current.val}. Moving right...`;
+                    highlightedNodes[current.val] = 'highlighted-path';
+                    const nextNode = current.right;
+                    if (nextNode) {
+                        highlightedEdges[`${current.val}-${nextNode.val}`] = true;
+                    }
+                    current = current.right;
+                }
+            }
+            
+            bst.insert(val);
+            highlightedNodes[val] = 'success-node';
+            if (parent) {
+                highlightedEdges[`${parent.val}-${val}`] = true;
+            }
+            
+            drawTree(highlightedNodes, highlightedEdges);
+            document.getElementById('arrayMessage').textContent = `✨ Successfully inserted node ${val} into the BST.`;
+            
+            await sleep(1500);
+            drawTree();
+            setButtonsDisabled(false);
+        }
+
+        async function animateSearch(val) {
+            if (isNaN(val)) {
+                document.getElementById('arrayMessage').textContent = '⚠️ Enter a valid number to search.';
+                return;
+            }
+            setButtonsDisabled(true);
+            
+            const highlightedNodes = {};
+            const highlightedEdges = {};
+            
+            document.getElementById('arrayMessage').textContent = `🌫️ Searching for node ${val}...`;
+            
+            if (bst.root === null) {
+                document.getElementById('arrayMessage').textContent = `⚠️ The tree is empty!`;
+                setButtonsDisabled(false);
+                return;
+            }
+            
+            let current = bst.root;
+            let found = false;
+            
+            while (current !== null) {
+                highlightedNodes[current.val] = 'active-node';
+                drawTree(highlightedNodes, highlightedEdges);
+                await sleep(800);
+                
+                if (val === current.val) {
+                    found = true;
+                    highlightedNodes[current.val] = 'success-node';
+                    drawTree(highlightedNodes, highlightedEdges);
+                    document.getElementById('arrayMessage').textContent = `✨ Node ${val} found in the BST!`;
+                    break;
+                }
+                
+                if (val < current.val) {
+                    document.getElementById('arrayMessage').textContent = `🔍 ${val} < ${current.val}. Comparing Left...`;
+                    highlightedNodes[current.val] = 'highlighted-path';
+                    const nextNode = current.left;
+                    if (nextNode) {
+                        highlightedEdges[`${current.val}-${nextNode.val}`] = true;
+                    }
+                    current = current.left;
+                } else {
+                    document.getElementById('arrayMessage').textContent = `🔍 ${val} > ${current.val}. Comparing Right...`;
+                    highlightedNodes[current.val] = 'highlighted-path';
+                    const nextNode = current.right;
+                    if (nextNode) {
+                        highlightedEdges[`${current.val}-${nextNode.val}`] = true;
+                    }
+                    current = current.right;
+                }
+            }
+            
+            if (!found) {
+                document.getElementById('arrayMessage').textContent = `❌ Node ${val} not found in the BST.`;
+            }
+            
+            await sleep(1500);
+            drawTree();
+            setButtonsDisabled(false);
+        }
+
+        async function animateDelete(val) {
+            if (isNaN(val)) {
+                document.getElementById('arrayMessage').textContent = '⚠️ Enter a valid number to delete.';
+                return;
+            }
+            setButtonsDisabled(true);
+            
+            if (bst.root === null) {
+                document.getElementById('arrayMessage').textContent = `⚠️ The tree is empty!`;
+                setButtonsDisabled(false);
+                return;
+            }
+            
+            let current = bst.root;
+            let found = false;
+            
+            const highlightedNodes = {};
+            const highlightedEdges = {};
+            
+            while (current !== null) {
+                highlightedNodes[current.val] = 'active-node';
+                drawTree(highlightedNodes, highlightedEdges);
+                await sleep(600);
+                
+                if (val === current.val) {
+                    found = true;
+                    break;
+                }
+                
+                if (val < current.val) {
+                    highlightedNodes[current.val] = 'highlighted-path';
+                    const nextNode = current.left;
+                    if (nextNode) {
+                        highlightedEdges[`${current.val}-${nextNode.val}`] = true;
+                    }
+                    current = current.left;
+                } else {
+                    highlightedNodes[current.val] = 'highlighted-path';
+                    const nextNode = current.right;
+                    if (nextNode) {
+                        highlightedEdges[`${current.val}-${nextNode.val}`] = true;
+                    }
+                    current = current.right;
+                }
+            }
+            
+            if (!found) {
+                document.getElementById('arrayMessage').textContent = `❌ Node ${val} does not exist in the BST.`;
+                await sleep(1000);
+                drawTree();
+                setButtonsDisabled(false);
+                return;
+            }
+            
+            highlightedNodes[val] = 'success-node';
+            drawTree(highlightedNodes, highlightedEdges);
+            document.getElementById('arrayMessage').textContent = `⚔️ Striking and deleting node ${val}...`;
+            await sleep(800);
+            
+            bst.delete(val);
+            drawTree();
+            document.getElementById('arrayMessage').textContent = `🗑️ Deleted node ${val}. Tree layout updated.`;
+            setButtonsDisabled(false);
+        }
+
+        async function animateTraversal(type) {
+            if (!bst.root) {
+                document.getElementById('arrayMessage').textContent = `⚠️ The tree is empty!`;
+                return;
+            }
+            setButtonsDisabled(true);
+            const visited = [];
+            const highlightedNodes = {};
+            
+            document.getElementById('arrayMessage').textContent = `🌫️ Starting ${type} Traversal...`;
+            
+            async function traverse(node) {
+                if (!node) return;
+                
+                if (type === 'Pre-Order') {
+                    await visit(node);
+                    await traverse(node.left);
+                    await traverse(node.right);
+                } else if (type === 'In-Order') {
+                    await traverse(node.left);
+                    await visit(node);
+                    await traverse(node.right);
+                } else if (type === 'Post-Order') {
+                    await traverse(node.left);
+                    await traverse(node.right);
+                    await visit(node);
+                }
+            }
+            
+            async function visit(node) {
+                highlightedNodes[node.val] = 'traversal-node';
+                visited.push(node.val);
+                document.getElementById('arrayMessage').textContent = `👣 Visited: ${visited.join(' ➔ ')}`;
+                drawTree(highlightedNodes);
+                await sleep(800);
+                highlightedNodes[node.val] = 'active-node';
+                drawTree(highlightedNodes);
+            }
+            
+            await traverse(bst.root);
+            document.getElementById('arrayMessage').textContent = `🏁 ${type} Traversal Completed: ${visited.join(' ➔ ')}`;
+            
+            await sleep(2500);
+            drawTree();
+            setButtonsDisabled(false);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Setup default training values
+            const initial = [50, 30, 70, 20, 40, 60, 80];
+            initial.forEach(v => bst.insert(v));
+            drawTree();
+            
+            document.getElementById('treeInsert').addEventListener('click', () => {
+                const val = parseInt(document.getElementById('treeValue').value);
+                animateInsert(val);
+                document.getElementById('treeValue').value = '';
+            });
+
+            document.getElementById('treeSearch').addEventListener('click', () => {
+                const val = parseInt(document.getElementById('treeValue').value);
+                animateSearch(val);
+                document.getElementById('treeValue').value = '';
+            });
+
+            document.getElementById('treeDelete').addEventListener('click', () => {
+                const val = parseInt(document.getElementById('treeValue').value);
+                animateDelete(val);
+                document.getElementById('treeValue').value = '';
+            });
+
+            document.getElementById('treeTraverseIn').addEventListener('click', () => {
+                animateTraversal('In-Order');
+            });
+
+            document.getElementById('treeTraversePre').addEventListener('click', () => {
+                animateTraversal('Pre-Order');
+            });
+
+            document.getElementById('treeTraversePost').addEventListener('click', () => {
+                animateTraversal('Post-Order');
+            });
+
+            document.getElementById('treeReset').addEventListener('click', () => {
+                bst = new BST();
+                const initial = [50, 30, 70, 20, 40, 60, 80];
+                initial.forEach(v => bst.insert(v));
+                drawTree();
+                document.getElementById('arrayMessage').textContent = '🔄 Mist Tree reset to default training forms.';
+            });
+        });
+    </script>
+</body>
+</html>

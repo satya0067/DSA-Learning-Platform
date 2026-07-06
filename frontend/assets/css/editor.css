@@ -1,0 +1,301 @@
+body {
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f2f4f8;
+    color: #1f2937;
+}
+
+body.dark-theme {
+    background: #0f172a;
+    color: #e2e8f0;
+}
+
+.editor-app {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 72px);
+    gap: 20px;
+    padding: 20px;
+}
+
+.editor-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #d1d5db;
+    border-radius: 16px;
+    padding: 16px 20px;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+}
+
+body.dark-theme .editor-topbar {
+    background: rgba(15, 23, 42, 0.92);
+    border-color: #334155;
+}
+
+.editor-topbar .brand {
+    display: grid;
+    gap: 6px;
+}
+
+.editor-topbar .brand h1 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.editor-topbar .brand p {
+    margin: 0;
+    color: #475569;
+    font-size: 0.95rem;
+}
+
+body.dark-theme .editor-topbar .brand p {
+    color: #94a3b8;
+}
+
+.editor-actions,
+.editor-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.editor-actions button,
+.editor-tools button,
+.editor-tools select {
+    border: 1px solid #cbd5e1;
+    background: white;
+    color: #0f172a;
+    border-radius: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+body.dark-theme .editor-actions button,
+body.dark-theme .editor-tools button,
+body.dark-theme .editor-tools select {
+    background: #1e293b;
+    color: #e2e8f0;
+    border-color: #334155;
+}
+
+.editor-actions button:hover,
+.editor-tools button:hover,
+.editor-tools select:hover {
+    background: #f8fafc;
+}
+
+body.dark-theme .editor-actions button:hover,
+body.dark-theme .editor-tools button:hover,
+body.dark-theme .editor-tools select:hover {
+    background: #334155;
+}
+
+.editor-pane {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 20px;
+}
+
+.editor-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.panel {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #d1d5db;
+    border-radius: 18px;
+    padding: 18px;
+    min-height: 160px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+body.dark-theme .panel {
+    background: rgba(15, 23, 42, 0.95);
+    border-color: #334155;
+}
+
+.panel h3 {
+    margin: 0 0 14px;
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+}
+
+.editor-main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.editor-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.editor-container {
+    min-height: 520px;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid #cbd5e1;
+}
+
+body.dark-theme .editor-container {
+    border-color: #334155;
+}
+
+.editor-bottom {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 20px;
+}
+
+.console-panel,
+.stdin-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.console-output {
+    min-height: 220px;
+    padding: 14px;
+    border-radius: 14px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    overflow: auto;
+    white-space: pre-wrap;
+    font-family: 'Courier New', monospace;
+    color: #0f172a;
+}
+
+body.dark-theme .console-output {
+    background: #020617;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+.stdin-panel textarea {
+    min-height: 120px;
+    border-radius: 14px;
+    border: 1px solid #cbd5e1;
+    padding: 14px;
+    font-family: 'Courier New', monospace;
+    resize: vertical;
+    background: white;
+}
+
+body.dark-theme .stdin-panel textarea {
+    background: #020617;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+.file-list,
+.snippet-list {
+    display: grid;
+    gap: 10px;
+}
+
+.tab-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #eef2ff;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+body.dark-theme .tab-item {
+    background: #1e293b;
+}
+
+.tab-item.active {
+    background: #c7d2fe;
+    border-color: #a5b4fc;
+}
+
+body.dark-theme .tab-item.active {
+    background: #334155;
+    border-color: #475569;
+}
+
+.tab-item span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tab-item button {
+    border: none;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    padding: 0;
+    font-size: 1.1rem;
+}
+
+body.dark-theme .tab-item button {
+    color: #94a3b8;
+}
+
+.sidebar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.action-button {
+    width: 100%;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.status-badge span {
+    color: #2563eb;
+}
+
+body.dark-theme .status-badge span {
+    color: #93c5fd;
+}
+
+@media (max-width: 1024px) {
+    .editor-pane {
+        grid-template-columns: 1fr;
+    }
+
+    .editor-bottom {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    .editor-topbar,
+    .panel {
+        padding: 16px 14px;
+    }
+
+    .editor-actions,
+    .editor-tools {
+        width: 100%;
+    }
+}

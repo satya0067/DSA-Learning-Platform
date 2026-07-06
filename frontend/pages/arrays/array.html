@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Struct-Learn | Arrays - Water Breathing Form</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 20% 30%, #0a0512, #020006);
+            color: #f0e9e1;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Static themed background */
+        .static-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0515 100%);
+        }
+
+        /* Water Breathing decorative elements */
+        .water-pattern {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+            background: repeating-linear-gradient(transparent, transparent 40px, rgba(0, 150, 255, 0.05) 40px, rgba(0, 150, 255, 0.08) 80px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .main-wrapper {
+            position: relative;
+            z-index: 30;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .demon-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 3rem;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 150, 255, 0.6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            filter: drop-shadow(0 0 8px #0096ff);
+            color: #0096ff;
+        }
+
+        .logo-text {
+            font-weight: 800;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #f7b42c, #fc575e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo-sub {
+            font-size: 0.7rem;
+            color: #0096ff;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #f0e6d8;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #0096ff;
+        }
+
+        /* Layout */
+        .main-layout {
+            display: flex;
+            max-width: 1400px;
+            margin: 1.5rem auto;
+            padding: 0 2rem;
+            gap: 2rem;
+        }
+
+        /* Sidebar */
+        aside {
+            width: 280px;
+            background: rgba(10, 5, 20, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            border: 1px solid rgba(0, 150, 255, 0.4);
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        aside h3 {
+            color: #0096ff;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            border-left: 3px solid #0096ff;
+            padding-left: 0.8rem;
+        }
+
+        aside ul {
+            list-style: none;
+        }
+
+        aside ul li {
+            margin: 0.8rem 0;
+        }
+
+        aside ul li a {
+            color: #cbc3b0;
+            text-decoration: none;
+            transition: 0.2s;
+            display: block;
+            padding: 0.3rem 0;
+        }
+
+        aside ul li a:hover {
+            color: #0096ff;
+            transform: translateX(5px);
+        }
+
+        aside ul li a.active {
+            color: #0096ff;
+            background: rgba(0, 150, 255, 0.15);
+            padding: 0.5rem 0.8rem;
+            border-radius: 12px;
+            border-left: 3px solid #0096ff;
+        }
+
+        /* Main Content */
+        .container {
+            flex: 1;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h1 i {
+            color: #0096ff;
+            font-size: 2rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+            color: #ffd1a9;
+        }
+
+        /* Cards */
+        .array-intro {
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .array-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            border-radius: 24px;
+            padding: 1.6rem;
+            transition: transform 0.2s;
+        }
+
+        .array-card:hover {
+            transform: translateY(-3px);
+            border-color: #0096ff;
+        }
+
+        .array-card h2 {
+            margin-top: 0;
+            color: #0096ff;
+        }
+
+        /* Info Panel - No visualization */
+        .info-panel {
+            margin: 1.5rem 0;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            border-radius: 24px;
+            padding: 1.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 1rem;
+            border-left: 3px solid #0096ff;
+        }
+
+        .info-item h4 {
+            color: #0096ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .complexity-badge {
+            display: inline-block;
+            background: rgba(0, 150, 255, 0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: linear-gradient(95deg, #0096ff, #0055aa);
+            padding: 1rem 2rem;
+            border-radius: 40px;
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            margin-top: 1.5rem;
+            transition: 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(0, 0, 0, 0.85);
+            padding: 1.2rem;
+            text-align: center;
+            border-top: 1px solid #0096ff;
+            margin-top: 2rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: auto;
+            gap: 1rem;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 900px) {
+            .main-layout {
+                flex-direction: column;
+            }
+            aside {
+                width: 100%;
+                position: relative;
+                top: 0;
+            }
+            .demon-nav {
+                padding: 0.8rem 1.5rem;
+            }
+        }
+
+        .cursor-glow {
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, rgba(0, 150, 255, 0.5) 0%, rgba(0, 100, 255, 0) 80%);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Core Array Operations Visualizer */
+        .array-visualization {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            padding: 1.5rem;
+            min-height: 120px;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            margin: 1rem 0;
+        }
+
+        .array-item {
+            min-width: 60px;
+            min-height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 2px solid rgba(0, 150, 255, 0.4);
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .array-item.highlight {
+            border-color: #fbbf24;
+            background: radial-gradient(circle, rgba(251, 191, 36, 0.35), rgba(255, 255, 255, 0.05));
+            transform: scale(1.1) translateY(-4px);
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
+        }
+
+        .array-item.search-hit {
+            border-color: #10b981;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.35), rgba(255, 255, 255, 0.05));
+            transform: scale(1.1) translateY(-4px);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+        }
+
+        .array-message {
+            margin-top: 1rem;
+            padding: 0.8rem 1.1rem;
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            color: #ffd1a9;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<div class="static-bg"></div>
+<div class="water-pattern"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<div class="main-wrapper">
+    <nav class="demon-nav">
+        <a href="../../index.html" class="logo-area">
+            <i class="fas fa-water logo-icon"></i>
+            <div>
+                <div class="logo-text">STRUCT-LEARN</div>
+                <div class="logo-sub">Water Breathing · Array Form</div>
+            </div>
+        </a>
+        <div class="nav-links">
+            <a href="../dashboard/dashboard.html"><i class="fas fa-home"></i> Dojo</a>
+            <a href="array.html"><i class="fas fa-code"></i> Breathing Forms</a>
+            <a href="../profile/profile.html"><i class="fas fa-ranking-star"></i> Rank</a>
+        </div>
+    </nav>
+
+    <div class="main-layout">
+        <aside>
+            <h3><i class="fas fa-tint"></i> Water Breathing Forms</h3>
+            <ul>
+                <li><a href="array.html" class="active">Arrays Basics · First Form</a></li>
+                <li><a href="bubble-sort.html">Bubble Sort · Second Form</a></li>
+                <li><a href="insertion-sort.html">Insertion Sort · Third Form</a></li>
+                <li><a href="selection-sort.html">Selection Sort · Fourth Form</a></li>
+                <li><a href="merge-sort.html">Merge Sort · Fifth Form</a></li>
+                <li><a href="quick-sort.html">Quick Sort · Sixth Form</a></li>
+                <li><a href="heap-sort.html">Heap Sort · Seventh Form</a></li>
+                <li><a href="binary-search.html">Binary Search · Eighth Form</a></li>
+                <li><a href="linear-search.html">Linear Search · Ninth Form</a></li>
+            </ul>
+        </aside>
+
+        <main class="container">
+            <h1><i class="fas fa-water"></i> Arrays · Water Breathing First Form</h1>
+            
+            <div class="array-intro">
+                <div class="array-card">
+                    <h2><i class="fas fa-droplet"></i> What is an Array?</h2>
+                    <p>In data structures, an array is a sequence of elements stored consecutively in memory — like flowing water through a channel. Arrays provide direct indexed access, making them the foundation for many algorithms and higher-level structures.</p>
+                </div>
+                <div class="array-card">
+                    <h2><i class="fas fa-waveform"></i> Why arrays matter in DSA</h2>
+                    <p>Arrays are the first step in learning algorithmic thinking. They are used for sorting, searching, indexing, buffering, and building more complex structures like heaps, hash tables, and matrices. Master the First Form to unlock all future breathing techniques!</p>
+                </div>
+            </div>
+
+            <h2><i class="fas fa-list"></i> Core Array Operations</h2>
+            <ul style="margin-left: 2rem; line-height: 1.8;">
+                <li><strong>Access</strong> — read any element by index in O(1) time.</li>
+                <li><strong>Traverse</strong> — visit every element sequentially in O(n) time.</li>
+                <li><strong>Insert</strong> — add a new value at a specific position (O(n) time due to shifting).</li>
+                <li><strong>Delete</strong> — remove an element and shift remaining elements (O(n) time).</li>
+                <li><strong>Search</strong> — locate a value using linear search (O(n)) or binary search (O(log n)) for sorted arrays.</li>
+            </ul>
+
+            <!-- Interactive Visualizer -->
+            <div class="array-card">
+                <h2><i class="fas fa-play"></i> Core Array Operations Playground</h2>
+                <p>Observe how memory operations work in real-time. Practice indices access, search, insert, and delete techniques!</p>
+                
+                <div id="visualization" class="array-visualization"></div>
+                <div id="arrayMessage" class="array-message">Click an operation below to interact with the array.</div>
+
+                <div style="margin-top: 1.5rem; display: grid; gap: 1rem; background: rgba(0,0,0,0.2); padding: 1.25rem; border-radius: 20px; border: 1px solid rgba(0, 150, 255, 0.25);">
+                    <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
+                        <div style="flex: 1; min-width: 140px;">
+                            <label style="display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 5px; font-weight: 600;">Element Value</label>
+                            <input type="text" id="valueInput" placeholder="e.g., 99" style="width: 100%; padding: 0.8rem 1.2rem; background: #1e293b; border: 1px solid #334155; border-radius: 40px; color: white; font-size: 0.9rem;">
+                        </div>
+                        <div style="flex: 1; min-width: 140px;">
+                            <label style="display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 5px; font-weight: 600;">Target Index / Position</label>
+                            <input type="number" id="indexInput" placeholder="0 to 7" style="width: 100%; padding: 0.8rem 1.2rem; background: #1e293b; border: 1px solid #334155; border-radius: 40px; color: white; font-size: 0.9rem;">
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.5rem;">
+                        <button onclick="handleAccess()" class="kimetsu-btn" style="background: linear-gradient(95deg, #0096ff, #0055aa); box-shadow: 0 4px 12px rgba(0, 150, 255, 0.4);"><i class="fas fa-hand-pointer"></i> Access Index</button>
+                        <button onclick="handleInsert()" class="kimetsu-btn" style="background: linear-gradient(95deg, #0096ff, #0055aa); box-shadow: 0 4px 12px rgba(0, 150, 255, 0.4);"><i class="fas fa-plus"></i> Insert at Index</button>
+                        <button onclick="handleDelete()" class="kimetsu-btn" style="background: linear-gradient(95deg, #0096ff, #0055aa); box-shadow: 0 4px 12px rgba(0, 150, 255, 0.4);"><i class="fas fa-trash-alt"></i> Delete Index</button>
+                        <button onclick="handleSearch()" class="kimetsu-btn" style="background: linear-gradient(95deg, #0096ff, #0055aa); box-shadow: 0 4px 12px rgba(0, 150, 255, 0.4);"><i class="fas fa-search"></i> Search Value</button>
+                        <button onclick="handleReset()" class="kimetsu-btn" style="background: #334155; box-shadow: none;"><i class="fas fa-undo-alt"></i> Reset Array</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="array-card">
+                <h2><i class="fas fa-search"></i> Searching Techniques</h2>
+                <p>Arrays support multiple search operations depending on whether the data is sorted or unsorted.</p>
+                <ul style="margin-left: 2rem; line-height: 1.8;">
+                    <li><strong>Linear Search</strong> — compare each element in order until the target is found; best for unsorted arrays.</li>
+                    <li><strong>Binary Search</strong> — compare the target to the middle element, then narrow the search to the left or right half of a sorted array.</li>
+                    <li><strong>Jump Search</strong> — jump ahead by fixed blocks, then perform a linear scan inside the block where the target could exist.</li>
+                    <li><strong>Interpolation Search</strong> — estimate the likely position of the target in a sorted array based on its value distribution, then adjust the search range.</li>
+                </ul>
+                <div style="margin-top: 1rem; display: grid; gap: 0.8rem; background: rgba(0,0,0,0.12); padding: 1rem; border-radius: 16px;">
+                    <p><strong>Search Operations:</strong></p>
+                    <p><strong>Compare</strong> — check array values against the target.</p>
+                    <p><strong>Move</strong> — advance through the array using sequential or jump steps.</p>
+                    <p><strong>Narrow</strong> — limit the search range based on sorted order or estimated position.</p>
+                </div>
+            </div>
+
+            <div class="array-card">
+                <h2><i class="fas fa-sort"></i> Sorting Techniques</h2>
+                <p>Sorting arrays organizes data and unlocks faster search and more advanced algorithms.</p>
+                <ul style="margin-left: 2rem; line-height: 1.8;">
+                    <li><strong>Bubble Sort</strong> — compare adjacent items and swap them if out of order; repeat until the list is sorted.</li>
+                    <li><strong>Selection Sort</strong> — repeatedly find the minimum value from the unsorted portion and swap it into position.</li>
+                    <li><strong>Insertion Sort</strong> — build a sorted prefix by inserting each new element into the correct position.</li>
+                    <li><strong>Merge Sort</strong> — split the array into halves, sort each half, then merge the sorted halves back together.</li>
+                    <li><strong>Quick Sort</strong> — choose a pivot, partition elements into lower and higher groups, then sort each partition recursively.</li>
+                </ul>
+                <div style="margin-top: 1rem; display: grid; gap: 0.8rem; background: rgba(0,0,0,0.12); padding: 1rem; border-radius: 16px;">
+                    <p><strong>Sort Operations:</strong></p>
+                    <p><strong>Compare</strong> — evaluate relative order of two elements.</p>
+                    <p><strong>Swap</strong> — exchange positions of elements when needed.</p>
+                    <p><strong>Divide</strong> — split the array for divide-and-conquer methods.</p>
+                </div>
+            </div>
+
+            <!-- Information Panel - No visualization, just educational content -->
+            <div class="info-panel">
+                <h2><i class="fas fa-chart-line"></i> Array Operations & Complexities</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <h4><i class="fas fa-fingerprint"></i> Access</h4>
+                        <p>Access any element directly using its index.</p>
+                        <span class="complexity-badge">Time: O(1)</span>
+                        <span class="complexity-badge">Space: O(1)</span>
+                    </div>
+                    <div class="info-item">
+                        <h4><i class="fas fa-search"></i> Search</h4>
+                        <p>Linear search: check each element one by one.<br>Binary search: requires sorted array.</p>
+                        <span class="complexity-badge">Linear: O(n)</span>
+                        <span class="complexity-badge">Binary: O(log n)</span>
+                    </div>
+                    <div class="info-item">
+                        <h4><i class="fas fa-plus-circle"></i> Insert</h4>
+                        <p>Insert at position requires shifting elements to the right.</p>
+                        <span class="complexity-badge">Time: O(n)</span>
+                        <span class="complexity-badge">Space: O(1)</span>
+                    </div>
+                    <div class="info-item">
+                        <h4><i class="fas fa-trash-alt"></i> Delete</h4>
+                        <p>Delete at position requires shifting elements to the left.</p>
+                        <span class="complexity-badge">Time: O(n)</span>
+                        <span class="complexity-badge">Space: O(1)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Linear Search Explanation Card -->
+            <div class="array-card">
+                <h2><i class="fas fa-search-location"></i> Linear Search · Water Breathing Eighth Form</h2>
+                <p><strong>How it works:</strong> Linear search checks each element in the array one by one from left to right until the target is found or the array ends. It works on both sorted and unsorted arrays.</p>
+                <br>
+                <p><strong>Algorithm Steps:</strong></p>
+                <ol style="margin-left: 2rem; margin-top: 0.5rem; line-height: 1.6;">
+                    <li>Start from the first element (index 0)</li>
+                    <li>Compare the current element with the target value</li>
+                    <li>If match found → return the index position</li>
+                    <li>If no match → move to the next element</li>
+                    <li>Repeat steps 2-4 until the end of the array</li>
+                    <li>If end reached without finding → return -1 (not found)</li>
+                </ol>
+                <div style="margin-top: 1rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 16px;">
+                    <strong><i class="fas fa-code"></i> Example Code (JavaScript):</strong>
+                    <pre style="margin-top: 0.5rem; padding: 0.8rem; background: #0a0a1a; border-radius: 12px; overflow-x: auto; font-size: 0.8rem;">
+function linearSearch(arr, target) {
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] === target) {
+            return i;  // Found at index i
+        }
+    }
+    return -1;  // Not found
+}
+
+// Example usage
+const numbers = [5, 8, 3, 7, 2];
+const result = linearSearch(numbers, 7);
+console.log(result);  // Output: 3</pre>
+                </div>
+                <div class="complexity-badge" style="margin-top: 1rem;">Best Case: O(1) | Worst Case: O(n) | Average: O(n)</div>
+            </div>
+
+            <!-- Array Example Section -->
+            <div class="array-card">
+                <h2><i class="fas fa-database"></i> Array Examples & Use Cases</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <h4>📊 Storing Data</h4>
+                        <p>Student grades, sensor readings, image pixels</p>
+                    </div>
+                    <div class="info-item">
+                        <h4>🔄 Sorting Algorithms</h4>
+                        <p>Bubble, Merge, Quick Sort all operate on arrays</p>
+                    </div>
+                    <div class="info-item">
+                        <h4>🔍 Searching</h4>
+                        <p>Linear and Binary search implementations</p>
+                    </div>
+                    <div class="info-item">
+                        <h4>🏗️ Building Blocks</h4>
+                        <p>Stacks, Queues, Hash Tables, Heaps</p>
+                    </div>
+                </div>
+            </div>
+
+            <a href="../editor/editor.html" class="btn-primary" id="practiceBtn"><i class="fas fa-code"></i> Practice Code in Dojo</a>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div><i class="fas fa-water"></i> Water Breathing · First Form · Array Mastery</div>
+            <div>© 2025 Struct-Learn · Total Concentration</div>
+        </div>
+    </footer>
+</div>
+
+<script src="../../config/config.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/visualization.js"></script>
+<script>
+    // Cursor glow effect
+    const cursorGlow = document.getElementById('cursorGlow');
+    document.addEventListener('mousemove', (e) => {
+        cursorGlow.style.left = e.clientX + 'px';
+        cursorGlow.style.top = e.clientY + 'px';
+    });
+    
+    // Initialize Array Playground on Load
+    const defaultData = [42, 17, 89, 3, 56, 23, 91, 8];
+    document.addEventListener('DOMContentLoaded', () => {
+        createVisualization('array', defaultData, { message: 'First Form: Array initialized and ready.' });
+    });
+
+    // Control Handlers
+    function handleAccess() {
+        const idxVal = document.getElementById('indexInput').value;
+        if (idxVal === '') {
+            updateArrayMessage('⚠️ Please specify a target index first!');
+            return;
+        }
+        accessArrayIndex(idxVal);
+    }
+
+    function handleInsert() {
+        const val = document.getElementById('valueInput').value.trim();
+        const idxVal = document.getElementById('indexInput').value;
+        if (val === '') {
+            updateArrayMessage('⚠️ Please specify a value to insert!');
+            return;
+        }
+        if (idxVal === '') {
+            updateArrayMessage('⚠️ Please specify a target index for insertion!');
+            return;
+        }
+        insertArrayValue(val, idxVal);
+    }
+
+    function handleDelete() {
+        const idxVal = document.getElementById('indexInput').value;
+        if (idxVal === '') {
+            updateArrayMessage('⚠️ Please specify a target index to delete!');
+            return;
+        }
+        deleteArrayIndex(idxVal);
+    }
+
+    function handleSearch() {
+        const val = document.getElementById('valueInput').value.trim();
+        if (val === '') {
+            updateArrayMessage('⚠️ Please enter a value to search for!');
+            return;
+        }
+        searchArrayValue(val);
+    }
+
+    function handleReset() {
+        createVisualization('array', defaultData, { message: 'Playground array reset to defaults.' });
+        document.getElementById('valueInput').value = '';
+        document.getElementById('indexInput').value = '';
+    }
+
+    // Practice button
+    document.getElementById('practiceBtn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        alert("⚔️ Practice Dojo: Train your Water Breathing - Array techniques! Complete challenges to master the First Form. ⚔️\n\n🔍 Linear Search Challenge: Write a function that searches for a value in an array and returns its index!");
+    });
+    
+    // Nav links: allow normal navigation to other sections
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        // No custom blocking; keep default link behavior.
+    });
+    
+    // Sidebar links - Allow navigation to all forms
+    document.querySelectorAll('aside ul li a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            // Allow default navigation - no preventDefault
+            // Just add active state styling
+            document.querySelectorAll('aside ul li a').forEach(a => a.classList.remove('active'));
+            link.classList.add('active');
+        });
+    });
+    
+    console.log("%c🌊 WATER BREATHING · FIRST FORM — ARRAYS 🌊\nMaster the flow of data structures with linear search and array operations!", "color: #0096ff; font-size: 14px; font-weight: bold;");
+</script>
+</body>
+</html>

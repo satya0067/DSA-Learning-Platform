@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Register · Demon Slayer Code Corps</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: radial-gradient(circle at 20% 30%, #1a0505, #020006);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            color: #f0e9e1;
+        }
+
+        .redirect-card {
+            width: min(540px, calc(100% - 2rem));
+            background: rgba(10, 5, 25, 0.96);
+            border: 1px solid rgba(255, 111, 55, 0.3);
+            border-radius: 24px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(18px);
+        }
+
+        .redirect-card h1 {
+            margin-bottom: 1rem;
+            font-size: clamp(2rem, 4vw, 2.6rem);
+            color: #ffb347;
+        }
+
+        .redirect-card p {
+            margin-bottom: 1.75rem;
+            color: #b9ac9c;
+            line-height: 1.6;
+        }
+
+        .redirect-card a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.95rem 1.8rem;
+            border-radius: 999px;
+            background: linear-gradient(95deg, #ff4d2e, #ff7d40);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .redirect-card a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(255, 111, 55, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <div class="redirect-card">
+        <h1>Register on Struct-Learn</h1>
+        <p>We moved registration into the unified auth page for a smoother experience. You’ll be taken to the registration tab automatically.</p>
+        <a href="login.html#register"><i class="fas fa-arrow-right"></i> Go to Register</a>
+    </div>
+    <script>
+        setTimeout(() => {
+            window.location.href = 'login.html#register';
+        }, 400);
+    </script>
+</body>
+</html>

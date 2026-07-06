@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Linear Queue - Struct-Learn Dojo Visualization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #34d399;
+            --primary-dark: #10b981;
+            --primary-glow: rgba(52, 211, 153, 0.3);
+            --secondary: #60a5fa;
+            --accent: #a78bfa;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --bg-dark: #0a0512;
+            --bg-card: rgba(10, 5, 25, 0.85);
+            --text-light: #f0e9e1;
+            --text-muted: #b9ac9c;
+            --border-glow: rgba(52, 211, 153, 0.2);
+            --border-radius: 16px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 20% 30%, #0a2e1a 0%, #0a0512 45%, #020006 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .back:hover {
+            background: rgba(52, 211, 153, 0.2);
+            transform: translateX(-4px);
+        }
+
+        header {
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #34d399, #10b981);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        h1 i {
+            color: var(--primary);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-glow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            transition: border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(52, 211, 153, 0.4);
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .page-nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .page-nav-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.65rem 1rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 700;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .page-nav-link:hover {
+            background: rgba(255, 255, 255, 0.14);
+            transform: translateY(-1px);
+        }
+
+        input {
+            padding: 0.7rem 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            width: 120px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(52, 211, 153, 0.2);
+        }
+
+        input::placeholder {
+            color: #6a5e4e;
+        }
+
+        .btn {
+            padding: 0.7rem 1.4rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #34d399, #10b981);
+            color: #0a0512;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 211, 153, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            color: white;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #1a0a2e;
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f87171, #ef4444);
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn:disabled {
+            background: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .queue-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border: 2px dashed rgba(52, 211, 153, 0.15);
+            min-height: 180px;
+        }
+
+        .queue {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            min-height: 150px;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+        }
+
+        .item {
+            width: 80px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #34d399, #10b981);
+            color: #0a0512;
+            border-radius: var(--border-radius);
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: 0 6px 18px rgba(52, 211, 153, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            animation: fadeIn 0.3s ease both;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .item.front::after {
+            content: '⚔️ FRONT';
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            color: #34d399;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            white-space: nowrap;
+        }
+
+        .item.rear::before {
+            content: '🎯 REAR';
+            position: absolute;
+            bottom: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            color: #34d399;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            white-space: nowrap;
+        }
+
+        .pulse-enq {
+            animation: enqPulse 0.5s ease;
+        }
+
+        @keyframes enqPulse {
+            0% { transform: scale(1); box-shadow: 0 6px 18px rgba(52, 211, 153, 0.2); }
+            50% { transform: scale(1.12); box-shadow: 0 10px 30px rgba(52, 211, 153, 0.5); }
+            100% { transform: scale(1); box-shadow: 0 6px 18px rgba(52, 211, 153, 0.2); }
+        }
+
+        .pulse-deq {
+            animation: deqPulse 0.5s ease;
+        }
+
+        @keyframes deqPulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(0.9); opacity: 0.7; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-glow);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .info-card h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: #34d399;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status {
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.8rem 1rem;
+            border-radius: var(--border-radius);
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+        }
+
+        .meta-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.8rem;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.6rem 1rem;
+            background: rgba(52, 211, 153, 0.05);
+            border-radius: var(--border-radius);
+            flex: 1;
+            border: 1px solid rgba(52, 211, 153, 0.08);
+        }
+
+        .meta-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #34d399;
+        }
+
+        .log-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+
+        .log-container::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .log-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .log-container::-webkit-scrollbar-thumb {
+            background: #34d399;
+            border-radius: 10px;
+        }
+
+        .op-log {
+            line-height: 1.6;
+        }
+
+        .legend {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .legend-front { background: linear-gradient(135deg, #34d399, #10b981); }
+        .legend-rear { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+
+        .empty-queue {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .controls { flex-direction: column; align-items: stretch; }
+            .input-group { width: 100%; }
+            input { flex: 1; width: auto; }
+            .btn { justify-content: center; }
+            .info-panel { grid-template-columns: 1fr; }
+            .item { width: 60px; height: 60px; font-size: 1rem; }
+            .meta-row { flex-direction: column; gap: 0.8rem; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a class="back" href="queue-operations.html">
+            <i class="fas fa-arrow-left"></i> Back to Queue Operations
+        </a>
+
+        <div class="page-nav-links">
+            <a class="page-nav-link" href="queue-operations.html">Queue Operations</a>
+            <a class="page-nav-link" href="linearqueue.html">Linear Queue</a>
+            <a class="page-nav-link" href="circular-queue.html">Circular Queue</a>
+            <a class="page-nav-link" href="Dequeue-queue.html">Deque</a>
+            <a class="page-nav-link" href="priorityqueue.html">Priority Queue</a>
+            <a class="page-nav-link" href="queues.html">Queue Topic</a>
+        </div>
+
+        <header>
+            <h1><i class="fas fa-queue"></i> Linear Queue · Dojo Visualization</h1>
+            <p class="subtitle">A First-In-First-Out (FIFO) data structure. Elements are added at the rear and removed from the front.</p>
+        </header>
+
+        <div class="card">
+            <div class="controls">
+                <div class="input-group">
+                    <input id="val" type="number" min="1" max="999" placeholder="Value">
+                    <button id="enqueue" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Enqueue
+                    </button>
+                </div>
+                <button id="dequeue" class="btn btn-warning" disabled>
+                    <i class="fas fa-minus-circle"></i> Dequeue
+                </button>
+                <button id="front" class="btn btn-secondary" disabled>
+                    <i class="fas fa-arrow-up"></i> Front
+                </button>
+                <button id="rear" class="btn btn-secondary" disabled>
+                    <i class="fas fa-arrow-down"></i> Rear
+                </button>
+                <button id="size" class="btn btn-primary">
+                    <i class="fas fa-ruler"></i> Size
+                </button>
+                <button id="reset" class="btn btn-danger">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+            </div>
+
+            <div class="queue-container">
+                <div class="queue" id="display">
+                    <div class="empty-queue">⚔️ Queue is empty. Enqueue some elements!</div>
+                </div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color legend-front"></div>
+                    <span>Front (Dequeue from here)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-rear"></div>
+                    <span>Rear (Enqueue to here)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <div class="info-card">
+                <h3><i class="fas fa-info-circle"></i> Queue Status</h3>
+                <div id="status" class="status">⚔️ Queue is empty. Ready to enqueue.</div>
+                <div id="details" style="color: var(--text-muted); font-size: 0.85rem;"></div>
+                <div class="meta-row">
+                    <div class="meta-item">
+                        <span class="meta-label">Current Size</span>
+                        <span id="sizeDisplay" class="meta-value">0</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Max Capacity</span>
+                        <span id="maxDisplay" class="meta-value">10</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3><i class="fas fa-history"></i> Operation Log</h3>
+                <div class="log-container">
+                    <div id="log" class="op-log">⚔️ No operations yet</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class LinearQueue {
+            constructor(maxSize = 10) {
+                this.q = [];
+                this.maxSize = maxSize;
+                this.display = document.getElementById('display');
+                this.status = document.getElementById('status');
+                this.details = document.getElementById('details');
+                this.log = document.getElementById('log');
+                this.sizeDisplay = document.getElementById('sizeDisplay');
+                this.maxDisplay = document.getElementById('maxDisplay');
+                this.logs = [];
+                this.attach();
+                this.update();
+            }
+
+            attach() {
+                document.getElementById('enqueue').addEventListener('click', () => this.enqueue());
+                document.getElementById('dequeue').addEventListener('click', () => this.dequeue());
+                document.getElementById('front').addEventListener('click', () => this.getFront());
+                document.getElementById('rear').addEventListener('click', () => this.getRear());
+                document.getElementById('size').addEventListener('click', () => this.getSize());
+                document.getElementById('reset').addEventListener('click', () => this.reset());
+                document.getElementById('val').addEventListener('keypress', e => {
+                    if (e.key === 'Enter') this.enqueue();
+                });
+            }
+
+            logOp(msg, color = "#34d399") {
+                const t = new Date().toLocaleTimeString();
+                this.logs.unshift(`<span style="color: ${color}">[${t}] ${msg}</span>`);
+                this.logs = this.logs.slice(0, 10);
+                this.log.innerHTML = this.logs.join('<br>');
+            }
+
+            enqueue() {
+                const v = Number(document.getElementById('val').value);
+                if (!v || v < 1 || v > 999) {
+                    this._setStatus('⚠️ Please enter a number between 1-999', '#f87171');
+                    return;
+                }
+                if (this.q.length >= this.maxSize) {
+                    this._setStatus('⚠️ Queue Overflow! Max capacity reached.', '#f87171');
+                    this.logOp('ENQUEUE FAILED: overflow', '#f87171');
+                    return;
+                }
+                this.q.push(v);
+                this._setStatus(`✅ Enqueued: ${v}`, '#34d399');
+                this.logOp(`ENQUEUE ${v}`, '#34d399');
+                document.getElementById('val').value = '';
+                this.update('rear');
+            }
+
+            dequeue() {
+                if (this.q.length === 0) {
+                    this._setStatus('⚠️ Queue Underflow! Nothing to dequeue.', '#f87171');
+                    this.logOp('DEQUEUE FAILED: underflow', '#f87171');
+                    return;
+                }
+                const v = this.q.shift();
+                this._setStatus(`🗑️ Dequeued: ${v}`, '#fbbf24');
+                this.logOp(`DEQUEUE ${v}`, '#fbbf24');
+                this.update('front');
+            }
+
+            getFront() {
+                if (this.q.length === 0) {
+                    this._setStatus('⚠️ Queue is empty', '#f87171');
+                    return;
+                }
+                this._setStatus(`👀 Front element: ${this.q[0]}`, '#60a5fa');
+                this.update('front');
+            }
+
+            getRear() {
+                if (this.q.length === 0) {
+                    this._setStatus('⚠️ Queue is empty', '#f87171');
+                    return;
+                }
+                this._setStatus(`👀 Rear element: ${this.q[this.q.length - 1]}`, '#60a5fa');
+                this.update('rear');
+            }
+
+            getSize() {
+                this._setStatus(`📏 Current size: ${this.q.length} / ${this.maxSize}`, '#34d399');
+            }
+
+            reset() {
+                this.q = [];
+                this.logs = [];
+                this.log.innerHTML = '⚔️ No operations yet';
+                this._setStatus('🔄 Queue has been reset', '#94a3b8');
+                this.update();
+            }
+
+            _setStatus(msg, color) {
+                this.status.textContent = msg;
+                this.status.style.color = color;
+                this.status.style.backgroundColor = color === '#f87171' ? 'rgba(248, 113, 113, 0.1)' :
+                    color === '#34d399' ? 'rgba(52, 211, 153, 0.1)' :
+                    color === '#fbbf24' ? 'rgba(251, 191, 36, 0.1)' :
+                    color === '#60a5fa' ? 'rgba(96, 165, 250, 0.1)' :
+                    color === '#94a3b8' ? 'rgba(148, 163, 184, 0.1)' : 'rgba(255,255,255,0.05)';
+            }
+
+            update(highlightPos = null) {
+                this.display.innerHTML = '';
+
+                if (this.q.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'empty-queue';
+                    empty.textContent = '⚔️ Queue is empty. Enqueue some elements!';
+                    this.display.appendChild(empty);
+                } else {
+                    this.q.forEach((v, i) => {
+                        const d = document.createElement('div');
+                        d.className = 'item';
+                        d.textContent = v;
+                        if (i === 0) d.classList.add('front');
+                        if (i === this.q.length - 1) d.classList.add('rear');
+                        d.style.animationDelay = `${i * 60}ms`;
+                        this.display.appendChild(d);
+                    });
+                }
+
+                // Transient highlight for front/rear
+                if (highlightPos) {
+                    const children = Array.from(this.display.children);
+                    if (highlightPos === 'front' && children[0]) {
+                        children[0].classList.add('pulse-deq');
+                        setTimeout(() => children[0].classList.remove('pulse-deq'), 400);
+                    }
+                    if (highlightPos === 'rear' && children[children.length - 1]) {
+                        children[children.length - 1].classList.add('pulse-enq');
+                        setTimeout(() => children[children.length - 1].classList.remove('pulse-enq'), 400);
+                    }
+                }
+
+                this.details.textContent = `Empty: ${this.q.length === 0 ? 'Yes' : 'No'} | Full: ${this.q.length === this.maxSize ? 'Yes' : 'No'}`;
+                document.getElementById('dequeue').disabled = this.q.length === 0;
+                document.getElementById('front').disabled = this.q.length === 0;
+                document.getElementById('rear').disabled = this.q.length === 0;
+                this.sizeDisplay.textContent = this.q.length;
+                this.maxDisplay.textContent = this.maxSize;
+            }
+        }
+
+        // Initialize the queue
+        new LinearQueue(10);
+    </script>
+</body>
+</html>

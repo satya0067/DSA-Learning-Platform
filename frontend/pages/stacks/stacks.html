@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Stacks - Struct-Learn | Demon Slayer Dojo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #f59e0b;
+            --primary-dark: #d97706;
+            --primary-glow: rgba(245, 158, 11, 0.3);
+            --bg-dark: #0a0512;
+            --bg-card: rgba(10, 5, 25, 0.85);
+            --text-light: #f0e9e1;
+            --text-muted: #b9ac9c;
+            --border-glow: rgba(245, 158, 11, 0.2);
+            --border-radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 20% 30%, #1a0a2e 0%, #0a0512 45%, #020006 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+
+        /* ===== ANIMATED BACKGROUND ===== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.3), rgba(245, 158, 11, 0));
+            border-radius: 50%;
+            animation: floatParticle linear infinite;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: orbPulse 6s ease-in-out infinite;
+        }
+
+        @keyframes orbPulse {
+            0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.3; }
+            50% { transform: scale(1.2) translate(50px, -30px); opacity: 0.6; }
+        }
+
+        /* ===== NAVIGATION ===== */
+        .top-nav {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+            color: var(--primary);
+            filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.4));
+        }
+
+        .logo span {
+            font-weight: 800;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+            position: relative;
+            z-index: 5;
+        }
+
+        /* Back Link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .back-link:hover {
+            background: rgba(245, 158, 11, 0.2);
+            transform: translateX(-4px);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: rgba(10, 5, 25, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 32px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.1), transparent);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 40px;
+            font-size: 0.8rem;
+            color: #fbbf24;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-section h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .hero-section h1 i {
+            color: var(--primary);
+        }
+
+        .hero-section p {
+            color: #cbd5e1;
+            max-width: 650px;
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+
+        /* ===== TABS ===== */
+        .operation-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.3rem;
+            border-radius: 60px;
+        }
+
+        .tab-btn {
+            padding: 0.7rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-radius: 40px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #1a0a2e;
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: var(--text-light);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeSlide 0.3s ease both;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== VISUALIZATION ===== */
+        .vis-area {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border: 2px dashed rgba(245, 158, 11, 0.15);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stack-container {
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            gap: 6px;
+            min-height: 280px;
+            width: 200px;
+            padding: 10px;
+        }
+
+        .stack-element {
+            width: 160px;
+            height: 48px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a0a2e;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .stack-element.pop-out {
+            animation: popOut 0.3s ease forwards;
+        }
+
+        @keyframes popOut {
+            from { transform: scale(1); opacity: 1; }
+            to { transform: scale(1.1) translateY(-20px); opacity: 0; }
+        }
+
+        .stack-base {
+            width: 200px;
+            height: 8px;
+            background: #64748b;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        .empty-message {
+            color: var(--text-muted);
+            font-style: italic;
+            padding: 2rem;
+        }
+
+        /* ===== CONTROLS ===== */
+        .stack-controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .control-btn {
+            padding: 0.8rem 1.8rem;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-push {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-push:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-pop {
+            background: linear-gradient(135deg, #f87171, #ef4444);
+            color: white;
+        }
+
+        .btn-pop:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #1a0a2e;
+        }
+
+        .btn-reset:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn:disabled {
+            background: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .input-value {
+            padding: 0.7rem 1.2rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            font-size: 1rem;
+            width: 120px;
+        }
+
+        .input-value:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* ===== STATUS ===== */
+        .status {
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.8rem 1rem;
+            border-radius: var(--border-radius);
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 1rem;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* ===== ALGORITHM SECTION ===== */
+        .algorithm-section {
+            background: rgba(10, 5, 25, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(245, 158, 11, 0.1);
+            border-radius: 28px;
+            padding: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .algorithm-section h3 {
+            color: #fbbf24;
+            margin-bottom: 1rem;
+        }
+
+        .algorithm-content {
+            line-height: 1.8;
+            color: #cbd5e1;
+        }
+
+        .algorithm-content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .algorithm-content li {
+            margin-bottom: 0.3rem;
+        }
+
+        .complexity {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .complexity-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .complexity-card h4 {
+            color: #fbbf24;
+            margin-bottom: 0.3rem;
+        }
+
+        .complexity-card p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* ===== CODE EDITOR ===== */
+        .code-editor {
+            background: #0f172a;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .editor-header {
+            background: #1e293b;
+            padding: 0.8rem 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-header span {
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .editor-content {
+            padding: 1.2rem;
+            font-family: 'Courier New', monospace;
+            color: #e2e8f0;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+
+        .editor-content .keyword { color: #f472b6; }
+        .editor-content .string { color: #34d399; }
+        .editor-content .comment { color: #64748b; }
+        .editor-content .function { color: #60a5fa; }
+        .editor-content .number { color: #fbbf24; }
+
+        /* ===== VIDEO SECTION ===== */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .video-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            background: #000;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-info {
+            padding: 1rem;
+        }
+
+        .video-info h4 {
+            color: #fbbf24;
+            margin-bottom: 0.3rem;
+            font-size: 0.95rem;
+        }
+
+        .video-info p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        /* ===== APPLICATIONS LIST ===== */
+        .app-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .app-item {
+            padding: 0.8rem 1rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: #cbd5e1;
+        }
+
+        .app-item i {
+            color: #fbbf24;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            .hero-section {
+                padding: 1.5rem;
+            }
+            .operation-tabs {
+                border-radius: var(--border-radius);
+                flex-direction: column;
+            }
+            .tab-btn {
+                text-align: center;
+            }
+            .stack-controls {
+                justify-content: center;
+            }
+            .input-value {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== ANIMATED BACKGROUND ===== -->
+<div class="bg-animation" id="bgAnimation"></div>
+
+<!-- ===== NAVIGATION ===== -->
+<nav class="top-nav">
+    <div class="logo">
+        <i class="fas fa-layer-group"></i>
+        <span>STRUCT-LEARN</span>
+    </div>
+    <div class="nav-links">
+        <a href="#"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="#"><i class="fas fa-code"></i> Topics</a>
+        <a href="#"><i class="fas fa-trophy"></i> Achievements</a>
+        <div class="nav-avatar">U</div>
+    </div>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="main-container">
+    <a class="back-link" href="index.html">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-content">
+            <div class="hero-badge"><i class="fas fa-layer-group"></i> LIFO Data Structure</div>
+            <h1><i class="fas fa-layer-group"></i> Stacks Dojo</h1>
+            <p>Last In First Out (LIFO) — Learn stack concepts here, then continue to the dedicated stack operations practice page.</p>
+        </div>
+    </div>
+    <div class="operation-tabs">
+        <button class="tab-btn active" data-tab="operations"><i class="fas fa-play"></i> Stack Operations</button>
+        <button class="tab-btn" data-tab="implementation"><i class="fas fa-code"></i> Implementation</button>
+        <button class="tab-btn" data-tab="videos"><i class="fas fa-video"></i> Videos</button>
+        <button class="tab-btn" data-tab="applications"><i class="fas fa-briefcase"></i> Applications</button>
+    </div>
+
+    <!-- ===== TAB 1: OPERATIONS ===== -->
+    <div id="operations" class="tab-content active">
+        <h2 style="color: #fbbf24; margin-bottom: 0.5rem;"><i class="fas fa-play"></i> Stack Operations</h2>
+        <p style="color: #94a3b8; margin-bottom: 1rem;">Explore stack push, pop, and peek in the dedicated operations page.</p>
+
+        <div class="algorithm-section" style="padding: 2rem; border-radius: 28px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);">
+            <h3 style="margin-bottom: 1rem;"><i class="fas fa-arrow-right"></i> Open the Stack Operations Dojo</h3>
+            <p style="color: #cbd5e1; margin-bottom: 1.5rem;">The interactive stack practice has been moved to a separate page so you can focus on learning stack concepts here first.</p>
+            <a href="stack-operations.html" style="display:inline-flex; align-items:center; gap:0.75rem; padding:0.95rem 1.4rem; border-radius:999px; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1a0a2e; text-decoration:none; font-weight:700; box-shadow: 0 12px 30px rgba(251, 146, 60, 0.18);">Go to Stack Operations Page <i class="fas fa-external-link-alt"></i></a>
+        </div>
+    </div>
+
+    <!-- ===== TAB 2: IMPLEMENTATION ===== -->
+    <div id="implementation" class="tab-content">
+        <h2 style="color: #fbbf24; margin-bottom: 0.5rem;"><i class="fas fa-code"></i> Stack Implementation</h2>
+        <p style="color: #94a3b8; margin-bottom: 1rem;">Full JavaScript implementation with all stack operations.</p>
+
+        <div class="code-editor">
+            <div class="editor-header">
+                <span><i class="fas fa-code"></i> Stack.js</span>
+            </div>
+            <div class="editor-content">
+                <pre><code><span class="keyword">class</span> <span class="function">Stack</span> {
+    <span class="function">constructor</span>() {
+        <span class="keyword">this</span>.items = [];
+        <span class="keyword">this</span>.top = -<span class="number">1</span>;
+        <span class="keyword">this</span>.maxSize = <span class="number">10</span>;
+    }
+
+    <span class="comment">// Push operation</span>
+    <span class="function">push</span>(element) {
+        <span class="keyword">if</span> (<span class="keyword">this</span>.<span class="function">isFull</span>()) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="function">Error</span>(<span class="string">"Stack Overflow"</span>);
+        }
+        <span class="keyword">this</span>.top++;
+        <span class="keyword">this</span>.items[<span class="keyword">this</span>.top] = element;
+        <span class="keyword">return</span> element;
+    }
+
+    <span class="comment">// Pop operation</span>
+    <span class="function">pop</span>() {
+        <span class="keyword">if</span> (<span class="keyword">this</span>.<span class="function">isEmpty</span>()) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="function">Error</span>(<span class="string">"Stack Underflow"</span>);
+        }
+        <span class="keyword">const</span> element = <span class="keyword">this</span>.items[<span class="keyword">this</span>.top];
+        <span class="keyword">this</span>.top--;
+        <span class="keyword">return</span> element;
+    }
+
+    <span class="comment">// Peek operation</span>
+    <span class="function">peek</span>() {
+        <span class="keyword">if</span> (<span class="keyword">this</span>.<span class="function">isEmpty</span>()) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="function">Error</span>(<span class="string">"Stack is empty"</span>);
+        }
+        <span class="keyword">return</span> <span class="keyword">this</span>.items[<span class="keyword">this</span>.top];
+    }
+
+    <span class="function">isEmpty</span>() { <span class="keyword">return</span> <span class="keyword">this</span>.top === -<span class="number">1</span>; }
+    <span class="function">isFull</span>() { <span class="keyword">return</span> <span class="keyword">this</span>.top === <span class="keyword">this</span>.maxSize - <span class="number">1</span>; }
+    <span class="function">size</span>() { <span class="keyword">return</span> <span class="keyword">this</span>.top + <span class="number">1</span>; }
+}</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TAB 3: VIDEOS ===== -->
+    <div id="videos" class="tab-content">
+        <h2 style="color: #fbbf24; margin-bottom: 0.5rem;"><i class="fas fa-video"></i> Stack Videos & Tutorials</h2>
+        <p style="color: #94a3b8; margin-bottom: 1rem;">Learn stacks through these comprehensive video tutorials.</p>
+
+        <div class="video-grid">
+            <div class="video-card">
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/wjI1WNcIntg" allowfullscreen loading="lazy"></iframe>
+                </div>
+                <div class="video-info">
+                    <h4>Stack Data Structure Basics</h4>
+                    <p>Introduction to stack, LIFO principle, and basic operations like push and pop.</p>
+                </div>
+            </div>
+            <div class="video-card">
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/XcADJHN6Vuw" allowfullscreen loading="lazy"></iframe>
+                </div>
+                <div class="video-info">
+                    <h4>Stack Implementation in JavaScript</h4>
+                    <p>Learn how to implement a stack from scratch using JavaScript arrays.</p>
+                </div>
+            </div>
+            <div class="video-card">
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/sFmXwbIjwwI" allowfullscreen loading="lazy"></iframe>
+                </div>
+                <div class="video-info">
+                    <h4>Stack Time & Space Complexity</h4>
+                    <p>Understand Big O complexity analysis for stack operations.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TAB 4: APPLICATIONS ===== -->
+    <div id="applications" class="tab-content">
+        <h2 style="color: #fbbf24; margin-bottom: 0.5rem;"><i class="fas fa-briefcase"></i> Stack Applications</h2>
+        <p style="color: #94a3b8; margin-bottom: 1rem;">Real-world applications of the stack data structure.</p>
+
+        <div class="algorithm-section">
+            <div class="app-list">
+                <div class="app-item"><i class="fas fa-code"></i> Function Call Management (Call Stack)</div>
+                <div class="app-item"><i class="fas fa-calculator"></i> Expression Evaluation</div>
+                <div class="app-item"><i class="fas fa-undo-alt"></i> Undo/Redo Operations</div>
+                <div class="app-item"><i class="fas fa-history"></i> Browser History (Back/Forward)</div>
+                <div class="app-item"><i class="fas fa-sitemap"></i> Depth-First Search (DFS)</div>
+                <div class="app-item"><i class="fas fa-check-double"></i> Syntax Parsing & Compilers</div>
+                <div class="app-item"><i class="fas fa-memory"></i> Stack Memory Allocation</div>
+                <div class="app-item"><i class="fas fa-brackets-curly"></i> Balanced Parentheses Checking</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==================== BACKGROUND ANIMATION ====================
+    const bg = document.getElementById('bgAnimation');
+
+    for (let i = 0; i < 35; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'bg-particle';
+        const size = Math.random() * 8 + 3;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDuration = (Math.random() * 12 + 8) + 's';
+        particle.style.animationDelay = (Math.random() * 6) + 's';
+        bg.appendChild(particle);
+    }
+
+    const orbColors = ['#f59e0b', '#fbbf24', '#d97706'];
+    orbColors.forEach((color, i) => {
+        const orb = document.createElement('div');
+        orb.className = 'bg-orb';
+        orb.style.width = (200 + Math.random() * 150) + 'px';
+        orb.style.height = orb.style.width;
+        orb.style.background = color;
+        orb.style.left = (10 + i * 30) + '%';
+        orb.style.top = (10 + i * 20) + '%';
+        orb.style.animationDelay = (i * 1.5) + 's';
+        bg.appendChild(orb);
+    });
+
+    // ==================== TAB FUNCTIONALITY ====================
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(this.getAttribute('data-tab')).classList.add('active');
+        });
+    });
+
+    // ==================== STACK OPERATIONS REDIRECT ====================
+    // The interactive stack visualization was moved to stack-operations.html.
+
+    console.log('%c📚 STACKS DOJO 📚\nStack operations are now available on a separate page.', 'color: #f59e0b; font-size: 14px; font-weight: bold;');
+</script>
+</body>
+</html>

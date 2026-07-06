@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Deque - Struct-Learn Dojo Visualization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #a78bfa;
+            --primary-dark: #7c3aed;
+            --primary-glow: rgba(167, 139, 250, 0.3);
+            --secondary: #8b5cf6;
+            --accent: #c4b5fd;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --bg-dark: #0a0512;
+            --bg-card: rgba(10, 5, 25, 0.85);
+            --text-light: #f0e9e1;
+            --text-muted: #b9ac9c;
+            --border-glow: rgba(167, 139, 250, 0.2);
+            --border-radius: 16px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 20% 30%, #1a0a2e 0%, #0a0512 45%, #020006 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            background: rgba(167, 139, 250, 0.1);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .back:hover {
+            background: rgba(167, 139, 250, 0.2);
+            transform: translateX(-4px);
+        }
+
+        header {
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #c4b5fd, #a78bfa, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        h1 i {
+            color: var(--primary);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-glow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            transition: border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(167, 139, 250, 0.4);
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        input {
+            padding: 0.7rem 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            width: 160px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(167, 139, 250, 0.2);
+        }
+
+        input::placeholder {
+            color: #6a5e4e;
+        }
+
+        .btn {
+            padding: 0.7rem 1.4rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #a78bfa, #7c3aed);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(167, 139, 250, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            color: white;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #0a0512;
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f87171, #ef4444);
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn:disabled {
+            background: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .deque-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border: 2px dashed rgba(167, 139, 250, 0.15);
+            min-height: 200px;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+
+        .deque {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            max-width: 800px;
+        }
+
+        .cell {
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            background: linear-gradient(135deg, #a78bfa, #7c3aed);
+            color: white;
+            box-shadow: 0 6px 18px rgba(167, 139, 250, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            font-weight: 700;
+            font-size: 1.1rem;
+            animation: fadeIn 0.3s ease both;
+            min-width: 80px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .cell:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(167, 139, 250, 0.3);
+        }
+
+        .cell.front::before {
+            content: '⚔️ FRONT';
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            color: #a78bfa;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            white-space: nowrap;
+        }
+
+        .cell.back::after {
+            content: '🎯 BACK';
+            position: absolute;
+            bottom: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            color: #a78bfa;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            white-space: nowrap;
+        }
+
+        .pulse-front {
+            animation: frontPulse 0.5s ease;
+        }
+
+        @keyframes frontPulse {
+            0% { transform: scale(1); box-shadow: 0 6px 18px rgba(167, 139, 250, 0.2); }
+            50% { transform: scale(1.12); box-shadow: 0 10px 30px rgba(167, 139, 250, 0.5); }
+            100% { transform: scale(1); box-shadow: 0 6px 18px rgba(167, 139, 250, 0.2); }
+        }
+
+        .pulse-back {
+            animation: backPulse 0.5s ease;
+        }
+
+        @keyframes backPulse {
+            0% { transform: scale(1); box-shadow: 0 6px 18px rgba(167, 139, 250, 0.2); }
+            50% { transform: scale(1.12); box-shadow: 0 10px 30px rgba(167, 139, 250, 0.5); }
+            100% { transform: scale(1); box-shadow: 0 6px 18px rgba(167, 139, 250, 0.2); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.4;
+        }
+
+        .deque-arrows {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            padding: 0 1rem;
+        }
+
+        .deque-arrow {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #a78bfa;
+            font-weight: 600;
+            font-size: 0.8rem;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            backdrop-filter: blur(4px);
+        }
+
+        .deque-arrow-left {
+            margin-left: 0.5rem;
+        }
+
+        .deque-arrow-right {
+            margin-right: 0.5rem;
+            flex-direction: row-reverse;
+        }
+
+        .deque-explanation {
+            margin-top: 1rem;
+            padding: 0.8rem 1.2rem;
+            background: rgba(167, 139, 250, 0.05);
+            border-radius: var(--border-radius);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border: 1px solid rgba(167, 139, 250, 0.08);
+        }
+
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-glow);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .info-card h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: #a78bfa;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status {
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.8rem 1rem;
+            border-radius: var(--border-radius);
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+        }
+
+        .meta-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.8rem;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.6rem 1rem;
+            background: rgba(167, 139, 250, 0.05);
+            border-radius: var(--border-radius);
+            flex: 1;
+            border: 1px solid rgba(167, 139, 250, 0.08);
+        }
+
+        .meta-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #a78bfa;
+        }
+
+        .log-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+
+        .log-container::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .log-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .log-container::-webkit-scrollbar-thumb {
+            background: #a78bfa;
+            border-radius: 10px;
+        }
+
+        .op-log {
+            line-height: 1.6;
+        }
+
+        .legend {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .legend-front { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+        .legend-back { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .controls { flex-direction: column; align-items: stretch; }
+            .input-group { width: 100%; }
+            input { flex: 1; width: auto; }
+            .btn { justify-content: center; }
+            .info-panel { grid-template-columns: 1fr; }
+            .deque-arrows { display: none; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a class="back" href="queue-operations.html">
+            <i class="fas fa-arrow-left"></i> Back to Queue Operations
+        </a>
+
+        <div class="page-nav-links">
+            <a class="page-nav-link" href="queue-operations.html">Queue Operations</a>
+            <a class="page-nav-link" href="linearqueue.html">Linear Queue</a>
+            <a class="page-nav-link" href="circular-queue.html">Circular Queue</a>
+            <a class="page-nav-link" href="Dequeue-queue.html">Deque</a>
+            <a class="page-nav-link" href="priorityqueue.html">Priority Queue</a>
+            <a class="page-nav-link" href="queues.html">Queue Topic</a>
+        </div>
+
+        <header>
+            <h1><i class="fas fa-arrows-left-right"></i> Deque · Double-Ended Queue</h1>
+            <p class="subtitle">A versatile data structure that supports insertion and deletion at both ends.</p>
+        </header>
+
+        <div class="card">
+            <div class="controls">
+                <div class="input-group">
+                    <input id="val" type="text" placeholder="Value (e.g., A)">
+                    <button id="pushFront" class="btn btn-primary">
+                        <i class="fas fa-arrow-left"></i> Push Front
+                    </button>
+                </div>
+                <button id="pushBack" class="btn btn-primary">
+                    Push Back <i class="fas fa-arrow-right"></i>
+                </button>
+                <button id="popFront" class="btn btn-warning" disabled>
+                    <i class="fas fa-arrow-left"></i> Pop Front
+                </button>
+                <button id="popBack" class="btn btn-warning" disabled>
+                    Pop Back <i class="fas fa-arrow-right"></i>
+                </button>
+                <button id="reset" class="btn btn-danger">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+            </div>
+
+            <div class="deque-container">
+                <div class="deque-arrows">
+                    <div class="deque-arrow deque-arrow-left">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Front Ops</span>
+                    </div>
+                    <div class="deque-arrow deque-arrow-right">
+                        <span>Back Ops</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+                <div class="deque" id="deque">
+                    <div class="empty-state">
+                        <i class="fas fa-arrows-left-right"></i>
+                        <p>Deque is empty. Add elements to either end to get started.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="deque-explanation">
+                <i class="fas fa-info-circle"></i> <strong>About Deque:</strong> A double-ended queue allows insertion and removal of elements from both the front and back.
+                This makes it more versatile than a regular queue or stack.
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color legend-front"></div>
+                    <span>Front (Push/Pop from left)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-back"></div>
+                    <span>Back (Push/Pop from right)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <div class="info-card">
+                <h3><i class="fas fa-info-circle"></i> Deque Status</h3>
+                <div id="status" class="status">⚔️ Ready. Deque is empty.</div>
+                <div class="meta-row">
+                    <div class="meta-item">
+                        <span class="meta-label">Current Size</span>
+                        <span id="sizeDisplay" class="meta-value">0</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Front Element</span>
+                        <span id="frontDisplay" class="meta-value">—</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Back Element</span>
+                        <span id="backDisplay" class="meta-value">—</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3><i class="fas fa-history"></i> Operation Log</h3>
+                <div class="log-container">
+                    <div id="log" class="op-log">⚔️ No operations yet</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class Deque {
+            constructor() {
+                this.arr = [];
+                this.view = document.getElementById('deque');
+                this.status = document.getElementById('status');
+                this.sizeDisplay = document.getElementById('sizeDisplay');
+                this.frontDisplay = document.getElementById('frontDisplay');
+                this.backDisplay = document.getElementById('backDisplay');
+                this.log = document.getElementById('log');
+                this.logs = [];
+                this.attach();
+                this.render();
+            }
+
+            attach() {
+                document.getElementById('pushFront').addEventListener('click', () => this.pushFront());
+                document.getElementById('pushBack').addEventListener('click', () => this.pushBack());
+                document.getElementById('popFront').addEventListener('click', () => this.popFront());
+                document.getElementById('popBack').addEventListener('click', () => this.popBack());
+                document.getElementById('reset').addEventListener('click', () => this.reset());
+                document.getElementById('val').addEventListener('keypress', e => {
+                    if (e.key === 'Enter') this.pushBack();
+                });
+            }
+
+            logOp(msg, color = "#a78bfa") {
+                const t = new Date().toLocaleTimeString();
+                this.logs.unshift(`<span style="color: ${color}">[${t}] ${msg}</span>`);
+                this.logs = this.logs.slice(0, 10);
+                this.log.innerHTML = this.logs.join('<br>');
+            }
+
+            pushFront() {
+                const v = document.getElementById('val').value.trim();
+                if (!v) {
+                    this._setStatus('⚠️ Please enter a value', '#f87171');
+                    return;
+                }
+                this.arr.unshift(v);
+                document.getElementById('val').value = '';
+                this._setStatus(`✅ Pushed to front: ${v}`, '#34d399');
+                this.logOp(`PUSH FRONT ${v}`, '#34d399');
+                this.render('front');
+            }
+
+            pushBack() {
+                const v = document.getElementById('val').value.trim();
+                if (!v) {
+                    this._setStatus('⚠️ Please enter a value', '#f87171');
+                    return;
+                }
+                this.arr.push(v);
+                document.getElementById('val').value = '';
+                this._setStatus(`✅ Pushed to back: ${v}`, '#34d399');
+                this.logOp(`PUSH BACK ${v}`, '#34d399');
+                this.render('back');
+            }
+
+            popFront() {
+                if (this.arr.length === 0) {
+                    this._setStatus('⚠️ Deque Underflow - Deque is empty', '#f87171');
+                    this.logOp('POP FRONT FAILED: underflow', '#f87171');
+                    return;
+                }
+                const v = this.arr.shift();
+                this._setStatus(`🗑️ Popped from front: ${v}`, '#fbbf24');
+                this.logOp(`POP FRONT ${v}`, '#fbbf24');
+                this.render('front');
+            }
+
+            popBack() {
+                if (this.arr.length === 0) {
+                    this._setStatus('⚠️ Deque Underflow - Deque is empty', '#f87171');
+                    this.logOp('POP BACK FAILED: underflow', '#f87171');
+                    return;
+                }
+                const v = this.arr.pop();
+                this._setStatus(`🗑️ Popped from back: ${v}`, '#fbbf24');
+                this.logOp(`POP BACK ${v}`, '#fbbf24');
+                this.render('back');
+            }
+
+            reset() {
+                this.arr = [];
+                this.logs = [];
+                this.log.innerHTML = '⚔️ No operations yet';
+                this._setStatus('🔄 Deque has been reset', '#94a3b8');
+                this.render();
+            }
+
+            _setStatus(msg, color) {
+                this.status.textContent = msg;
+                this.status.style.color = color;
+                this.status.style.backgroundColor = color === '#f87171' ? 'rgba(248, 113, 113, 0.1)' :
+                    color === '#34d399' ? 'rgba(52, 211, 153, 0.1)' :
+                    color === '#fbbf24' ? 'rgba(251, 191, 36, 0.1)' :
+                    color === '#94a3b8' ? 'rgba(148, 163, 184, 0.1)' : 'rgba(255,255,255,0.05)';
+            }
+
+            render(operation = null) {
+                this.view.innerHTML = '';
+
+                if (this.arr.length === 0) {
+                    this.view.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-arrows-left-right"></i>
+                            <p>Deque is empty. Add elements to either end to get started.</p>
+                        </div>
+                    `;
+                } else {
+                    this.arr.forEach((x, i) => {
+                        const c = document.createElement('div');
+                        c.className = 'cell';
+                        if (i === 0) c.classList.add('front');
+                        if (i === this.arr.length - 1) c.classList.add('back');
+
+                        c.style.animationDelay = `${i * 40}ms`;
+                        c.textContent = x;
+                        this.view.appendChild(c);
+                    });
+
+                    // Transient highlight for front/back operations
+                    if (operation) {
+                        const children = Array.from(this.view.children);
+                        if (operation === 'front' && children[0]) {
+                            children[0].classList.add('pulse-front');
+                            setTimeout(() => children[0].classList.remove('pulse-front'), 400);
+                        }
+                        if (operation === 'back' && children[children.length - 1]) {
+                            children[children.length - 1].classList.add('pulse-back');
+                            setTimeout(() => children[children.length - 1].classList.remove('pulse-back'), 400);
+                        }
+                    }
+                }
+
+                // Update displays
+                this.sizeDisplay.textContent = this.arr.length;
+                this.frontDisplay.textContent = this.arr.length > 0 ? this.arr[0] : '—';
+                this.backDisplay.textContent = this.arr.length > 0 ? this.arr[this.arr.length - 1] : '—';
+
+                document.getElementById('popFront').disabled = this.arr.length === 0;
+                document.getElementById('popBack').disabled = this.arr.length === 0;
+            }
+        }
+
+        // Initialize the deque
+        new Deque();
+    </script>
+</body>
+</html>

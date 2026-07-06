@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Linear Search Visualizer | Next-Gen DSA Learning</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 10% 20%, #03050b, #000000);
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Main layout with sidebar */
+        .main-layout {
+            display: flex;
+            max-width: 1400px;
+            margin: 1.5rem auto;
+            padding: 0 2rem;
+            gap: 2rem;
+            flex: 1;
+        }
+
+        /* Sidebar */
+        #sidebar {
+            width: 280px;
+            background: rgba(10, 5, 20, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            border: 1px solid rgba(96, 165, 250, 0.4);
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        #sidebar h3 {
+            color: #60a5fa;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            border-left: 3px solid #60a5fa;
+            padding-left: 0.8rem;
+        }
+
+        #sidebar ul {
+            list-style: none;
+        }
+
+        #sidebar ul li {
+            margin: 0.8rem 0;
+        }
+
+        #sidebar ul li a {
+            color: #cbc3b0;
+            text-decoration: none;
+            transition: 0.2s;
+            display: block;
+            padding: 0.3rem 0;
+        }
+
+        #sidebar ul li a:hover {
+            color: #60a5fa;
+            transform: translateX(5px);
+        }
+
+        #sidebar ul li a.active {
+            color: #60a5fa;
+            background: rgba(96, 165, 250, 0.15);
+            padding: 0.5rem 0.8rem;
+            border-radius: 12px;
+            border-left: 3px solid #60a5fa;
+        }
+
+        /* Dynamic Particle Background */
+        .particle-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, #3b82f6, transparent);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: floatParticle 8s linear infinite;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+        }
+
+        /* Main Container */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        /* Header */
+        .hero-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero-header h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #60a5fa, #a855f7, #f59e0b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-header p {
+            color: #94a3b8;
+            margin-top: 0.5rem;
+        }
+
+        /* Visualizer Card */
+        .visualizer-card {
+            background: rgba(10, 20, 30, 0.6);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 40px -15px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Array Grid - Impactful Cards */
+        .array-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            perspective: 1000px;
+        }
+
+        .array-card {
+            width: 90px;
+            height: 110px;
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 2px solid #334155;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .array-card .value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #e2e8f0, #94a3b8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .array-card .index {
+            font-size: 0.7rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* Animation States */
+        .array-card.checking {
+            border-color: #f59e0b;
+            background: linear-gradient(145deg, #422006, #2d1a00);
+            transform: scale(1.1) translateY(-10px);
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.6);
+            animation: pulse 0.6s ease-in-out infinite;
+        }
+
+        .array-card.found {
+            border-color: #10b981;
+            background: linear-gradient(145deg, #064e3b, #022c22);
+            transform: scale(1.15) translateY(-12px);
+            box-shadow: 0 0 40px rgba(16, 185, 129, 0.8);
+            animation: foundGlow 0.5s ease-out;
+        }
+
+        .array-card.not-found {
+            border-color: #ef4444;
+            background: linear-gradient(145deg, #7f1d1d, #450a0a);
+            filter: grayscale(0.3);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1.1) translateY(-10px); }
+            50% { transform: scale(1.15) translateY(-12px); }
+        }
+
+        @keyframes foundGlow {
+            0% { box-shadow: 0 0 0 0 #10b981; }
+            100% { box-shadow: 0 0 0 20px rgba(16, 185, 129, 0); }
+        }
+
+        /* Control Panel */
+        .control-panel {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 32px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: flex-end;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-field {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .input-field label {
+            display: block;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 40px;
+            color: white;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .input-field input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Button Styles */
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .btn {
+            padding: 0.9rem 1.8rem;
+            border-radius: 60px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #334155;
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+
+        /* Progress & Stats */
+        .search-stats {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 60px;
+        }
+
+        .stat-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.5rem 1.2rem;
+            background: #1e293b;
+            border-radius: 40px;
+            font-size: 0.85rem;
+        }
+
+        .stat-badge i {
+            font-size: 1rem;
+        }
+
+        .stat-value {
+            font-weight: 800;
+            color: #60a5fa;
+            font-size: 1.1rem;
+        }
+
+        /* Message Area */
+        .message-area {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 24px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+            border-left: 5px solid #3b82f6;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        /* Complexity Cards */
+        .complexity-grid {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .complexity-card {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #334155;
+        }
+
+        .complexity-card .big-o {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #f59e0b;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid #1e293b;
+            margin-top: 2rem;
+            color: #64748b;
+        }
+
+        @media (max-width: 700px) {
+            .array-card {
+                width: 65px;
+                height: 85px;
+            }
+            .array-card .value {
+                font-size: 1.2rem;
+            }
+            .btn-group {
+                justify-content: center;
+            }
+        }
+
+        /* Ripple Effect */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.4);
+            transform: scale(0);
+            animation: rippleAnim 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes rippleAnim {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="particle-bg" id="particleBg"></div>
+
+<div class="main-layout">
+    <aside id="sidebar">
+        <h3>Array Topics</h3>
+        <ul>
+            <li><a href="array.html">Arrays Basics · First Form</a></li>
+            <li><a href="bubble-sort.html">Bubble Sort · Second Form</a></li>
+            <li><a href="insertion-sort.html">Insertion Sort · Third Form</a></li>
+            <li><a href="selection-sort.html">Selection Sort · Fourth Form</a></li>
+            <li><a href="merge-sort.html">Merge Sort · Fifth Form</a></li>
+            <li><a href="quick-sort.html">Quick Sort · Sixth Form</a></li>
+            <li><a href="heap-sort.html">Heap Sort · Seventh Form</a></li>
+            <li><a href="binary-search.html">Binary Search · Eighth Form</a></li>
+            <li><a href="linear-search.html" class="active">Linear Search · Ninth Form</a></li>
+        </ul>
+    </aside>
+
+<div class="main-container">
+    <div class="hero-header">
+        <h1><i class="fas fa-search-location"></i> Linear Search Visualizer</h1>
+        <p>Watch the algorithm hunt for your target — one element at a time</p>
+    </div>
+
+    <div class="visualizer-card">
+        <!-- Dynamic Array Display -->
+        <div id="arrayContainer" class="array-grid"></div>
+
+        <!-- Search Stats -->
+        <div class="search-stats" id="statsPanel">
+            <div class="stat-badge"><i class="fas fa-chart-line"></i> Steps: <span id="stepCount" class="stat-value">0</span></div>
+            <div class="stat-badge"><i class="fas fa-bullseye"></i> Target: <span id="targetDisplay" class="stat-value">—</span></div>
+            <div class="stat-badge"><i class="fas fa-check-circle"></i> Status: <span id="searchStatus" class="stat-value">Ready</span></div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="input-group">
+                <div class="input-field">
+                    <label><i class="fas fa-code"></i> Custom Array (comma separated)</label>
+                    <input type="text" id="arrayInput" placeholder="e.g., 42, 17, 89, 3, 56, 23, 91, 8">
+                </div>
+                <div class="input-field">
+                    <label><i class="fas fa-crosshairs"></i> Target Value</label>
+                    <input type="text" id="targetInput" placeholder="Number to find">
+                </div>
+                <button id="updateBtn" class="btn btn-secondary"><i class="fas fa-sync-alt"></i> Update Array</button>
+            </div>
+
+            <div class="btn-group">
+                <button id="stepBtn" class="btn btn-primary"><i class="fas fa-step-forward"></i> Step-by-Step</button>
+                <button id="autoBtn" class="btn btn-success"><i class="fas fa-play"></i> Auto Search</button>
+                <button id="resetBtn" class="btn btn-warning"><i class="fas fa-undo-alt"></i> Reset</button>
+                <button id="stopBtn" class="btn btn-danger"><i class="fas fa-stop"></i> Stop</button>
+            </div>
+        </div>
+
+        <!-- Message Area -->
+        <div id="messageBox" class="message-area">
+            <i class="fas fa-lightbulb"></i> <strong>Ready to learn!</strong> Enter a target and click "Step-by-Step" to see linear search in action.
+        </div>
+
+        <!-- Complexity Section -->
+        <div class="complexity-grid">
+            <div class="complexity-card"><span class="big-o">O(1)</span><br>Best Case</div>
+            <div class="complexity-card"><span class="big-o">O(n)</span><br>Worst Case</div>
+            <div class="complexity-card"><span class="big-o">O(n)</span><br>Average Case</div>
+            <div class="complexity-card"><span class="big-o">O(1)</span><br>Space Complexity</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <i class="fas fa-eye"></i> Linear Search checks each element sequentially — Visual learning at its best
+    </div>
+</div>
+</div>
+
+<script>
+    // ==================== LINEAR SEARCH ENGINE ====================
+    let currentArray = [42, 17, 89, 3, 56, 23, 91, 8];
+    let targetValue = null;
+    let searchState = {
+        active: false,
+        currentIndex: 0,
+        foundIndex: -1,
+        steps: 0,
+        autoInterval: null
+    };
+
+    // DOM Elements
+    const arrayContainer = document.getElementById('arrayContainer');
+    const stepCountSpan = document.getElementById('stepCount');
+    const targetDisplaySpan = document.getElementById('targetDisplay');
+    const searchStatusSpan = document.getElementById('searchStatus');
+    const messageBox = document.getElementById('messageBox');
+    const arrayInput = document.getElementById('arrayInput');
+    const targetInput = document.getElementById('targetInput');
+
+    // Helper: Create ripple effect on element
+    function createRipple(x, y) {
+        const ripple = document.createElement('div');
+        ripple.classList.add('ripple');
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.style.position = 'fixed';
+        ripple.style.pointerEvents = 'none';
+        document.body.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+    }
+
+    // Render array with visual states
+    function renderArray(checkingIdx = -1, foundIdx = -1) {
+        arrayContainer.innerHTML = '';
+        currentArray.forEach((value, idx) => {
+            const card = document.createElement('div');
+            card.className = 'array-card';
+            
+            if (foundIdx === idx) {
+                card.classList.add('found');
+            } else if (checkingIdx === idx) {
+                card.classList.add('checking');
+            } else if (searchState.foundIndex === -1 && searchState.active && idx < searchState.currentIndex && searchState.currentIndex > 0) {
+                // Visually mark already checked elements (optional)
+                card.style.opacity = '0.7';
+            }
+            
+            card.innerHTML = `
+                <div class="value">${value}</div>
+                <div class="index">[${idx}]</div>
+            `;
+            arrayContainer.appendChild(card);
+        });
+    }
+
+    // Update stats panel
+    function updateStats() {
+        stepCountSpan.innerText = searchState.steps;
+        targetDisplaySpan.innerText = targetValue !== null ? targetValue : '—';
+        if (searchState.foundIndex !== -1) {
+            searchStatusSpan.innerText = '✓ Found!';
+            searchStatusSpan.style.color = '#10b981';
+        } else if (searchState.active) {
+            searchStatusSpan.innerText = 'Searching...';
+            searchStatusSpan.style.color = '#f59e0b';
+        } else if (searchState.currentIndex >= currentArray.length && searchState.steps > 0) {
+            searchStatusSpan.innerText = '✗ Not Found';
+            searchStatusSpan.style.color = '#ef4444';
+        } else {
+            searchStatusSpan.innerText = 'Ready';
+            searchStatusSpan.style.color = '#60a5fa';
+        }
+    }
+
+    // Stop any ongoing search
+    function stopSearch(resetVisual = false) {
+        if (searchState.autoInterval) {
+            clearInterval(searchState.autoInterval);
+            searchState.autoInterval = null;
+        }
+        searchState.active = false;
+        if (resetVisual) {
+            searchState.currentIndex = 0;
+            searchState.foundIndex = -1;
+            searchState.steps = 0;
+            renderArray();
+            messageBox.innerHTML = `<i class="fas fa-hand-paper"></i> <strong>Search stopped.</strong> Click "Reset" to start over.`;
+            updateStats();
+        } else {
+            renderArray(searchState.currentIndex, searchState.foundIndex);
+            updateStats();
+        }
+    }
+
+    // Reset entire search
+    function resetSearch() {
+        if (searchState.autoInterval) {
+            clearInterval(searchState.autoInterval);
+            searchState.autoInterval = null;
+        }
+        searchState.active = false;
+        searchState.currentIndex = 0;
+        searchState.foundIndex = -1;
+        searchState.steps = 0;
+        renderArray();
+        updateStats();
+        messageBox.innerHTML = `<i class="fas fa-undo-alt"></i> <strong>Search reset.</strong> Ready for a new hunt!`;
+    }
+
+    // Perform one step of linear search
+    function performStep() {
+        // Validate target
+        if (targetValue === null || targetValue === '') {
+            messageBox.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <strong>No target set!</strong> Please enter a value to search for.`;
+            return false;
+        }
+
+        // Initialize search if not active
+        if (!searchState.active && searchState.foundIndex === -1 && searchState.currentIndex === 0) {
+            searchState.active = true;
+            searchState.steps = 0;
+            messageBox.innerHTML = `<i class="fas fa-play"></i> <strong>Linear Search Started!</strong> Hunting for target: ${targetValue}`;
+            renderArray();
+        }
+
+        // If already found, show message
+        if (searchState.foundIndex !== -1) {
+            messageBox.innerHTML = `<i class="fas fa-trophy"></i> <strong>Already found!</strong> Value ${targetValue} is at index ${searchState.foundIndex}. Reset to search again.`;
+            return true;
+        }
+
+        // If reached end of array
+        if (searchState.currentIndex >= currentArray.length) {
+            searchState.active = false;
+            renderArray(-1, -1);
+            messageBox.innerHTML = `<i class="fas fa-skull"></i> <strong>Not Found!</strong> ${targetValue} does not exist in the array. Linear search checked all ${currentArray.length} elements.`;
+            updateStats();
+            return false;
+        }
+
+        // Check current element
+        const currentVal = currentArray[searchState.currentIndex];
+        searchState.steps++;
+        
+        // Visual feedback - highlight current element
+        renderArray(searchState.currentIndex, -1);
+        
+        // Get card position for ripple effect
+        const cards = document.querySelectorAll('.array-card');
+        if (cards[searchState.currentIndex]) {
+            const rect = cards[searchState.currentIndex].getBoundingClientRect();
+            createRipple(rect.left + rect.width/2, rect.top + rect.height/2);
+        }
+
+        // Compare
+        if (currentVal == targetValue) {
+            // FOUND!
+            searchState.foundIndex = searchState.currentIndex;
+            searchState.active = false;
+            renderArray(-1, searchState.foundIndex);
+            messageBox.innerHTML = `<i class="fas fa-celebration"></i> <strong>🎉 FOUND! 🎉</strong> Value ${targetValue} found at index ${searchState.currentIndex} after ${searchState.steps} step(s)!`;
+            updateStats();
+            
+            // Confetti-like effect with ripple
+            for(let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const fakeRect = { left: rect.left + rect.width/2, top: rect.top + rect.height/2 };
+                    createRipple(fakeRect.left, fakeRect.top);
+                }, i * 100);
+            }
+            return true;
+        } else {
+            // Not found yet, continue
+            messageBox.innerHTML = `<i class="fas fa-search"></i> <strong>Step ${searchState.steps}:</strong> Checking index ${searchState.currentIndex} (value = ${currentVal}) → Not a match. Moving to next.`;
+            searchState.currentIndex++;
+            updateStats();
+            renderArray(searchState.currentIndex, -1);
+            return false;
+        }
+    }
+
+    // Auto search with interval
+    function startAutoSearch() {
+        if (searchState.autoInterval) {
+            clearInterval(searchState.autoInterval);
+            searchState.autoInterval = null;
+        }
+        
+        if (targetValue === null || targetValue === '') {
+            messageBox.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <strong>Set a target first!</strong> Enter a value to search.`;
+            return;
+        }
+        
+        resetSearch();
+        searchState.active = true;
+        
+        searchState.autoInterval = setInterval(() => {
+            const completed = performStep();
+            if (completed || (!searchState.active && searchState.foundIndex !== -1) || searchState.currentIndex >= currentArray.length) {
+                if (searchState.autoInterval) {
+                    clearInterval(searchState.autoInterval);
+                    searchState.autoInterval = null;
+                }
+                searchState.active = false;
+                if (searchState.foundIndex === -1 && searchState.currentIndex >= currentArray.length) {
+                    messageBox.innerHTML = `<i class="fas fa-times-circle"></i> <strong>Search Complete:</strong> ${targetValue} not found after ${searchState.steps} steps.`;
+                }
+                updateStats();
+            }
+        }, 700);
+    }
+
+    // Update array from user input
+    function updateArray() {
+        let inputVal = arrayInput.value.trim();
+        if (inputVal) {
+            let newArray = inputVal.split(',').map(item => {
+                let num = parseInt(item.trim());
+                return isNaN(num) ? item.trim() : num;
+            }).filter(item => item !== '' && !isNaN(item));
+            if (newArray.length > 0) {
+                currentArray = newArray;
+            } else {
+                currentArray = [42, 17, 89, 3, 56, 23, 91, 8];
+            }
+        } else {
+            currentArray = [42, 17, 89, 3, 56, 23, 91, 8];
+        }
+        
+        // Reset search state
+        stopSearch(true);
+        resetSearch();
+        renderArray();
+        messageBox.innerHTML = `<i class="fas fa-check-circle"></i> <strong>Array Updated!</strong> New array: [${currentArray.join(', ')}]`;
+        arrayInput.value = currentArray.join(', ');
+    }
+
+    // Set target value
+    function setTarget() {
+        let val = targetInput.value.trim();
+        if (val !== '') {
+            targetValue = isNaN(parseInt(val)) ? val : parseInt(val);
+            messageBox.innerHTML = `<i class="fas fa-crosshairs"></i> <strong>Target set:</strong> ${targetValue}. Ready to search!`;
+            resetSearch();
+        } else {
+            targetValue = null;
+            messageBox.innerHTML = `<i class="fas fa-info-circle"></i> <strong>No target.</strong> Enter a value to search for.`;
+        }
+        updateStats();
+        renderArray();
+    }
+
+    // ==================== EVENT LISTENERS ====================
+    document.getElementById('stepBtn').addEventListener('click', () => {
+        if (searchState.autoInterval) {
+            clearInterval(searchState.autoInterval);
+            searchState.autoInterval = null;
+        }
+        performStep();
+    });
+    
+    document.getElementById('autoBtn').addEventListener('click', startAutoSearch);
+    document.getElementById('resetBtn').addEventListener('click', resetSearch);
+    document.getElementById('stopBtn').addEventListener('click', () => stopSearch(true));
+    document.getElementById('updateBtn').addEventListener('click', updateArray);
+    document.getElementById('targetInput').addEventListener('change', setTarget);
+    
+    // Initialize
+    renderArray();
+    arrayInput.value = currentArray.join(', ');
+    updateStats();
+    
+    // Particle background effect
+    function createBackgroundParticle() {
+        const particleDiv = document.getElementById('particleBg');
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        const size = Math.random() * 6 + 2;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDuration = Math.random() * 8 + 5 + 's';
+        particle.style.animationDelay = Math.random() * 5 + 's';
+        particleDiv.appendChild(particle);
+        setTimeout(() => particle.remove(), 10000);
+    }
+    setInterval(createBackgroundParticle, 400);
+    for(let i = 0; i < 30; i++) setTimeout(createBackgroundParticle, i * 100);
+    
+    console.log("%c🔍 LINEAR SEARCH — IMPACT VISUALIZER 🔍\nWatch each step with stunning visual feedback!", "color: #60a5fa; font-size: 14px; font-weight: bold;");
+</script>
+</body>
+</html>

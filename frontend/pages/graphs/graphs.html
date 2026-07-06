@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphs Mastery | Struct-Learn - Complete DSA Graph Workshop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 10% 20%, #0a0512, #020006);
+            color: #f0e9e1;
+            min-height: 100vh;
+        }
+
+        .top-nav {
+            background: rgba(0, 0, 0, 0.9);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            border-bottom: 2px solid #8b5cf6;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+            color: #8b5cf6;
+        }
+
+        .logo span {
+            font-weight: 800;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #a78bfa;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 1.5rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero-section h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #8b5cf6, #a78bfa, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Two Column Layout */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 1.5rem;
+        }
+
+        /* Graph Container */
+        .graph-container {
+            background: rgba(10, 20, 30, 0.7);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 2px solid #8b5cf6;
+            border-radius: 32px;
+            padding: 1.5rem;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 24px;
+            cursor: pointer;
+            width: 100%;
+            height: auto;
+        }
+
+        /* Controls Panel */
+        .controls-panel {
+            background: rgba(10, 20, 30, 0.7);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 2px solid #8b5cf6;
+            border-radius: 32px;
+            padding: 1.5rem;
+        }
+
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .control-group h3 {
+            color: #a78bfa;
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .input-row input, .input-row select {
+            flex: 1;
+            padding: 0.7rem 1rem;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 40px;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1.2rem;
+            border-radius: 40px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #334155;
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .graph-type-selector {
+            display: flex;
+            gap: 0.5rem;
+            background: #1e293b;
+            padding: 0.3rem;
+            border-radius: 60px;
+            margin-bottom: 1rem;
+        }
+
+        .type-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border-radius: 40px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            transition: 0.2s;
+            font-size: 0.8rem;
+        }
+
+        .type-btn.active {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .stats-panel {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-left: 5px solid #8b5cf6;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.5rem 0;
+            font-size: 0.85rem;
+        }
+
+        .traversal-result {
+            background: #0a0a1a;
+            border-radius: 16px;
+            padding: 0.8rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            word-break: break-all;
+        }
+
+        .info-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            padding: 1rem;
+            border: 1px solid #334155;
+            margin-top: 1rem;
+        }
+
+        .info-card h4 {
+            color: #a78bfa;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Scrollable Algorithm Section */
+        .algorithm-section {
+            background: rgba(10, 20, 30, 0.7);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 2px solid #8b5cf6;
+            border-radius: 32px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .algorithm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .algo-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            padding: 1rem;
+            border-left: 4px solid #8b5cf6;
+        }
+
+        .algo-card h4 {
+            color: #a78bfa;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .algo-card p {
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .complexity {
+            margin-top: 0.5rem;
+            font-size: 0.7rem;
+            color: #fbbf24;
+        }
+
+        @media (max-width: 900px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="top-nav">
+    <div class="logo">
+        <i class="fas fa-project-diagram"></i>
+        <span>STRUCT-LEARN</span>
+    </div>
+    <div class="nav-links">
+        <a href="#"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="#"><i class="fas fa-chart-line"></i> Algorithms</a>
+        <a href="#"><i class="fas fa-laptop-code"></i> Practice</a>
+    </div>
+</nav>
+
+<div class="main-container">
+    <div class="hero-section">
+        <h1><i class="fas fa-project-diagram"></i> Graphs · Complete DSA Workshop</h1>
+        <p>Build, Edit, Traverse | BFS | DFS | All Graph Types with Definitions</p>
+    </div>
+
+    <div class="two-column">
+        <!-- Graph Visualization Area -->
+        <div class="graph-container">
+            <canvas id="graphCanvas" width="700" height="500" style="width:100%; height:auto; aspect-ratio:700/500"></canvas>
+            <div class="control-group" style="margin-top: 1rem;">
+                <div class="graph-type-selector">
+                    <button class="type-btn active" data-type="undirected"><i class="fas fa-share-alt"></i> Undirected</button>
+                    <button class="type-btn" data-type="directed"><i class="fas fa-arrow-right"></i> Directed</button>
+                    <button class="type-btn" data-type="weighted"><i class="fas fa-weight-hanging"></i> Weighted</button>
+                </div>
+            </div>
+            <div class="control-group" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button id="bfsBtn" class="btn btn-primary"><i class="fas fa-layer-group"></i> BFS Traversal</button>
+                <button id="dfsBtn" class="btn btn-primary"><i class="fas fa-tree"></i> DFS Traversal</button>
+                <button id="resetTraversalBtn" class="btn btn-secondary"><i class="fas fa-undo-alt"></i> Reset</button>
+            </div>
+            <div class="stats-panel">
+                <strong><i class="fas fa-info-circle"></i> Traversal Status</strong>
+                <div id="traversalMessage" style="margin-top: 0.5rem;">✅ Ready! Click BFS or DFS to traverse.</div>
+                <div id="traversalResult" class="traversal-result">Traversal order will appear here...</div>
+            </div>
+        </div>
+
+        <!-- Controls Panel -->
+        <div class="controls-panel">
+            <div class="control-group">
+                <h3><i class="fas fa-plus-circle"></i> Add Node</h3>
+                <div class="input-row">
+                    <input type="text" id="nodeLabel" placeholder="Node Label (A, B, 1, etc.)" maxlength="3">
+                    <button id="addNodeBtn" class="btn btn-success btn-sm"><i class="fas fa-plus"></i> Add</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3><i class="fas fa-link"></i> Add Edge</h3>
+                <div class="input-row">
+                    <select id="edgeFrom" title="Select source node"></select>
+                    <select id="edgeTo" title="Select destination node"></select>
+                </div>
+                <div class="input-row">
+                    <input type="number" id="edgeWeight" placeholder="Weight (default: 1)" value="1" step="1">
+                    <button id="addEdgeBtn" class="btn btn-primary btn-sm"><i class="fas fa-link"></i> Add Edge</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3><i class="fas fa-trash-alt"></i> Remove</h3>
+                <div class="input-row">
+                    <select id="removeNodeSelect" title="Select node to remove"></select>
+                    <button id="removeNodeBtn" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Remove Node</button>
+                </div>
+                <div class="input-row">
+                    <select id="removeEdgeFrom" title="Select edge source node"></select>
+                    <select id="removeEdgeTo" title="Select edge destination node"></select>
+                    <button id="removeEdgeBtn" class="btn btn-warning btn-sm"><i class="fas fa-cut"></i> Remove Edge</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3><i class="fas fa-chart-simple"></i> Graph Statistics</h3>
+                <div class="stats-panel" style="margin-top: 0;">
+                    <div class="stat-row"><span>📊 Vertices:</span><span id="vertexCount">6</span></div>
+                    <div class="stat-row"><span>🔗 Edges:</span><span id="edgeCount">9</span></div>
+                    <div class="stat-row"><span>📐 Graph Type:</span><span id="graphTypeDisplay">Undirected</span></div>
+                    <div class="stat-row"><span>⚡ Density:</span><span id="graphDensity">0.00</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Algorithm Section with Graph Types and BFS/DFS Details -->
+    <div class="algorithm-section">
+        <h3 style="color: #a78bfa; margin-bottom: 1rem;"><i class="fas fa-book-open"></i> Graph Algorithms & Fundamentals</h3>
+        
+        <div class="algorithm-grid">
+            <!-- Graph Types Card -->
+            <div class="algo-card">
+                <h4><i class="fas fa-chart-pie"></i> Types of Graphs</h4>
+                <p><strong>Undirected Graph:</strong> Edges have no direction — connection is bidirectional. Facebook friendships are undirected.</p>
+                <p><strong>Directed Graph (Digraph):</strong> Edges have direction (one-way). Twitter follows are directed.</p>
+                <p><strong>Weighted Graph:</strong> Edges have numerical weights/costs. Google Maps distances are weighted.</p>
+                <p><strong>Unweighted Graph:</strong> All edges have equal weight (considered 1).</p>
+                <p><strong>Cyclic Graph:</strong> Contains at least one cycle (path that starts and ends at same vertex).</p>
+                <p><strong>Acyclic Graph:</strong> No cycles. Trees are acyclic graphs.</p>
+                <p><strong>Connected Graph:</strong> Path exists between every pair of vertices.</p>
+                <p><strong>Disconnected Graph:</strong> At least two vertices with no path between them.</p>
+                <p><strong>Complete Graph:</strong> Every vertex is directly connected to every other vertex.</p>
+                <div class="complexity">📌 Key: V = Vertices, E = Edges</div>
+            </div>
+
+            <!-- BFS Detailed Card -->
+            <div class="algo-card">
+                <h4><i class="fas fa-layer-group"></i> Breadth-First Search (BFS)</h4>
+                <p><strong>How it works:</strong> BFS explores all neighbors at the current depth before moving to the next level. It uses a Queue data structure (FIFO).</p>
+                <p><strong>Algorithm Steps:</strong> 1. Start from source vertex, mark as visited and enqueue. 2. Dequeue a vertex, visit all unvisited neighbors, mark visited and enqueue them. 3. Repeat until queue is empty.</p>
+                <p><strong>Applications:</strong> Shortest path in unweighted graphs, web crawling, social networking (finding friends within K levels), GPS navigation, broadcasting.</p>
+                <p><strong>Example:</strong> Starting from A, BFS visits: A → B, C → D, E (level by level)</p>
+                <div class="complexity">⏱ Time: O(V+E) | 💾 Space: O(V)</div>
+            </div>
+
+            <!-- DFS Detailed Card -->
+            <div class="algo-card">
+                <h4><i class="fas fa-tree"></i> Depth-First Search (DFS)</h4>
+                <p><strong>How it works:</strong> DFS explores as far as possible along each branch before backtracking. It uses a Stack (or recursion).</p>
+                <p><strong>Algorithm Steps:</strong> 1. Start from source vertex, mark as visited. 2. Recursively visit first unvisited neighbor. 3. Backtrack when no unvisited neighbors remain.</p>
+                <p><strong>Applications:</strong> Detecting cycles, topological sorting, solving mazes, finding connected components, pathfinding, tree traversals.</p>
+                <p><strong>Example:</strong> Starting from A, DFS visits: A → B → D → E → C (deep dive first)</p>
+                <div class="complexity">⏱ Time: O(V+E) | 💾 Space: O(V) for recursion stack</div>
+            </div>
+
+            <!-- Additional Algorithms Card -->
+            <div class="algo-card">
+                <h4><i class="fas fa-route"></i> Other Important Algorithms</h4>
+                <p><strong>Dijkstra's Algorithm:</strong> Finds shortest path in weighted graphs (non-negative weights). Uses priority queue. Time: O((V+E) log V)</p>
+                <p><strong>Bellman-Ford:</strong> Shortest path that handles negative weights. Time: O(V×E)</p>
+                <p><strong>Floyd-Warshall:</strong> All-pairs shortest path. Time: O(V³)</p>
+                <p><strong>Kruskal's/Prim's:</strong> Minimum Spanning Tree (MST) algorithms.</p>
+                <p><strong>Topological Sort:</strong> Linear ordering of vertices in DAG. Used in task scheduling.</p>
+                <p><strong>Kahn's Algorithm:</strong> BFS-based topological sorting using in-degree counts.</p>
+            </div>
+        </div>
+
+        <!-- BFS vs DFS Comparison Table -->
+        <div class="info-card" style="margin-top: 1rem;">
+            <h4><i class="fas fa-chart-line"></i> BFS vs DFS - Detailed Comparison</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                <div>
+                    <strong style="color: #8b5cf6;">BFS</strong>
+                    <ul style="margin-left: 1rem; font-size: 0.75rem; line-height: 1.5; margin-top: 0.3rem;">
+                        <li>Uses Queue (FIFO)</li>
+                        <li>Finds shortest path (unweighted)</li>
+                        <li>Level-order traversal</li>
+                        <li>More memory for wide graphs</li>
+                        <li>Better for closer targets</li>
+                    </ul>
+                </div>
+                <div>
+                    <strong style="color: #8b5cf6;">DFS</strong>
+                    <ul style="margin-left: 1rem; font-size: 0.75rem; line-height: 1.5; margin-top: 0.3rem;">
+                        <li>Uses Stack/Recursion (LIFO)</li>
+                        <li>Does NOT guarantee shortest path</li>
+                        <li>Depth-first traversal</li>
+                        <li>Less memory for deep graphs</li>
+                        <li>Better for finding existence</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="complexity" style="margin-top: 0.8rem;">💡 <strong>Tip:</strong> Use BFS for shortest path in unweighted graphs. Use DFS for cycle detection and topological sorting.</div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer" style="text-align: center; padding: 1.5rem; border-top: 1px solid #334155; margin-top: 2rem;">
+    <p><i class="fas fa-project-diagram"></i> Graphs — Build, Edit, and Traverse | Complete DSA Learning Platform</p>
+</footer>
+
+<script>
+    // ==================== GRAPH DATA STRUCTURE ====================
+    let graphType = 'undirected';
+    let vertices = [
+        { id: 0, x: 120, y: 200, label: 'A' },
+        { id: 1, x: 300, y: 120, label: 'B' },
+        { id: 2, x: 480, y: 180, label: 'C' },
+        { id: 3, x: 580, y: 330, label: 'D' },
+        { id: 4, x: 400, y: 400, label: 'E' },
+        { id: 5, x: 220, y: 350, label: 'F' }
+    ];
+    
+    let edges = [
+        { from: 0, to: 1, weight: 4 },
+        { from: 0, to: 5, weight: 3 },
+        { from: 1, to: 2, weight: 2 },
+        { from: 1, to: 3, weight: 5 },
+        { from: 2, to: 3, weight: 1 },
+        { from: 2, to: 4, weight: 6 },
+        { from: 3, to: 4, weight: 2 },
+        { from: 4, to: 5, weight: 4 },
+        { from: 5, to: 0, weight: 3 }
+    ];
+    
+    let nextId = 6;
+    let visited = [];
+    let traversalInterval = null;
+    
+    const canvas = document.getElementById('graphCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const COLORS = {
+        default: '#4f46e5',
+        visited: '#10b981',
+        current: '#f59e0b',
+        edge: '#64748b',
+        edgeWeight: '#94a3b8',
+        text: '#ffffff'
+    };
+    
+    function resizeCanvas() {
+        const container = canvas.parentElement;
+        const width = Math.min(700, container.clientWidth - 40);
+        canvas.width = width;
+        canvas.height = width * 0.7;
+        if (canvas.width > 0) {
+            vertices.forEach(v => {
+                v.x = Math.min(canvas.width - 40, Math.max(40, v.x));
+                v.y = Math.min(canvas.height - 40, Math.max(40, v.y));
+            });
+        }
+        drawGraph();
+    }
+    
+    window.addEventListener('resize', resizeCanvas);
+    
+    function updateSelectors() {
+        const edgeFrom = document.getElementById('edgeFrom');
+        const edgeTo = document.getElementById('edgeTo');
+        const removeNodeSelect = document.getElementById('removeNodeSelect');
+        const removeEdgeFrom = document.getElementById('removeEdgeFrom');
+        const removeEdgeTo = document.getElementById('removeEdgeTo');
+        
+        [edgeFrom, edgeTo, removeNodeSelect, removeEdgeFrom, removeEdgeTo].forEach(sel => {
+            if (sel) {
+                const currentValue = sel.value;
+                sel.innerHTML = '';
+                vertices.forEach(v => {
+                    const option = document.createElement('option');
+                    option.value = v.id;
+                    option.textContent = `${v.label} (${v.id})`;
+                    sel.appendChild(option);
+                });
+                if (currentValue && Array.from(sel.options).some(opt => opt.value === currentValue)) {
+                    sel.value = currentValue;
+                }
+            }
+        });
+    }
+    
+    function updateStats() {
+        document.getElementById('vertexCount').innerText = vertices.length;
+        document.getElementById('edgeCount').innerText = edges.length;
+        const typeNames = { undirected: 'Undirected', directed: 'Directed', weighted: 'Weighted' };
+        document.getElementById('graphTypeDisplay').innerText = typeNames[graphType];
+        
+        const maxEdges = graphType === 'undirected' ? vertices.length * (vertices.length - 1) / 2 : vertices.length * (vertices.length - 1);
+        const density = vertices.length > 1 ? (edges.length / maxEdges).toFixed(3) : 0;
+        document.getElementById('graphDensity').innerText = density;
+    }
+    
+    function drawGraph() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        edges.forEach(edge => {
+            const fromVertex = vertices.find(v => v.id === edge.from);
+            const toVertex = vertices.find(v => v.id === edge.to);
+            if (fromVertex && toVertex) {
+                ctx.beginPath();
+                ctx.moveTo(fromVertex.x, fromVertex.y);
+                ctx.lineTo(toVertex.x, toVertex.y);
+                ctx.strokeStyle = COLORS.edge;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                if (graphType === 'directed') {
+                    const angle = Math.atan2(toVertex.y - fromVertex.y, toVertex.x - fromVertex.x);
+                    const arrowX = toVertex.x - 15 * Math.cos(angle);
+                    const arrowY = toVertex.y - 15 * Math.sin(angle);
+                    ctx.beginPath();
+                    ctx.moveTo(arrowX, arrowY);
+                    ctx.lineTo(arrowX - 8 * Math.cos(angle - Math.PI/6), arrowY - 8 * Math.sin(angle - Math.PI/6));
+                    ctx.lineTo(arrowX - 8 * Math.cos(angle + Math.PI/6), arrowY - 8 * Math.sin(angle + Math.PI/6));
+                    ctx.fillStyle = COLORS.edge;
+                    ctx.fill();
+                }
+                
+                if (graphType === 'weighted') {
+                    const midX = (fromVertex.x + toVertex.x) / 2;
+                    const midY = (fromVertex.y + toVertex.y) / 2;
+                    ctx.fillStyle = COLORS.edgeWeight;
+                    ctx.font = '11px monospace';
+                    ctx.fillText(edge.weight, midX, midY - 5);
+                }
+            }
+        });
+        
+        vertices.forEach(vertex => {
+            ctx.beginPath();
+            ctx.arc(vertex.x, vertex.y, 22, 0, 2 * Math.PI);
+            ctx.fillStyle = visited[vertex.id] ? COLORS.visited : COLORS.default;
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            ctx.fillStyle = COLORS.text;
+            ctx.font = 'bold 14px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(vertex.label, vertex.x, vertex.y);
+        });
+    }
+    
+    function buildAdjacencyList() {
+        const adj = {};
+        vertices.forEach(v => { adj[v.id] = []; });
+        edges.forEach(edge => {
+            adj[edge.from].push({ to: edge.to, weight: edge.weight });
+            if (graphType !== 'directed') {
+                adj[edge.to].push({ to: edge.from, weight: edge.weight });
+            }
+        });
+        return adj;
+    }
+    
+    function resetTraversal() {
+        if (traversalInterval) clearInterval(traversalInterval);
+        visited.fill(false);
+        drawGraph();
+        document.getElementById('traversalResult').innerHTML = 'Traversal order will appear here...';
+        document.getElementById('traversalMessage').innerHTML = '✅ Traversal reset. Click BFS or DFS to start!';
+    }
+    
+    function startBFS() {
+        if (vertices.length === 0) {
+            document.getElementById('traversalMessage').innerHTML = '⚠️ No vertices in graph! Add some nodes first.';
+            return;
+        }
+        if (traversalInterval) clearInterval(traversalInterval);
+        visited = new Array(nextId).fill(false);
+        const adj = buildAdjacencyList();
+        const queue = [vertices[0].id];
+        visited[vertices[0].id] = true;
+        const order = [vertices[0].id];
+        drawGraph();
+        
+        document.getElementById('traversalMessage').innerHTML = `🔍 BFS (Queue-based) starting from ${vertices[0].label}...`;
+        
+        let idx = 0;
+        traversalInterval = setInterval(() => {
+            if (idx >= order.length) {
+                const orderStr = order.map(id => vertices.find(v => v.id === id)?.label).join(' → ');
+                document.getElementById('traversalResult').innerHTML = `<strong>BFS Order (Level by Level):</strong> ${orderStr}`;
+                document.getElementById('traversalMessage').innerHTML = `✅ BFS complete! Queue emptied. Order: ${orderStr}`;
+                clearInterval(traversalInterval);
+                return;
+            }
+            const current = order[idx];
+            const neighbors = adj[current] || [];
+            for (const neighbor of neighbors) {
+                if (!visited[neighbor.to]) {
+                    visited[neighbor.to] = true;
+                    order.push(neighbor.to);
+                    document.getElementById('traversalMessage').innerHTML = `BFS: Enqueuing ${vertices.find(v => v.id === neighbor.to)?.label} from ${vertices.find(v => v.id === current)?.label}`;
+                    drawGraph();
+                }
+            }
+            idx++;
+            drawGraph();
+        }, 700);
+    }
+    
+    function startDFS() {
+        if (vertices.length === 0) {
+            document.getElementById('traversalMessage').innerHTML = '⚠️ No vertices in graph! Add some nodes first.';
+            return;
+        }
+        if (traversalInterval) clearInterval(traversalInterval);
+        visited = new Array(nextId).fill(false);
+        const order = [];
+        const stack = [vertices[0].id];
+        
+        function dfsStep() {
+            if (stack.length === 0) {
+                const orderStr = order.map(id => vertices.find(v => v.id === id)?.label).join(' → ');
+                document.getElementById('traversalResult').innerHTML = `<strong>DFS Order (Deep First):</strong> ${orderStr}`;
+                document.getElementById('traversalMessage').innerHTML = `✅ DFS complete! Stack emptied. Order: ${orderStr}`;
+                clearInterval(traversalInterval);
+                return;
+            }
+            const current = stack.pop();
+            if (!visited[current]) {
+                visited[current] = true;
+                order.push(current);
+                document.getElementById('traversalMessage').innerHTML = `DFS: Pushing neighbors of ${vertices.find(v => v.id === current)?.label} onto stack`;
+                drawGraph();
+                
+                const adj = buildAdjacencyList();
+                const neighbors = adj[current] || [];
+                for (let i = neighbors.length - 1; i >= 0; i--) {
+                    if (!visited[neighbors[i].to]) {
+                        stack.push(neighbors[i].to);
+                    }
+                }
+            }
+        }
+        
+        traversalInterval = setInterval(dfsStep, 700);
+    }
+    
+    function addNode() {
+        const label = document.getElementById('nodeLabel').value.trim();
+        if (!label) {
+            alert('Please enter a node label');
+            return;
+        }
+        const newId = nextId++;
+        const x = 100 + Math.random() * (canvas.width - 200);
+        const y = 100 + Math.random() * (canvas.height - 200);
+        vertices.push({ id: newId, x: x, y: y, label: label });
+        updateSelectors();
+        updateStats();
+        resetTraversal();
+        drawGraph();
+        document.getElementById('nodeLabel').value = '';
+    }
+    
+    function addEdge() {
+        const fromId = parseInt(document.getElementById('edgeFrom').value);
+        const toId = parseInt(document.getElementById('edgeTo').value);
+        const weight = parseInt(document.getElementById('edgeWeight').value);
+        
+        if (fromId === toId) {
+            alert('Cannot add self-loop edge');
+            return;
+        }
+        
+        const edgeExists = edges.some(e => (e.from === fromId && e.to === toId));
+        if (edgeExists) {
+            alert('Edge already exists!');
+            return;
+        }
+        
+        edges.push({ from: fromId, to: toId, weight: weight || 1 });
+        updateStats();
+        resetTraversal();
+        drawGraph();
+    }
+    
+    function removeNode() {
+        const nodeId = parseInt(document.getElementById('removeNodeSelect').value);
+        vertices = vertices.filter(v => v.id !== nodeId);
+        edges = edges.filter(e => e.from !== nodeId && e.to !== nodeId);
+        updateSelectors();
+        updateStats();
+        resetTraversal();
+        drawGraph();
+    }
+    
+    function removeEdge() {
+        const fromId = parseInt(document.getElementById('removeEdgeFrom').value);
+        const toId = parseInt(document.getElementById('removeEdgeTo').value);
+        const edgeIndex = edges.findIndex(e => e.from === fromId && e.to === toId);
+        if (edgeIndex !== -1) {
+            edges.splice(edgeIndex, 1);
+        } else {
+            alert('Edge not found');
+        }
+        updateStats();
+        resetTraversal();
+        drawGraph();
+    }
+    
+    function setGraphType(type) {
+        graphType = type;
+        document.querySelectorAll('.type-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.type === type);
+        });
+        resetTraversal();
+        updateStats();
+        drawGraph();
+    }
+    
+    document.getElementById('addNodeBtn').addEventListener('click', addNode);
+    document.getElementById('addEdgeBtn').addEventListener('click', addEdge);
+    document.getElementById('removeNodeBtn').addEventListener('click', removeNode);
+    document.getElementById('removeEdgeBtn').addEventListener('click', removeEdge);
+    document.getElementById('bfsBtn').addEventListener('click', startBFS);
+    document.getElementById('dfsBtn').addEventListener('click', startDFS);
+    document.getElementById('resetTraversalBtn').addEventListener('click', resetTraversal);
+    
+    document.querySelectorAll('.type-btn').forEach(btn => {
+        btn.addEventListener('click', () => setGraphType(btn.dataset.type));
+    });
+    
+    let dragging = false;
+    let dragIndex = -1;
+    
+    canvas.addEventListener('mousedown', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const mouseX = (e.clientX - rect.left) * scaleX;
+        const mouseY = (e.clientY - rect.top) * scaleY;
+        
+        for (let i = 0; i < vertices.length; i++) {
+            const v = vertices[i];
+            const dx = mouseX - v.x;
+            const dy = mouseY - v.y;
+            if (Math.sqrt(dx*dx + dy*dy) < 22) {
+                dragging = true;
+                dragIndex = i;
+                break;
+            }
+        }
+    });
+    
+    canvas.addEventListener('mousemove', (e) => {
+        if (dragging && dragIndex !== -1) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            let newX = (e.clientX - rect.left) * scaleX;
+            let newY = (e.clientY - rect.top) * scaleY;
+            newX = Math.max(30, Math.min(canvas.width - 30, newX));
+            newY = Math.max(30, Math.min(canvas.height - 30, newY));
+            vertices[dragIndex].x = newX;
+            vertices[dragIndex].y = newY;
+            drawGraph();
+        }
+    });
+    
+    canvas.addEventListener('mouseup', () => {
+        dragging = false;
+        dragIndex = -1;
+    });
+    
+    resizeCanvas();
+    updateSelectors();
+    updateStats();
+    drawGraph();
+    
+    console.log('%c📊 GRAPH WORKSHOP - Complete DSA Learning Platform 📊\nBFS | DFS | All Graph Types | Algorithms', 'color: #8b5cf6; font-size: 14px; font-weight: bold;');
+</script>
+</body>
+</html>

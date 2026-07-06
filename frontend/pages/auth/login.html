@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Login / Register · Demon Slayer Code Corps</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-start: #0a0512;
+            --bg-end: #020006;
+            --card-bg: rgba(10, 5, 25, 0.85);
+            --card-border: rgba(255, 111, 55, 0.3);
+            --text: #f0e9e1;
+            --muted: #b9ac9c;
+            --accent: #ff7d40;
+            --accent-glow: rgba(255, 111, 55, 0.4);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.8s ease;
+        }
+
+        /* Dynamic background based on hashira */
+        body.hashira-flame { background: radial-gradient(circle at 20% 30%, #1a0505, #0a0000); }
+        body.hashira-water { background: radial-gradient(circle at 20% 30%, #05101a, #00050a); }
+        body.hashira-thunder { background: radial-gradient(circle at 20% 30%, #1a1a05, #0a0a00); }
+        body.hashira-mist { background: radial-gradient(circle at 20% 30%, #0f0a1a, #05020a); }
+        body.hashira-wind { background: radial-gradient(circle at 20% 30%, #0a1a0a, #000a00); }
+        body.hashira-sun { background: radial-gradient(circle at 20% 30%, #1a1205, #0a0600); }
+
+        /* ===== ANIMATED BACKGROUND ===== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: floatParticle linear infinite;
+        }
+
+        .bg-particle.fire { background: radial-gradient(circle, rgba(255, 80, 40, 0.6), rgba(255, 30, 0, 0)); }
+        .bg-particle.water { background: radial-gradient(circle, rgba(0, 200, 255, 0.5), rgba(0, 100, 255, 0)); }
+        .bg-particle.thunder { background: radial-gradient(circle, rgba(255, 215, 0, 0.5), rgba(255, 200, 0, 0)); }
+        .bg-particle.mist { background: radial-gradient(circle, rgba(184, 169, 255, 0.4), rgba(100, 80, 200, 0)); }
+        .bg-particle.wind { background: radial-gradient(circle, rgba(95, 220, 122, 0.4), rgba(50, 200, 80, 0)); }
+        .bg-particle.sun { background: radial-gradient(circle, rgba(255, 170, 51, 0.5), rgba(255, 150, 0, 0)); }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: orbPulse 6s ease-in-out infinite;
+        }
+
+        @keyframes orbPulse {
+            0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.4; }
+            50% { transform: scale(1.2) translate(50px, -30px); opacity: 0.7; }
+        }
+
+        /* ===== CURSOR GLOW ===== */
+        .cursor-glow {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: 0.05s linear;
+        }
+
+        /* ===== NAVIGATION ===== */
+        .top-nav {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(16px);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            border-bottom: 2px solid rgba(255, 111, 55, 0.4);
+            position: relative;
+            z-index: 10;
+            transition: border-color 0.6s ease;
+        }
+
+        .top-nav.hashira-flame { border-color: #ff4d2e66; }
+        .top-nav.hashira-water { border-color: #2e9eff66; }
+        .top-nav.hashira-thunder { border-color: #ffd96666; }
+        .top-nav.hashira-mist { border-color: #b8a9ff66; }
+        .top-nav.hashira-wind { border-color: #5fdc7a66; }
+        .top-nav.hashira-sun { border-color: #ffaa3366; }
+
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo i { font-size: 1.8rem; transition: color 0.6s ease, filter 0.6s ease; }
+        .logo span { font-weight: 800; font-size: 1.3rem; background: linear-gradient(135deg, #ff7d40, #ffb347); -webkit-background-clip: text; background-clip: text; color: transparent; transition: background 0.6s ease; }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.16);
+            transform: translateY(-1px);
+        }
+
+        /* Hashira Selector */
+        .hashira-selector {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(0,0,0,0.5);
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            backdrop-filter: blur(4px);
+            transition: border-color 0.6s ease;
+            border: 1px solid transparent;
+        }
+
+        .hashira-selector.hashira-flame { border-color: #ff4d2e44; }
+        .hashira-selector.hashira-water { border-color: #2e9eff44; }
+        .hashira-selector.hashira-thunder { border-color: #ffd96644; }
+        .hashira-selector.hashira-mist { border-color: #b8a9ff44; }
+        .hashira-selector.hashira-wind { border-color: #5fdc7a44; }
+        .hashira-selector.hashira-sun { border-color: #ffaa3344; }
+
+        .hashira-option {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: #888;
+            background: rgba(255,255,255,0.05);
+            position: relative;
+        }
+
+        .hashira-option:hover {
+            transform: scale(1.15);
+            color: #fff;
+            background: rgba(255,255,255,0.12);
+        }
+
+        .hashira-option.active {
+            border-color: #ffd966;
+            box-shadow: 0 0 20px rgba(255, 100, 50, 0.4);
+            background: rgba(255, 90, 50, 0.2);
+            transform: scale(1.1);
+            color: #fff;
+        }
+
+        .hashira-option .tooltip {
+            position: absolute;
+            bottom: -26px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            color: #ffdbb5;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: 0.3s;
+            pointer-events: none;
+        }
+
+        .hashira-option:hover .tooltip { opacity: 1; }
+
+        /* ===== AUTH PAGE ===== */
+        .auth-page {
+            position: relative;
+            z-index: 5;
+            min-height: calc(100vh - 4rem);
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .auth-layout {
+            width: min(1180px, 100%);
+            display: grid;
+            grid-template-columns: 1.35fr 0.9fr;
+            gap: 2rem;
+            animation: slideUp 0.6s ease both;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== AUTH CARD - DYNAMIC ===== */
+        .auth-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(18px);
+            border-radius: 32px;
+            border: 1px solid var(--card-border);
+            padding: 2.2rem;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+            transition: all 0.6s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            transition: all 0.8s ease;
+        }
+
+        .auth-card.hashira-flame { border-top: 4px solid #ff4d2e; box-shadow: 0 0 40px rgba(255, 77, 46, 0.12); }
+        .auth-card.hashira-flame::before { background: radial-gradient(circle, rgba(255, 77, 46, 0.06) 0%, transparent 70%); }
+
+        .auth-card.hashira-water { border-top: 4px solid #2e9eff; box-shadow: 0 0 40px rgba(46, 158, 255, 0.12); }
+        .auth-card.hashira-water::before { background: radial-gradient(circle, rgba(46, 158, 255, 0.06) 0%, transparent 70%); }
+
+        .auth-card.hashira-thunder { border-top: 4px solid #ffd966; box-shadow: 0 0 40px rgba(255, 217, 102, 0.12); }
+        .auth-card.hashira-thunder::before { background: radial-gradient(circle, rgba(255, 217, 102, 0.06) 0%, transparent 70%); }
+
+        .auth-card.hashira-mist { border-top: 4px solid #b8a9ff; box-shadow: 0 0 40px rgba(184, 169, 255, 0.12); }
+        .auth-card.hashira-mist::before { background: radial-gradient(circle, rgba(184, 169, 255, 0.06) 0%, transparent 70%); }
+
+        .auth-card.hashira-wind { border-top: 4px solid #5fdc7a; box-shadow: 0 0 40px rgba(95, 220, 122, 0.12); }
+        .auth-card.hashira-wind::before { background: radial-gradient(circle, rgba(95, 220, 122, 0.06) 0%, transparent 70%); }
+
+        .auth-card.hashira-sun { border-top: 4px solid #ffaa33; box-shadow: 0 0 45px rgba(255, 170, 51, 0.15); }
+        .auth-card.hashira-sun::before { background: radial-gradient(circle, rgba(255, 170, 51, 0.08) 0%, transparent 70%); }
+
+        .change-password-block {
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            padding-top: 1.8rem;
+        }
+
+        .change-password-block h2 {
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .change-password-block p {
+            margin-bottom: 1rem;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .change-password-block .auth-submit {
+            width: 100%;
+            margin-top: 0.65rem;
+        }
+
+        .hidden-panel {
+            display: none;
+        }
+
+        .auth-actions {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .secondary-btn,
+        .link-btn {
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+            padding: 0.85rem 1rem;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background 0.25s ease, transform 0.2s ease;
+            font-weight: 700;
+        }
+
+        .secondary-btn:hover,
+        .link-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .secondary-btn.active {
+            background: rgba(255, 125, 64, 0.2);
+            border-color: rgba(255, 125, 64, 0.35);
+        }
+
+        .password-extras {
+            margin-top: 1.5rem;
+            display: block;
+        }
+
+        .change-password-block,
+        .forgot-password-block {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .change-password-block h2,
+        .forgot-password-block h2 {
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .change-password-block p,
+        .forgot-password-block p {
+            margin-bottom: 1rem;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .link-btn {
+            margin-top: 1rem;
+            display: inline-block;
+        }
+
+        /* ===== SIDEBAR - DYNAMIC ===== */
+        .auth-sidebar {
+            background: var(--card-bg);
+            backdrop-filter: blur(18px);
+            border-radius: 32px;
+            padding: 2.2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+            transition: all 0.6s ease;
+            border: 1px solid var(--card-border);
+        }
+
+        .auth-sidebar.hashira-flame { border-color: #ff4d2e66; }
+        .auth-sidebar.hashira-water { border-color: #2e9eff66; }
+        .auth-sidebar.hashira-thunder { border-color: #ffd96666; }
+        .auth-sidebar.hashira-mist { border-color: #b8a9ff66; }
+        .auth-sidebar.hashira-wind { border-color: #5fdc7a66; }
+        .auth-sidebar.hashira-sun { border-color: #ffaa3366; }
+
+        /* ===== TABS ===== */
+        .auth-tabs {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.75rem;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.3rem;
+            border-radius: 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.9rem 1rem;
+            border: none;
+            border-radius: 40px;
+            background: transparent;
+            color: var(--muted);
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-btn:hover { color: #fff; }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #ff7d40, #e65a2e);
+            color: #fff;
+            box-shadow: 0 8px 25px rgba(255, 111, 55, 0.35);
+            transform: scale(1.02);
+        }
+
+        .tab-btn.active.hashira-flame { background: linear-gradient(135deg, #ff4d2e, #b52e1c); }
+        .tab-btn.active.hashira-water { background: linear-gradient(135deg, #2e9eff, #1a6bb5); }
+        .tab-btn.active.hashira-thunder { background: linear-gradient(135deg, #ffd966, #d4a830); }
+        .tab-btn.active.hashira-mist { background: linear-gradient(135deg, #b8a9ff, #7a6bb5); }
+        .tab-btn.active.hashira-wind { background: linear-gradient(135deg, #5fdc7a, #2b8a4b); }
+        .tab-btn.active.hashira-sun { background: linear-gradient(135deg, #ffaa33, #cc7a00); }
+
+        /* ===== PANELS ===== */
+        .auth-panel {
+            display: none;
+            animation: fadeSlide 0.4s ease both;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-panel.active { display: block; }
+
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateX(15px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .auth-panel h1 {
+            font-size: clamp(1.8rem, 2.5vw, 2.4rem);
+            margin: 0 0 0.5rem;
+            background: linear-gradient(135deg, #ffb88c, #ff7d40);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            transition: background 0.6s ease;
+        }
+
+        .auth-panel p {
+            color: var(--muted);
+            margin: 0 0 1.5rem;
+            line-height: 1.6;
+            transition: color 0.6s ease;
+        }
+
+        /* ===== FORM ===== */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            color: #ffb88c;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+            transition: color 0.6s ease;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ff7d40;
+            box-shadow: 0 0 20px rgba(255, 111, 55, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-group input::placeholder { color: #6a5e4e; }
+
+        .form-group select {
+            width: 100%;
+            padding: 0.95rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        .form-group select:focus {
+            outline: none;
+            border-color: #ff7d40;
+            box-shadow: 0 0 20px rgba(255, 111, 55, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .tab-helper {
+            margin: 0 0 1.5rem;
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .auth-submit {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 22px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 111, 55, 0.4);
+        }
+
+        .auth-submit:active { transform: scale(0.98); }
+
+        .auth-submit::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg) translateX(-100%);
+            transition: 0.6s;
+        }
+        .auth-submit:hover::after { transform: rotate(45deg) translateX(100%); }
+
+        .auth-submit.hashira-flame { background: linear-gradient(95deg, #b52e1c, #ff4d2e); }
+        .auth-submit.hashira-flame:hover { background: linear-gradient(95deg, #cf3a24, #ff6236); box-shadow: 0 10px 30px rgba(255, 77, 46, 0.4); }
+
+        .auth-submit.hashira-water { background: linear-gradient(95deg, #1a6bb5, #2e9eff); }
+        .auth-submit.hashira-water:hover { background: linear-gradient(95deg, #2a7bc5, #4aaeff); box-shadow: 0 10px 30px rgba(46, 158, 255, 0.4); }
+
+        .auth-submit.hashira-thunder { background: linear-gradient(95deg, #d4a830, #ffd966); }
+        .auth-submit.hashira-thunder:hover { background: linear-gradient(95deg, #e4b840, #ffe976); box-shadow: 0 10px 30px rgba(255, 217, 102, 0.4); }
+
+        .auth-submit.hashira-mist { background: linear-gradient(95deg, #7a6bb5, #b8a9ff); }
+        .auth-submit.hashira-mist:hover { background: linear-gradient(95deg, #8a7bc5, #c8b9ff); box-shadow: 0 10px 30px rgba(184, 169, 255, 0.4); }
+
+        .auth-submit.hashira-wind { background: linear-gradient(95deg, #2b8a4b, #5fdc7a); }
+        .auth-submit.hashira-wind:hover { background: linear-gradient(95deg, #3b9a5b, #6fec8a); box-shadow: 0 10px 30px rgba(95, 220, 122, 0.4); }
+
+        .auth-submit.hashira-sun { background: linear-gradient(95deg, #cc7a00, #ffaa33); }
+        .auth-submit.hashira-sun:hover { background: linear-gradient(95deg, #dc8a10, #ffba43); box-shadow: 0 10px 30px rgba(255, 170, 51, 0.5); }
+
+        /* ===== MESSAGE BOX ===== */
+        .message-box {
+            margin: 1rem 0 0;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            font-weight: 600;
+            display: none;
+            font-size: 0.9rem;
+        }
+        .message-box.show { display: block; }
+        .message-box.success { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .message-box.error { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .message-box.info { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.2); }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar-title {
+            font-size: 1.8rem;
+            line-height: 1.2;
+            margin: 0 0 1rem;
+            background: linear-gradient(135deg, #ffb88c, #ff7d40);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            transition: background 0.6s ease;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 1.5rem 0 0;
+            padding: 0;
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .feature-list li {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            padding: 0.6rem 0.8rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            transition: 0.2s;
+        }
+        .feature-list li:hover { background: rgba(255, 255, 255, 0.06); }
+
+        .feature-list li i {
+            width: 1.5rem;
+            text-align: center;
+            transition: color 0.6s ease;
+        }
+
+        .feature-list li i.hashira-flame { color: #ff4d2e; }
+        .feature-list li i.hashira-water { color: #2e9eff; }
+        .feature-list li i.hashira-thunder { color: #ffd966; }
+        .feature-list li i.hashira-mist { color: #b8a9ff; }
+        .feature-list li i.hashira-wind { color: #5fdc7a; }
+        .feature-list li i.hashira-sun { color: #ffaa33; }
+
+        .auth-note {
+            margin-top: 1.5rem;
+            color: var(--muted);
+            line-height: 1.6;
+            font-size: 0.9rem;
+            transition: color 0.6s ease;
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(10, 5, 20, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid #ff5e2e;
+            border-radius: 20px;
+            padding: 1rem 1.8rem;
+            color: #f0e6d8;
+            font-weight: 600;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.5s ease;
+            z-index: 999;
+            max-width: 400px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast i { margin-right: 12px; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 980px) {
+            .auth-layout { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 500px) {
+            .auth-card, .auth-sidebar { padding: 1.5rem; }
+            .auth-tabs .tab-btn { font-size: 0.8rem; padding: 0.7rem; }
+            .top-nav { padding: 0.6rem 1rem; flex-direction: column; gap: 0.5rem; }
+            .hashira-selector { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== ANIMATED BACKGROUND ===== -->
+<div class="bg-animation" id="bgAnimation"></div>
+
+<!-- ===== CURSOR GLOW ===== -->
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"><i class="fas fa-khanda"></i> <span id="toastMessage">Welcome, Slayer!</span></div>
+
+<!-- ===== NAVIGATION ===== -->
+<nav class="top-nav" id="topNav">
+    <a href="../../index.html" class="logo">
+        <i class="fas fa-dragon" id="logoIcon"></i>
+        <span id="logoText">STRUCT-LEARN</span>
+    </a>
+    <button type="button" class="back-button" onclick="goBackHome()"><i class="fas fa-arrow-left"></i> Back to Home</button>
+    <div class="hashira-selector" id="hashiraSelector">
+        <div class="hashira-option" data-hashira="flame" title="Flame Hashira">
+            <i class="fas fa-fire"></i>
+            <span class="tooltip">Flame</span>
+        </div>
+        <div class="hashira-option" data-hashira="water" title="Water Hashira">
+            <i class="fas fa-tint"></i>
+            <span class="tooltip">Water</span>
+        </div>
+        <div class="hashira-option" data-hashira="thunder" title="Thunder Hashira">
+            <i class="fas fa-bolt"></i>
+            <span class="tooltip">Thunder</span>
+        </div>
+        <div class="hashira-option" data-hashira="mist" title="Mist Hashira">
+            <i class="fas fa-cloud-moon"></i>
+            <span class="tooltip">Mist</span>
+        </div>
+        <div class="hashira-option" data-hashira="wind" title="Wind Hashira">
+            <i class="fas fa-wind"></i>
+            <span class="tooltip">Wind</span>
+        </div>
+        <div class="hashira-option" data-hashira="sun" title="Sun Breathing">
+            <i class="fas fa-sun"></i>
+            <span class="tooltip">Sun</span>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== AUTH PAGE ===== -->
+<div class="auth-page">
+    <div class="auth-layout">
+        <!-- Auth Card -->
+        <section class="auth-card" id="authCard">
+            <div class="auth-tabs">
+                <button type="button" id="authTabLogin" class="tab-btn active"><i class="fas fa-sign-in-alt"></i> Login</button>
+                <button type="button" id="authTabRegister" class="tab-btn"><i class="fas fa-user-plus"></i> Register</button>
+            </div>
+            <p class="tab-helper">Choose the right path: existing members sign in, or new recruits register and select a role that fits their learning journey.</p>
+
+            <!-- Login Panel -->
+            <div id="loginSection" class="auth-panel active">
+                <h1>Welcome back, Slayer ⚔️</h1>
+                <p>Sign in to continue your training with Struct-Learn and keep your progress synced.</p>
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="loginEmail"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="loginEmail" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword"><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="auth-submit" id="loginSubmit"><i class="fas fa-khanda"></i> Login & Enter Corps</button>
+                </form>
+                <div id="loginMessage" class="message-box"></div>
+
+                <div class="auth-actions">
+                    <button type="button" id="showChangePasswordBtn" class="secondary-btn"><i class="fas fa-key"></i> Change Password</button>
+                    <button type="button" id="showForgotPasswordBtn" class="secondary-btn"><i class="fas fa-question-circle"></i> Forgot Password</button>
+                </div>
+
+                <div id="passwordExtras" class="password-extras hidden-panel">
+                    <div class="change-password-block hidden-panel" id="changePasswordBlock">
+                        <h2>Change Password</h2>
+                        <p>Know your current password? Update it here to keep your account secure.</p>
+                        <form id="changePasswordForm" onsubmit="handleChangePassword(event)">
+                            <div class="form-group">
+                                <label for="changeEmail"><i class="fas fa-envelope"></i> Email</label>
+                                <input type="email" id="changeEmail" placeholder="you@example.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="currentPassword"><i class="fas fa-lock"></i> Current Password</label>
+                                <input type="password" id="currentPassword" placeholder="Enter current password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword"><i class="fas fa-key"></i> New Password</label>
+                                <input type="password" id="newPassword" placeholder="Enter new password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmNewPassword"><i class="fas fa-check-circle"></i> Confirm New Password</label>
+                                <input type="password" id="confirmNewPassword" placeholder="Confirm new password" required>
+                            </div>
+                            <button type="submit" class="auth-submit" id="changePasswordSubmit"><i class="fas fa-key"></i> Change Password</button>
+                        </form>
+                        <button type="button" class="link-btn" onclick="hidePasswordForms()">Cancel</button>
+                        <div id="changePasswordMessage" class="message-box"></div>
+                    </div>
+
+                    <div class="forgot-password-block hidden-panel" id="forgotPasswordBlock">
+                        <h2>Forgot Password</h2>
+                        <p>Reset your password using your registered email address.</p>
+                        <form id="forgotPasswordForm" onsubmit="handleForgotPassword(event)">
+                            <div class="form-group">
+                                <label for="forgotEmail"><i class="fas fa-envelope"></i> Email</label>
+                                <input type="email" id="forgotEmail" placeholder="you@example.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="forgotNewPassword"><i class="fas fa-key"></i> New Password</label>
+                                <input type="password" id="forgotNewPassword" placeholder="Enter new password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmForgotPassword"><i class="fas fa-check-circle"></i> Confirm New Password</label>
+                                <input type="password" id="confirmForgotPassword" placeholder="Confirm new password" required>
+                            </div>
+                            <button type="submit" class="auth-submit" id="forgotPasswordSubmit"><i class="fas fa-key"></i> Reset Password</button>
+                        </form>
+                        <button type="button" class="link-btn" onclick="hidePasswordForms()">Cancel</button>
+                        <div id="forgotPasswordMessage" class="message-box"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Register Panel -->
+            <div id="registerSection" class="auth-panel">
+                <h1>Create your account 🎯</h1>
+                <p>Register quickly and unlock quizzes, progress tracking, and personalized recommendations.</p>
+                <form id="registerForm" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label for="username"><i class="fas fa-user"></i> Username</label>
+                        <input type="text" id="username" placeholder="Your username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userRole"><i class="fas fa-user-shield"></i> Role</label>
+                        <select id="userRole" required>
+                            <option value="student">Student / Learner</option>
+                            <option value="mentor">Mentor</option>
+                            <option value="instructor">Instructor</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="registerEmail" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword"><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" id="registerPassword" placeholder="Create a password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword"><i class="fas fa-check-circle"></i> Confirm Password</label>
+                        <input type="password" id="confirmPassword" placeholder="Repeat your password" required>
+                    </div>
+                    <button type="submit" class="auth-submit" id="registerSubmit"><i class="fas fa-user-plus"></i> Register Now</button>
+                </form>
+                <div id="registerMessage" class="message-box"></div>
+            </div>
+        </section>
+
+        <!-- Sidebar -->
+        <aside class="auth-sidebar" id="authSidebar">
+            <h2 class="sidebar-title" id="sidebarTitle">One page. Two auth flows.</h2>
+            <p class="auth-note" id="sidebarNote">Switch instantly between login and registration without leaving the screen. This page gives you both forms together so access is faster and more intuitive.</p>
+            <ul class="feature-list">
+                <li><i id="f1" class="fas fa-code"></i> Login and register from one page</li>
+                <li><i id="f2" class="fas fa-user-plus"></i> Register with username, email, password</li>
+                <li><i id="f3" class="fas fa-rocket"></i> Quick redirect to home page after login</li>
+                <li><i id="f4" class="fas fa-shield-alt"></i> Inline input validation and messages</li>
+                <li><i id="f5" class="fas fa-bolt"></i> Live animated background</li>
+            </ul>
+        </aside>
+    </div>
+</div>
+
+<script src="/assets/js/api.js"></script>
+<script>
+    // ==================== HASHIRA DATA ====================
+    const hashiraData = {
+        flame: {
+            color: "#ff4d2e",
+            particle: "fire",
+            badge: "🔥 FLAME",
+            title: "Welcome back, Flame Slayer",
+            subtext: "Ignite your coding journey with the passion of Rengoku!"
+        },
+        water: {
+            color: "#2e9eff",
+            particle: "water",
+            badge: "🌊 WATER",
+            title: "Welcome back, Water Slayer",
+            subtext: "Flow through challenges with the calm precision of Giyu!"
+        },
+        thunder: {
+            color: "#ffd966",
+            particle: "thunder",
+            badge: "⚡ THUNDER",
+            title: "Welcome back, Thunder Slayer",
+            subtext: "Strike with lightning speed through every algorithm!"
+        },
+        mist: {
+            color: "#b8a9ff",
+            particle: "mist",
+            badge: "🌫️ MIST",
+            title: "Welcome back, Mist Slayer",
+            subtext: "See through the mist and master complex data structures!"
+        },
+        wind: {
+            color: "#5fdc7a",
+            particle: "wind",
+            badge: "💨 WIND",
+            title: "Welcome back, Wind Slayer",
+            subtext: "Cut through complexity with the relentless spirit of Sanemi!"
+        },
+        sun: {
+            color: "#ffaa33",
+            particle: "sun",
+            badge: "☀️ SUN",
+            title: "Welcome back, Sun Slayer",
+            subtext: "Radiate brilliance as you master every data structure!"
+        }
+    };
+
+    let currentHashira = "flame";
+
+    // ==================== BACKGROUND PARTICLES ====================
+    const bg = document.getElementById('bgAnimation');
+    let particleType = 'fire';
+
+    function createParticle() {
+        const particle = document.createElement('div');
+        particle.className = `bg-particle ${particleType}`;
+        const size = Math.random() * 8 + 3;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDuration = (Math.random() * 12 + 6) + 's';
+        particle.style.animationDelay = (Math.random() * 6) + 's';
+        bg.appendChild(particle);
+        setTimeout(() => { if(particle && particle.remove) particle.remove(); }, 18000);
+    }
+
+    function spawnParticles() {
+        for (let i = 0; i < 35; i++) setTimeout(() => createParticle(), i * 80);
+    }
+
+    // Orbs
+    const orbColors = ['#ff7d40', '#8b5cf6', '#10b981'];
+    orbColors.forEach((color, i) => {
+        const orb = document.createElement('div');
+        orb.className = 'bg-orb';
+        orb.style.width = (200 + Math.random() * 150) + 'px';
+        orb.style.height = orb.style.width;
+        orb.style.background = color;
+        orb.style.left = (10 + i * 30) + '%';
+        orb.style.top = (10 + i * 20) + '%';
+        orb.style.animationDelay = (i * 1.5) + 's';
+        bg.appendChild(orb);
+    });
+
+    spawnParticles();
+    setInterval(createParticle, 500);
+
+    // ==================== CURSOR GLOW ====================
+    const cursorGlow = document.getElementById('cursorGlow');
+    document.addEventListener('mousemove', (e) => {
+        cursorGlow.style.left = e.clientX + 'px';
+        cursorGlow.style.top = e.clientY + 'px';
+    });
+
+    // ==================== TOAST ====================
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toastMessage');
+        toastMsg.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(toast._timeout);
+        toast._timeout = setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function goBackHome() {
+        if (window.history.length > 1) {
+            window.history.back();
+            return;
+        }
+        window.location.href = '../../index.html';
+    }
+
+    // ==================== UPDATE HASHIRA THEME ====================
+    function updateHashiraTheme(hashiraKey) {
+        const data = hashiraData[hashiraKey];
+        if (!data) return;
+        
+        currentHashira = hashiraKey;
+        particleType = data.particle;
+
+        // Body
+        document.body.className = `hashira-${hashiraKey}`;
+
+        // Nav
+        document.getElementById('topNav').className = `top-nav hashira-${hashiraKey}`;
+        
+        // Logo
+        const logoIcon = document.getElementById('logoIcon');
+        logoIcon.style.color = data.color;
+        logoIcon.style.filter = `drop-shadow(0 0 12px ${data.color})`;
+        
+        // Hashira selector
+        document.getElementById('hashiraSelector').className = `hashira-selector hashira-${hashiraKey}`;
+
+        // Auth card
+        document.getElementById('authCard').className = `auth-card hashira-${hashiraKey}`;
+
+        // Sidebar
+        document.getElementById('authSidebar').className = `auth-sidebar hashira-${hashiraKey}`;
+
+        // Tab buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            if (btn.classList.contains('active')) {
+                btn.className = `tab-btn active hashira-${hashiraKey}`;
+            }
+        });
+
+        // Submit buttons
+        document.getElementById('loginSubmit').className = `auth-submit hashira-${hashiraKey}`;
+        document.getElementById('registerSubmit').className = `auth-submit hashira-${hashiraKey}`;
+
+        // Feature icons
+        document.querySelectorAll('.feature-list li i').forEach(icon => {
+            icon.className = icon.className.split(' ')[0] + ` hashira-${hashiraKey}`;
+        });
+
+        // Sidebar title
+        document.getElementById('sidebarTitle').style.background = `linear-gradient(135deg, ${data.color}, ${data.color}cc)`;
+        document.getElementById('sidebarTitle').style.webkitBackgroundClip = 'text';
+        document.getElementById('sidebarTitle').style.backgroundClip = 'text';
+        document.getElementById('sidebarTitle').style.color = 'transparent';
+
+        // Sidebar note
+        document.getElementById('sidebarNote').style.color = data.color;
+
+        // Cursor glow
+        cursorGlow.style.background = `radial-gradient(circle, ${data.color}66 0%, ${data.color}00 80%)`;
+
+        // Active hashira option
+        document.querySelectorAll('.hashira-option').forEach(opt => {
+            opt.classList.toggle('active', opt.getAttribute('data-hashira') === hashiraKey);
+            if (opt.classList.contains('active')) {
+                opt.style.color = data.color;
+                opt.style.borderColor = data.color;
+            } else {
+                opt.style.color = '';
+                opt.style.borderColor = '';
+            }
+        });
+
+        // Restart particles with new type
+        bg.innerHTML = '';
+        orbColors.forEach((color, i) => {
+            const orb = document.createElement('div');
+            orb.className = 'bg-orb';
+            orb.style.width = (200 + Math.random() * 150) + 'px';
+            orb.style.height = orb.style.width;
+            orb.style.background = color;
+            orb.style.left = (10 + i * 30) + '%';
+            orb.style.top = (10 + i * 20) + '%';
+            orb.style.animationDelay = (i * 1.5) + 's';
+            bg.appendChild(orb);
+        });
+        for (let i = 0; i < 35; i++) setTimeout(() => createParticle(), i * 80);
+    }
+
+    // ==================== HASHIRA SELECTOR CLICKS ====================
+    document.querySelectorAll('.hashira-option').forEach(option => {
+        option.addEventListener('click', () => {
+            const hashiraVal = option.getAttribute('data-hashira');
+            if (hashiraVal && hashiraVal !== currentHashira) {
+                updateHashiraTheme(hashiraVal);
+                showToast(`⚔️ ${hashiraVal.charAt(0).toUpperCase() + hashiraVal.slice(1)} Hashira guides your training!`);
+            }
+        });
+    });
+
+    // ==================== AUTH TABS ====================
+    const loginTab = document.getElementById('authTabLogin');
+    const registerTab = document.getElementById('authTabRegister');
+    const loginSection = document.getElementById('loginSection');
+    const registerSection = document.getElementById('registerSection');
+    const loginMessage = document.getElementById('loginMessage');
+    const registerMessage = document.getElementById('registerMessage');
+    const roleSelect = document.getElementById('userRole');
+    const sidebarTitle = document.getElementById('sidebarTitle');
+    const sidebarNote = document.getElementById('sidebarNote');
+
+    function updateSidebarContent(tab) {
+        if (!sidebarTitle || !sidebarNote) return;
+
+        if (tab === 'login') {
+            sidebarTitle.textContent = 'Returning Slayer';
+            sidebarNote.textContent = 'Login now to continue your progress, access saved quizzes, and jump back into your training.';
+        } else {
+            sidebarTitle.textContent = 'New Recruit';
+            sidebarNote.textContent = 'Register with the Corps and choose a role to personalize your experience from day one.';
+        }
+    }
+
+    function setActiveTab(tab) {
+        loginTab.classList.toggle('active', tab === 'login');
+        registerTab.classList.toggle('active', tab === 'register');
+        loginSection.classList.toggle('active', tab === 'login');
+        registerSection.classList.toggle('active', tab === 'register');
+        loginMessage.classList.remove('show');
+        registerMessage.classList.remove('show');
+
+        if (tab === 'login') {
+            loginTab.className = `tab-btn active hashira-${currentHashira}`;
+            registerTab.className = `tab-btn`;
+        } else {
+            registerTab.className = `tab-btn active hashira-${currentHashira}`;
+            loginTab.className = `tab-btn`;
+        }
+
+        updateSidebarContent(tab);
+        window.location.hash = tab === 'register' ? '#register' : '#login';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loginTab.addEventListener('click', () => setActiveTab('login'));
+        registerTab.addEventListener('click', () => setActiveTab('register'));
+
+        const showChangePasswordBtn = document.getElementById('showChangePasswordBtn');
+        const showForgotPasswordBtn = document.getElementById('showForgotPasswordBtn');
+
+        if (showChangePasswordBtn) {
+            showChangePasswordBtn.addEventListener('click', () => showPasswordForm('change'));
+        }
+        if (showForgotPasswordBtn) {
+            showForgotPasswordBtn.addEventListener('click', () => showPasswordForm('forgot'));
+        }
+
+        const initialTab = window.location.hash === '#register' ? 'register' : 'login';
+        setActiveTab(initialTab);
+    });
+
+    // ==================== LOGIN HANDLER ====================
+    async function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value.trim();
+        const submitButton = document.getElementById('loginSubmit');
+
+        if (!email || !password) {
+            showMessage(loginMessage, 'Please fill in all fields.', 'error');
+            return;
+        }
+
+        if (!email.includes('@')) {
+            showMessage(loginMessage, 'Please enter a valid email address.', 'error');
+            return;
+        }
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Signing in...';
+        }
+
+        try {
+            if (typeof Auth === 'undefined') {
+                throw new Error('Auth service unavailable. Make sure the backend is running.');
+            }
+            const response = await Auth.login({ email, password });
+            localStorage.setItem('token', response.token);
+            showMessage(loginMessage, '✅ Login successful! Redirecting to home page...', 'success');
+            setTimeout(() => {
+                window.location.href = '../../index.html';
+            }, 900);
+        } catch (error) {
+            console.error('Login error:', error);
+            showMessage(loginMessage, 'Login failed: ' + (error.message || 'Please try again.'), 'error');
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Login & Enter Corps';
+            }
+        }
+    }
+
+    // ==================== REGISTER HANDLER ====================
+    async function handleRegister(e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value.trim();
+        const email = document.getElementById('registerEmail').value.trim();
+        const password = document.getElementById('registerPassword').value;
+        const confirm = document.getElementById('confirmPassword').value;
+        const role = roleSelect ? roleSelect.value : 'student';
+        const submitButton = document.getElementById('registerSubmit');
+
+        if (!username || !email || !password || !confirm) {
+            showMessage(registerMessage, 'Please fill in all fields.', 'error');
+            return;
+        }
+
+        if (username.length < 3) {
+            showMessage(registerMessage, 'Username must be at least 3 characters.', 'error');
+            return;
+        }
+
+        if (!email.includes('@')) {
+            showMessage(registerMessage, 'Please enter a valid email address.', 'error');
+            return;
+        }
+
+        if (password.length < 6) {
+            showMessage(registerMessage, 'Password must be at least 6 characters.', 'error');
+            return;
+        }
+
+        if (password !== confirm) {
+            showMessage(registerMessage, 'Passwords do not match!', 'error');
+            return;
+        }
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Registering...';
+        }
+
+        try {
+            if (typeof Auth === 'undefined') {
+                throw new Error('Auth service unavailable. Make sure the backend is running.');
+            }
+            const response = await Auth.register({ username, email, password, role });
+            showMessage(registerMessage, response.message || '🎉 Registration successful! You can now login.', 'success');
+
+            document.getElementById('username').value = '';
+            document.getElementById('registerEmail').value = '';
+            document.getElementById('registerPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+
+            setTimeout(() => {
+                setActiveTab('login');
+                showMessage(loginMessage, '✅ Account created! Please login.', 'success');
+            }, 1200);
+        } catch (error) {
+            console.error('Registration error:', error);
+            showMessage(registerMessage, 'Registration failed: ' + (error.message || 'Please try again.'), 'error');
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Register Now';
+            }
+        }
+    }
+
+    // ==================== CHANGE PASSWORD HANDLER ====================
+    async function handleChangePassword(e) {
+        e.preventDefault();
+
+        const email = document.getElementById('changeEmail').value.trim();
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+        const submitButton = document.getElementById('changePasswordSubmit');
+        const changePasswordMessage = document.getElementById('changePasswordMessage');
+
+        if (changePasswordMessage) {
+            changePasswordMessage.textContent = '';
+            changePasswordMessage.className = 'message-box';
+        }
+        console.log('Submitting password change request', { email, currentPassword, newPassword });
+
+        if (!email || !currentPassword || !newPassword || !confirmNewPassword) {
+            showMessage(changePasswordMessage, 'Please fill in all fields.', 'error');
+            return;
+        }
+
+        if (!email.includes('@')) {
+            showMessage(changePasswordMessage, 'Please enter a valid email address.', 'error');
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            showMessage(changePasswordMessage, 'New password must be at least 6 characters.', 'error');
+            return;
+        }
+
+        if (newPassword !== confirmNewPassword) {
+            showMessage(changePasswordMessage, 'New passwords do not match.', 'error');
+            return;
+        }
+
+        if (currentPassword === newPassword) {
+            showMessage(changePasswordMessage, 'New password must be different from the current password.', 'error');
+            return;
+        }
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Updating password...';
+        }
+
+        try {
+            const response = await Auth.changePassword({ email, currentPassword, newPassword });
+            showMessage(changePasswordMessage, response.message || 'Password changed successfully.', 'success');
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmNewPassword').value = '';
+            hidePasswordForms();
+            showToast('✅ Password changed successfully. Use your new password the next time you login.');
+        } catch (error) {
+            console.error('Change password error:', error);
+            showMessage(changePasswordMessage, 'Password change failed: ' + (error.message || 'Please try again.'), 'error');
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Change Password';
+            }
+        }
+    }
+
+    // ==================== FORGOT PASSWORD HANDLER ====================
+    async function handleForgotPassword(e) {
+        e.preventDefault();
+
+        const email = document.getElementById('forgotEmail').value.trim();
+        const newPassword = document.getElementById('forgotNewPassword').value;
+        const confirmNewPassword = document.getElementById('confirmForgotPassword').value;
+        const submitButton = document.getElementById('forgotPasswordSubmit');
+        const forgotPasswordMessage = document.getElementById('forgotPasswordMessage');
+
+        if (forgotPasswordMessage) {
+            forgotPasswordMessage.textContent = '';
+            forgotPasswordMessage.className = 'message-box';
+        }
+        console.log('Submitting forgot-password request', { email, newPassword });
+
+        if (!email || !newPassword || !confirmNewPassword) {
+            showMessage(forgotPasswordMessage, 'Please fill in all fields.', 'error');
+            return;
+        }
+
+        if (!email.includes('@')) {
+            showMessage(forgotPasswordMessage, 'Please enter a valid email address.', 'error');
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            showMessage(forgotPasswordMessage, 'New password must be at least 6 characters.', 'error');
+            return;
+        }
+
+        if (newPassword !== confirmNewPassword) {
+            showMessage(forgotPasswordMessage, 'New passwords do not match.', 'error');
+            return;
+        }
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Resetting password...';
+        }
+
+        try {
+            const response = await Auth.forgotPassword({ email, newPassword });
+            showMessage(forgotPasswordMessage, response.message || 'Password reset successful.', 'success');
+            document.getElementById('forgotEmail').value = '';
+            document.getElementById('forgotNewPassword').value = '';
+            document.getElementById('confirmForgotPassword').value = '';
+            hidePasswordForms();
+            showToast('✅ Password reset successful. Login with your new password now.');
+        } catch (error) {
+            console.error('Forgot password error:', error);
+            showMessage(forgotPasswordMessage, 'Password reset failed: ' + (error.message || 'Please try again.'), 'error');
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Reset Password';
+            }
+        }
+    }
+
+    function showPasswordForm(type) {
+        const passwordExtras = document.getElementById('passwordExtras');
+        const changeBlock = document.getElementById('changePasswordBlock');
+        const forgotBlock = document.getElementById('forgotPasswordBlock');
+        const changeButton = document.getElementById('showChangePasswordBtn');
+        const forgotButton = document.getElementById('showForgotPasswordBtn');
+        const changePasswordMessage = document.getElementById('changePasswordMessage');
+        const forgotPasswordMessage = document.getElementById('forgotPasswordMessage');
+
+        if (!passwordExtras || !changeBlock || !forgotBlock || !changeButton || !forgotButton) return;
+
+        if (changePasswordMessage) {
+            changePasswordMessage.textContent = '';
+            changePasswordMessage.className = 'message-box';
+        }
+        if (forgotPasswordMessage) {
+            forgotPasswordMessage.textContent = '';
+            forgotPasswordMessage.className = 'message-box';
+        }
+
+        passwordExtras.classList.remove('hidden-panel');
+        changeBlock.classList.add('hidden-panel');
+        forgotBlock.classList.add('hidden-panel');
+        changeButton.classList.remove('active');
+        forgotButton.classList.remove('active');
+
+        if (type === 'change') {
+            changeBlock.classList.remove('hidden-panel');
+            changeButton.classList.add('active');
+        } else if (type === 'forgot') {
+            forgotBlock.classList.remove('hidden-panel');
+            forgotButton.classList.add('active');
+        }
+    }
+
+    function hidePasswordForms() {
+        const passwordExtras = document.getElementById('passwordExtras');
+        const changeBlock = document.getElementById('changePasswordBlock');
+        const forgotBlock = document.getElementById('forgotPasswordBlock');
+        const changeButton = document.getElementById('showChangePasswordBtn');
+        const forgotButton = document.getElementById('showForgotPasswordBtn');
+
+        if (!passwordExtras || !changeBlock || !forgotBlock || !changeButton || !forgotButton) return;
+
+        passwordExtras.classList.add('hidden-panel');
+        changeBlock.classList.add('hidden-panel');
+        forgotBlock.classList.add('hidden-panel');
+        changeButton.classList.remove('active');
+        forgotButton.classList.remove('active');
+    }
+
+    // ==================== MESSAGE HELPER ====================
+    function showMessage(el, text, type = 'info') {
+        el.textContent = text;
+        el.className = 'message-box show ' + type;
+    }
+
+    // ==================== EXPOSE ====================
+    window.handleLogin = handleLogin;
+    window.handleRegister = handleRegister;
+    window.handleChangePassword = handleChangePassword;
+    window.handleForgotPassword = handleForgotPassword;
+    window.showPasswordForm = showPasswordForm;
+    window.hidePasswordForms = hidePasswordForms;
+
+    // ==================== INIT ====================
+    updateHashiraTheme('flame');
+    console.log('%c⚔️ STRUCT-LEARN · Demon Slayer Auth Page ⚔️', 'color: #ff7540; font-size: 14px; font-weight: bold;');
+    console.log('%cFlame • Water • Thunder • Mist • Wind • Sun — Total Concentration!', 'color: #ffb347; font-size: 12px;');
+</script>
+</body>
+</html>

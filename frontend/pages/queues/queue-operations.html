@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Queue Operations - Interactive | Struct-Learn Dojo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 20% 30%, #0a2e1a 0%, #0a0512 45%, #020006 100%);
+            color: #f0e9e1;
+            min-height: 100vh;
+        }
+
+        /* ===== ANIMATED BACKGROUND ===== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(52, 211, 153, 0.3), rgba(52, 211, 153, 0));
+            border-radius: 50%;
+            animation: floatParticle linear infinite;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: orbPulse 6s ease-in-out infinite;
+        }
+
+        @keyframes orbPulse {
+            0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.3; }
+            50% { transform: scale(1.2) translate(50px, -30px); opacity: 0.6; }
+        }
+
+        /* ===== NAVIGATION ===== */
+        .top-nav {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            border-bottom: 1px solid rgba(52, 211, 153, 0.3);
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+            color: #34d399;
+            filter: drop-shadow(0 0 10px rgba(52, 211, 153, 0.4));
+        }
+
+        .logo span {
+            font-weight: 800;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #34d399, #10b981);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #34d399;
+        }
+
+        .nav-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #34d399, #10b981);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+            position: relative;
+            z-index: 5;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #34d399;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .back-link:hover {
+            background: rgba(52, 211, 153, 0.2);
+            transform: translateX(-4px);
+        }
+
+        /* Hero */
+        .hero-section {
+            background: rgba(10, 5, 25, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            border-radius: 32px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(52, 211, 153, 0.1), transparent);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            background: rgba(52, 211, 153, 0.15);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            border-radius: 40px;
+            font-size: 0.8rem;
+            color: #34d399;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-section h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #34d399, #10b981);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .hero-section p {
+            color: #cbd5e1;
+            max-width: 600px;
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .impl-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .impl-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: 999px;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #f0e9e1;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+
+        .impl-link:hover {
+            background: rgba(52, 211, 153, 0.14);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 18px rgba(16, 185, 129, 0.12);
+        }
+
+        /* ===== QUEUE TYPE SELECTOR ===== */
+        .type-selector {
+            display: flex;
+            gap: 0.6rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.3rem;
+            border-radius: 60px;
+        }
+
+        .type-btn {
+            padding: 0.6rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-radius: 40px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .type-btn.active {
+            background: linear-gradient(135deg, #34d399, #10b981);
+            color: #0a0512;
+            box-shadow: 0 8px 25px rgba(52, 211, 153, 0.3);
+        }
+
+        .type-btn:hover:not(.active) {
+            color: #f0e9e1;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .type-description {
+            display: none;
+        }
+
+        /* ===== QUEUE VISUALIZATION ===== */
+        .vis-area {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 2px dashed rgba(52, 211, 153, 0.15);
+            min-height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .queue-visual {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .queue-element {
+            padding: 0.7rem 1.2rem;
+            background: linear-gradient(135deg, #34d399, #10b981);
+            border-radius: 10px;
+            font-weight: 700;
+            color: #0a0512;
+            min-width: 55px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: scale(0.8) translateX(-10px); }
+            to { opacity: 1; transform: scale(1) translateX(0); }
+        }
+
+        .queue-arrow {
+            color: #34d399;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .queue-front-label, .queue-rear-label {
+            font-size: 0.65rem;
+            color: #34d399;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.15rem 0.5rem;
+            border-radius: 10px;
+        }
+
+        .empty-message {
+            color: #64748b;
+            font-style: italic;
+            padding: 1rem;
+        }
+
+        /* ===== CONTROLS ===== */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: rgba(10, 5, 25, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(52, 211, 153, 0.15);
+            border-radius: 20px;
+            padding: 1.5rem;
+        }
+
+        .card h2 {
+            color: #34d399;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 0.7rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #34d399;
+            box-shadow: 0 0 20px rgba(52, 211, 153, 0.15);
+        }
+
+        .input-group input::placeholder {
+            color: #64748b;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1rem;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-enqueue {
+            background: linear-gradient(135deg, #34d399, #10b981);
+            color: #0a0512;
+        }
+
+        .btn-enqueue:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 211, 153, 0.3);
+        }
+
+        .btn-dequeue {
+            background: linear-gradient(135deg, #f87171, #ef4444);
+            color: white;
+        }
+
+        .btn-dequeue:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-front {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #0a0512;
+        }
+
+        .btn-front:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-rear {
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            color: white;
+        }
+
+        .btn-rear:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-size {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+
+        .btn-size:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #64748b, #475569);
+            color: white;
+        }
+
+        .btn-reset:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ===== STATUS ===== */
+        .status-panel {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #34d399;
+        }
+
+        .status-message {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .status-details {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 0.2rem;
+        }
+
+        /* ===== INFO CARDS ===== */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.6rem;
+        }
+
+        .info-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.6rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .implementation-links .btn {
+            min-width: 160px;
+        }
+
+        .info-card h4 {
+            color: #94a3b8;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-card p {
+            color: #34d399;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-top: 0.2rem;
+        }
+
+        /* ===== LOG ===== */
+        .log-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 0.8rem;
+            max-height: 150px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            margin-top: 0.8rem;
+        }
+
+        .log-container::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .log-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .log-container::-webkit-scrollbar-thumb {
+            background: #34d399;
+            border-radius: 10px;
+        }
+
+        .log-entry {
+            color: #94a3b8;
+            padding: 0.2rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .log-entry .time {
+            color: #64748b;
+        }
+
+        .log-entry .op-enqueue { color: #34d399; }
+        .log-entry .op-dequeue { color: #f87171; }
+        .log-entry .op-front { color: #fbbf24; }
+        .log-entry .op-rear { color: #60a5fa; }
+        .log-entry .op-size { color: #8b5cf6; }
+        .log-entry .op-error { color: #f87171; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            .btn-grid {
+                grid-template-columns: 1fr;
+            }
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-section h1 {
+                font-size: 1.8rem;
+            }
+            .type-selector {
+                border-radius: var(--border-radius);
+                flex-direction: column;
+            }
+            .type-btn {
+                text-align: center;
+            }
+            .queue-element {
+                min-width: 45px;
+                padding: 0.5rem 0.8rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== ANIMATED BACKGROUND ===== -->
+<div class="bg-animation" id="bgAnimation"></div>
+
+<!-- ===== NAVIGATION ===== -->
+<nav class="top-nav">
+    <div class="logo">
+        <i class="fas fa-queue"></i>
+        <span>STRUCT-LEARN</span>
+    </div>
+    <div class="nav-links">
+        <a href="#"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="#"><i class="fas fa-code"></i> Topics</a>
+        <a href="#"><i class="fas fa-trophy"></i> Achievements</a>
+        <div class="nav-avatar">U</div>
+    </div>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="main-container">
+    <a class="back-link" href="queues.html">
+        <i class="fas fa-arrow-left"></i> Back to Queues
+    </a>
+
+    <!-- Hero -->
+    <div class="hero-section">
+        <div class="hero-content">
+            <div class="hero-badge"><i class="fas fa-queue"></i> Interactive Practice</div>
+            <h1><i class="fas fa-hand-pointer"></i> Queue Operations Dojo</h1>
+            <p>Enqueue, Dequeue, and Peek — practice queue operations with live visualization and instant feedback.</p>
+            <div class="impl-links">
+                <a class="impl-link" href="linearqueue.html"><i class="fas fa-arrows-alt-h"></i> Linear Queue</a>
+                <a class="impl-link" href="circular-queue.html"><i class="fas fa-sync-alt"></i> Circular Queue</a>
+                <a class="impl-link" href="priorityqueue.html"><i class="fas fa-sort-amount-down"></i> Priority Queue</a>
+                <a class="impl-link" href="Dequeue-queue.html"><i class="fas fa-arrows-left-right"></i> Deque</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Queue Type Selector -->
+    <div class="type-selector">
+        <button class="type-btn active" data-type="linear" aria-label="Linear Queue"><i class="fas fa-arrows-alt-h"></i></button>
+        <button class="type-btn" data-type="circular" aria-label="Circular Queue"><i class="fas fa-sync-alt"></i></button>
+        <button class="type-btn" data-type="priority" aria-label="Priority Queue"><i class="fas fa-sort-amount-down"></i></button>
+        <button class="type-btn" data-type="deque" aria-label="Deque"><i class="fas fa-arrows-left-right"></i></button>
+    </div>
+
+    <div class="type-description" id="typeDescription"></div>
+
+    <!-- Visualization -->
+    <div class="vis-area">
+        <div class="queue-visual" id="queueDisplay">
+            <div class="empty-message">⚔️ Queue is empty. Enqueue some elements!</div>
+        </div>
+    </div>
+
+    <!-- Controls Grid -->
+    <div class="controls-grid">
+        <!-- Operations Panel -->
+        <div class="card">
+            <h2><i class="fas fa-gamepad"></i> Operations</h2>
+
+            <div class="input-group">
+                <input type="number" id="valueInput" placeholder="Enter value (1-100)" min="1" max="100">
+                <button class="btn btn-enqueue" id="enqueueBtn"><i class="fas fa-plus-circle"></i> Enqueue</button>
+            </div>
+
+            <div class="btn-grid">
+                <button class="btn btn-dequeue" id="dequeueBtn" disabled><i class="fas fa-arrow-left"></i> Dequeue</button>
+                <button class="btn btn-front" id="frontBtn" disabled><i class="fas fa-eye"></i> Front</button>
+                <button class="btn btn-rear" id="rearBtn" disabled><i class="fas fa-arrow-right"></i> Rear</button>
+                <button class="btn btn-size" id="sizeBtn"><i class="fas fa-ruler"></i> Size</button>
+                <button class="btn btn-reset" id="resetBtn" style="grid-column: span 2;"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+
+            <div class="status-panel">
+                <div class="status-message" id="statusMessage">⚔️ Queue is empty. Ready to enqueue.</div>
+                <div class="status-details" id="statusDetails"></div>
+            </div>
+        </div>
+
+        <!-- Info & Log Panel -->
+        <div class="card">
+            <h2><i class="fas fa-chart-bar"></i> Queue Information</h2>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>Size</h4>
+                    <p id="sizeDisplay">0</p>
+                </div>
+                <div class="info-card">
+                    <h4>Max Capacity</h4>
+                    <p id="maxSizeDisplay">10</p>
+                </div>
+                <div class="info-card">
+                    <h4>Empty?</h4>
+                    <p id="isEmptyDisplay">Yes</p>
+                </div>
+                <div class="info-card">
+                    <h4>Full?</h4>
+                    <p id="isFullDisplay">No</p>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 1.2rem; font-size: 1rem;"><i class="fas fa-history"></i> Operation Log</h2>
+            <div class="log-container" id="operationLog">
+                <div class="log-entry">⚔️ No operations yet. Start enqueuing!</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==================== BACKGROUND ANIMATION ====================
+    const bg = document.getElementById('bgAnimation');
+
+    for (let i = 0; i < 35; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'bg-particle';
+        const size = Math.random() * 8 + 3;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDuration = (Math.random() * 12 + 8) + 's';
+        particle.style.animationDelay = (Math.random() * 6) + 's';
+        bg.appendChild(particle);
+    }
+
+    const orbColors = ['#34d399', '#10b981', '#059669'];
+    orbColors.forEach((color, i) => {
+        const orb = document.createElement('div');
+        orb.className = 'bg-orb';
+        orb.style.width = (200 + Math.random() * 150) + 'px';
+        orb.style.height = orb.style.width;
+        orb.style.background = color;
+        orb.style.left = (10 + i * 30) + '%';
+        orb.style.top = (10 + i * 20) + '%';
+        orb.style.animationDelay = (i * 1.5) + 's';
+        bg.appendChild(orb);
+    });
+
+    // ==================== QUEUE OPERATIONS ====================
+    const typeDescriptions = {
+        linear: "<strong>Linear Queue:</strong> Elements are added at the rear and removed from the front following FIFO principle. Simple but may waste memory as front pointer advances.",
+        circular: "<strong>Circular Queue:</strong> Last element points back to first, reusing memory efficiently. Rear and front pointers wrap around at the end.",
+        priority: "<strong>Priority Queue:</strong> Elements are dequeued based on priority rather than insertion order. Higher priority elements are removed first.",
+        deque: "<strong>Deque (Double-Ended Queue):</strong> Elements can be added or removed from both front and rear. Combines advantages of both queues and stacks."
+    };
+
+    let currentType = 'linear';
+
+    // Type buttons
+    document.querySelectorAll('.type-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentType = this.getAttribute('data-type');
+            document.getElementById('typeDescription').innerHTML = typeDescriptions[currentType];
+            resetQueue();
+        });
+    });
+
+    // Queue state
+    let queue = [];
+    const MAX_SIZE = 10;
+    let logs = [];
+
+    // DOM Elements
+    const queueDisplay = document.getElementById('queueDisplay');
+    const statusMessage = document.getElementById('statusMessage');
+    const statusDetails = document.getElementById('statusDetails');
+    const valueInput = document.getElementById('valueInput');
+    const enqueueBtn = document.getElementById('enqueueBtn');
+    const dequeueBtn = document.getElementById('dequeueBtn');
+    const frontBtn = document.getElementById('frontBtn');
+    const rearBtn = document.getElementById('rearBtn');
+    const sizeBtn = document.getElementById('sizeBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const logContainer = document.getElementById('operationLog');
+
+    function renderQueue() {
+        queueDisplay.innerHTML = '';
+        if (queue.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'empty-message';
+            empty.textContent = '⚔️ Queue is empty. Enqueue some elements!';
+            queueDisplay.appendChild(empty);
+        } else {
+            queue.forEach((val, idx) => {
+                const el = document.createElement('div');
+                el.className = 'queue-element';
+                if (idx === 0) {
+                    el.style.background = 'linear-gradient(135deg, #fbbf24, #f59e0b)';
+                    el.style.color = '#0a0512';
+                }
+                if (idx === queue.length - 1) {
+                    el.style.borderColor = '#fbbf24';
+                }
+                el.textContent = val;
+                queueDisplay.appendChild(el);
+                if (idx < queue.length - 1) {
+                    const arrow = document.createElement('div');
+                    arrow.className = 'queue-arrow';
+                    arrow.textContent = '→';
+                    queueDisplay.appendChild(arrow);
+                }
+            });
+        }
+        updateInfo();
+        updateButtons();
+    }
+
+    function updateStatus(msg, color = '#94a3b8', details = '') {
+        statusMessage.textContent = msg;
+        statusMessage.style.color = color;
+        statusDetails.textContent = details;
+    }
+
+    function updateInfo() {
+        document.getElementById('sizeDisplay').textContent = queue.length;
+        document.getElementById('maxSizeDisplay').textContent = MAX_SIZE;
+        document.getElementById('isEmptyDisplay').textContent = queue.length === 0 ? 'Yes' : 'No';
+        document.getElementById('isFullDisplay').textContent = queue.length === MAX_SIZE ? 'Yes' : 'No';
+    }
+
+    function updateButtons() {
+        enqueueBtn.disabled = queue.length >= MAX_SIZE;
+        dequeueBtn.disabled = queue.length === 0;
+        frontBtn.disabled = queue.length === 0;
+        rearBtn.disabled = queue.length === 0;
+    }
+
+    function logOperation(type, message) {
+        const timestamp = new Date().toLocaleTimeString();
+        const logClass = `op-${type}`;
+        const entry = `<div class="log-entry"><span class="time">[${timestamp}]</span> <span class="${logClass}">${message}</span></div>`;
+        logs.unshift(entry);
+        if (logs.length > 12) logs.pop();
+        logContainer.innerHTML = logs.join('');
+    }
+
+    function enqueue() {
+        const value = parseInt(valueInput.value);
+        if (isNaN(value) || value < 1 || value > 100) {
+            updateStatus('⚠️ Invalid! Enter a number between 1-100', '#f87171');
+            return;
+        }
+        if (queue.length >= MAX_SIZE) {
+            updateStatus('⚠️ Queue Overflow! Max capacity reached.', '#f87171');
+            logOperation('error', `Enqueue failed - Queue full (size: ${queue.length})`);
+            return;
+        }
+
+        if (currentType === 'priority') {
+            let inserted = false;
+            for (let i = 0; i < queue.length; i++) {
+                if (value > queue[i]) {
+                    queue.splice(i, 0, value);
+                    inserted = true;
+                    break;
+                }
+            }
+            if (!inserted) queue.push(value);
+        } else {
+            queue.push(value);
+        }
+
+        valueInput.value = '';
+        updateStatus(`✅ Enqueued: ${value}`, '#34d399', `Queue size: ${queue.length}`);
+        logOperation('enqueue', `Enqueued ${value} (size: ${queue.length})`);
+        renderQueue();
+    }
+
+    function dequeue() {
+        if (queue.length === 0) {
+            updateStatus('⚠️ Queue Underflow! Nothing to dequeue.', '#f87171');
+            return;
+        }
+        const value = queue.shift();
+        updateStatus(`🗑️ Dequeued: ${value}`, '#fbbf24', `Queue size: ${queue.length}`);
+        logOperation('dequeue', `Dequeued ${value} (size: ${queue.length})`);
+        renderQueue();
+    }
+
+    function getFront() {
+        if (queue.length === 0) {
+            updateStatus('⚠️ Queue is empty! Nothing to peek.', '#f87171');
+            return;
+        }
+        const value = queue[0];
+        updateStatus(`👀 Front element: ${value}`, '#fbbf24', `Position: 1`);
+        logOperation('front', `Front: ${value}`);
+    }
+
+    function getRear() {
+        if (queue.length === 0) {
+            updateStatus('⚠️ Queue is empty! Nothing to peek.', '#f87171');
+            return;
+        }
+        const value = queue[queue.length - 1];
+        updateStatus(`👀 Rear element: ${value}`, '#60a5fa', `Position: ${queue.length}`);
+        logOperation('rear', `Rear: ${value}`);
+    }
+
+    function getSize() {
+        const size = queue.length;
+        updateStatus(`📏 Queue Size: ${size} / ${MAX_SIZE}`, '#8b5cf6', `Empty: ${size === 0 ? 'Yes' : 'No'} | Full: ${size === MAX_SIZE ? 'Yes' : 'No'}`);
+        logOperation('size', `Size check: ${size} elements`);
+    }
+
+    function resetQueue() {
+        queue = [];
+        valueInput.value = '';
+        updateStatus('🔄 Queue reset. Ready to enqueue.', '#94a3b8');
+        logs = [];
+        logContainer.innerHTML = '<div class="log-entry">⚔️ Queue reset. Ready for operations.</div>';
+        renderQueue();
+    }
+
+    // Event Listeners
+    enqueueBtn.addEventListener('click', enqueue);
+    dequeueBtn.addEventListener('click', dequeue);
+    frontBtn.addEventListener('click', getFront);
+    rearBtn.addEventListener('click', getRear);
+    sizeBtn.addEventListener('click', getSize);
+    resetBtn.addEventListener('click', resetQueue);
+
+    valueInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') enqueue();
+    });
+
+    // Initialize
+    renderQueue();
+    updateStatus('⚔️ Queue is empty. Ready to enqueue.', '#94a3b8');
+
+    console.log('%c📚 QUEUE OPERATIONS DOJO 📚\nMaster FIFO operations with interactive visualization!', 'color: #34d399; font-size: 14px; font-weight: bold;');
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+/* Dark/Light Theme Styles */
+
+/* Light Theme (default) */
+:root {
+    --text-color: #333;
+    --bg-color: #fff;
+    --border-color: #ddd;
+}
+
+body {
+    color: var(--text-color);
+    background-color: var(--bg-color);
+}
+
+/* Dark Theme */
+body.dark-theme {
+    --text-color: #f0f0f0;
+    --bg-color: #1a1a1a;
+    --border-color: #444;
+}
+
+body.dark-theme {
+    color: var(--text-color);
+    background-color: var(--bg-color);
+}
+
+body.dark-theme a {
+    color: #66b3ff;
+}
+
+body.dark-theme a:hover {
+    color: #99ccff;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--primary-color);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 1000;
+}

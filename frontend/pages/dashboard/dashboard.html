@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Struct-Learn | Hashira Training Dojo - DSA Progress</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 20% 30%, #0a0512, #020006);
+            color: #f0e9e1;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Clean background - no animations */
+        .static-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0515 100%);
+        }
+
+        /* Main content overlay */
+        .main-wrapper {
+            position: relative;
+            z-index: 30;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .demon-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 3rem;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 80, 40, 0.6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            filter: drop-shadow(0 0 8px #ff4d1e);
+            color: #e34d2b;
+        }
+
+        .logo-text {
+            font-weight: 800;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #f7b42c, #fc575e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo-sub {
+            font-size: 0.7rem;
+            color: #ffb347;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #f0e6d8;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #ff8c5a;
+        }
+
+        /* Layout */
+        .dashboard-layout {
+            display: flex;
+            max-width: 1400px;
+            margin: 1.5rem auto;
+            padding: 0 2rem;
+            gap: 2rem;
+        }
+
+        /* Sidebar - Hashira Rank Panel */
+        .hashira-sidebar {
+            width: 300px;
+            background: rgba(10, 5, 20, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
+            border: 1px solid rgba(255, 90, 50, 0.5);
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .slayer-profile {
+            text-align: center;
+        }
+
+        .slayer-avatar {
+            font-size: 3.5rem;
+            color: #ff8c5a;
+            margin-bottom: 0.5rem;
+        }
+
+        .slayer-name {
+            font-size: 1.3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffbc6e, #ff5e2e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .rank-badge {
+            background: rgba(255, 70, 30, 0.3);
+            border-radius: 30px;
+            padding: 0.3rem 1rem;
+            display: inline-block;
+            font-size: 0.8rem;
+            margin: 0.8rem 0;
+            border: 1px solid #ff6133;
+        }
+
+        .mastery-section {
+            margin: 1.5rem 0;
+        }
+
+        .mastery-bar-bg {
+            background: rgba(255,255,255,0.15);
+            border-radius: 30px;
+            height: 12px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .mastery-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff784b, #ff3a1a);
+            border-radius: 30px;
+            transition: width 0.5s ease;
+        }
+
+        .sidebar-stats {
+            margin-top: 1rem;
+            border-top: 1px solid rgba(255,90,50,0.3);
+            padding-top: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.5rem 0;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+        }
+
+        .hero-welcome {
+            background: rgba(0,0,0,0.4);
+            border-radius: 28px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 6px solid #ff5e2e;
+        }
+
+        /* Status Cards */
+        .dashboard-status {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            margin-bottom: 1.5rem;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 1.2rem;
+            transition: transform 0.2s ease;
+        }
+
+        .status-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .status-card.highlight {
+            background: rgba(255, 141, 79, 0.12);
+            border-color: rgba(255, 141, 79, 0.35);
+        }
+
+        .status-card h2 {
+            font-size: 1rem;
+            color: #ffd1a9;
+        }
+
+        .status-value {
+            display: block;
+            margin: 0.5rem 0 0;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .status-caption {
+            margin: 0.4rem 0 0;
+            color: #c7b7a3;
+            font-size: 0.85rem;
+        }
+
+        /* Progress Items */
+        #progress-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .progress-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 1.2rem;
+        }
+
+        .progress-item h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .breathing-tag {
+            font-size: 0.7rem;
+            background: rgba(255, 80, 40, 0.25);
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            color: #ffae7a;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            margin: 0.8rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff8d4f, #ffd45d);
+            transition: width 0.4s ease;
+            border-radius: 999px;
+        }
+
+        .progress-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #c7b7a3;
+        }
+
+        .progress-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
+        }
+
+        .progress-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.2s;
+            font-size: 0.8rem;
+        }
+
+        .progress-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .progress-btn.primary {
+            background: #ff5e2e;
+        }
+
+        .progress-btn.primary:hover {
+            background: #ff784b;
+        }
+
+        /* Topics Grid */
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .topic-card {
+            background: rgba(15, 8, 28, 0.8);
+            backdrop-filter: blur(6px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 90, 50, 0.4);
+            padding: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-4px);
+            border-color: #ff784b;
+        }
+
+        .topic-card h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .topic-card h3 a {
+            text-decoration: none;
+            color: #ffcd94;
+            font-size: 1.3rem;
+        }
+
+        .topic-card h3 a:hover {
+            color: #ff8c5a;
+        }
+
+        .topic-card p {
+            color: #cbc3b0;
+            font-size: 0.9rem;
+        }
+
+        .progress-summary-text {
+            color: #f0e7d8;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(0, 0, 0, 0.85);
+            padding: 1.2rem;
+            text-align: center;
+            border-top: 1px solid #ff5933;
+            margin-top: 2rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: auto;
+            gap: 1rem;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-layout {
+                flex-direction: column;
+            }
+            .hashira-sidebar {
+                width: 100%;
+                position: relative;
+                top: 0;
+            }
+            .demon-nav {
+                padding: 0.8rem 1.5rem;
+            }
+        }
+
+        .cursor-glow {
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, rgba(255,80,40,0.5) 0%, rgba(255,40,0,0) 80%);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+        }
+
+        h2 {
+            margin: 1.5rem 0 1rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- STATIC BACKGROUND - No animations -->
+<div class="static-bg"></div>
+
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<div class="main-wrapper">
+    <nav class="demon-nav">
+        <a href="../../index.html" class="logo-area">
+            <i class="fas fa-dragon logo-icon"></i>
+            <div>
+                <div class="logo-text">STRUCT-LEARN</div>
+                <div class="logo-sub">Hashira Training Dojo</div>
+            </div>
+        </a>
+        <div class="nav-links">
+            <a href="../../index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="dashboard.html" class="active"><i class="fas fa-chalkboard-teacher"></i> Dashboard</a>
+            <a href="../quiz/quiz.html"><i class="fas fa-book"></i> Quiz</a>
+            <a href="../practice/practice.html"><i class="fas fa-keyboard"></i> Practice</a>
+            <a href="../practice/contests.html"><i class="fas fa-trophy"></i> Contests</a>
+            <a href="../practice/roadmaps.html"><i class="fas fa-map-signs"></i> Roadmaps</a>
+            <a href="../profile/profile.html"><i class="fas fa-user-ninja"></i> Profile</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar - Slayer Profile -->
+        <aside class="hashira-sidebar">
+            <div class="slayer-profile">
+                <div class="slayer-avatar"><i class="fas fa-user-ninja"></i></div>
+                <div class="slayer-name" id="slayerName">DSA Hashira-in-Training</div>
+                <div class="rank-badge" id="rankBadge"><i class="fas fa-crown"></i> Mizunoto · Junior Slayer</div>
+                <div class="mastery-section">
+                    <div><i class="fas fa-chart-line"></i> Total Concentration Mastery</div>
+                    <div class="mastery-bar-bg"><div class="mastery-fill" id="masteryFill" style="width: 0%;"></div></div>
+                    <span id="masteryPercent">0</span>% Complete
+                </div>
+                <div class="sidebar-stats">
+                    <div class="stat-item"><span><i class="fas fa-check-circle"></i> Forms Mastered</span><span id="completedCount">0</span><span>/6</span></div>
+                    <div class="stat-item"><span><i class="fas fa-fire"></i> Training Streak</span><span id="streakDays">0</span><span> days</span></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="hero-welcome">
+                <h1><i class="fas fa-feather-alt" style="color:#ff7540;"></i> Welcome, Slayer!</h1>
+                <p>⚔️ Track your DSA mastery through the Hashira Breathing Forms. Each completed topic unlocks new techniques and raises your rank! ⚔️</p>
+            </div>
+
+            <div class="dashboard-status">
+                <div class="status-card">
+                    <h2>⚔️ Forms Mastered</h2>
+                    <span id="status-topics" class="status-value">0 / 6</span>
+                    <p class="status-caption">Data Structure Breathing Forms completed</p>
+                </div>
+                <div class="status-card highlight">
+                    <h2>🔥 Training Streak</h2>
+                    <span id="status-streak" class="status-value">0 days</span>
+                    <p class="status-caption">Keep practicing daily to become a Hashira!</p>
+                </div>
+            </div>
+
+            <div id="progress-summary" class="status-card" style="margin-bottom: 1.5rem;">
+                <h2>📜 Training Chronicle</h2>
+                <p id="summary-text" class="progress-summary-text">Loading your progress insights...</p>
+            </div>
+
+            <h2><i class="fas fa-khanda"></i> Breathing Forms · DSA Topics</h2>
+            <div id="progress-container"></div>
+
+            <h2><i class="fas fa-scroll"></i> All Training Forms</h2>
+            <div class="topics-grid">
+                <div class="topic-card">
+                    <h3><a href="../arrays/array.html">Arrays</a></h3>
+                    <p>Water Breathing · Contiguous memory, sorting algorithms</p>
+                </div>
+                <div class="topic-card">
+                    <h3><a href="../stacks/stacks.html">Stacks</a></h3>
+                    <p>Thunder Breathing · LIFO, expression evaluation</p>
+                </div>
+                <div class="topic-card">
+                    <h3><a href="../queues/queues.html">Queues</a></h3>
+                    <p>Flame Breathing · FIFO, BFS foundation</p>
+                </div>
+                <div class="topic-card">
+                    <h3><a href="../linked-list/linked-list.html">Linked Lists</a></h3>
+                    <p>Mist Breathing · Dynamic pointers, efficient insert/delete</p>
+                </div>
+                <div class="topic-card">
+                    <h3><a href="../trees/trees.html">Trees</a></h3>
+                    <p>Wind Breathing · Hierarchical data, BST, traversals</p>
+                </div>
+                <div class="topic-card">
+                    <h3><a href="../graphs/graphs.html">Graphs</a></h3>
+                    <p>Sun Breathing · Networks, BFS, DFS, shortest paths</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div><i class="fas fa-code-branch"></i> Hashira Training Dojo · Total Concentration</div>
+            <div>© 2025 Struct-Learn · Master DSA like a Hashira</div>
+        </div>
+    </footer>
+</div>
+
+<script src="../../config/config.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/api.js"></script>
+<script>
+    // ========== DSA PROGRESS SYSTEM (Database linked) ==========
+    // Topics mapped to Breathing Forms
+    const topics = [
+        { id: "arrays", name: "Arrays", breathing: "Water Breathing", icon: "fas fa-layer-group", progress: 0 },
+        { id: "stacks", name: "Stacks", breathing: "Thunder Breathing", icon: "fas fa-cubes", progress: 0 },
+        { id: "queues", name: "Queues", breathing: "Flame Breathing", icon: "fas fa-chart-simple", progress: 0 },
+        { id: "linkedlists", name: "Linked Lists", breathing: "Mist Breathing", icon: "fas fa-link", progress: 0 },
+        { id: "trees", name: "Trees", breathing: "Wind Breathing", icon: "fas fa-tree", progress: 0 },
+        { id: "graphs", name: "Graphs", breathing: "Sun Breathing", icon: "fas fa-project-diagram", progress: 0 }
+    ];
+
+    let trainingStreak = 0;
+    let slayerName = "DSA Hashira-in-Training";
+    let currentUser = null;
+
+    // Breathing Theme Styles for Dojo UI customizations
+    const themeStyles = {
+        flame: { primary: '#ff4d2e', glow: 'rgba(255, 77, 46, 0.4)' },
+        water: { primary: '#2e9eff', glow: 'rgba(46, 158, 255, 0.4)' },
+        thunder: { primary: '#ffd966', glow: 'rgba(255, 217, 102, 0.4)' },
+        mist: { primary: '#b8a9ff', glow: 'rgba(184, 169, 255, 0.4)' },
+        wind: { primary: '#5fdc7a', glow: 'rgba(95, 220, 122, 0.4)' },
+        sun: { primary: '#ffaa33', glow: 'rgba(255, 170, 51, 0.4)' }
+    };
+
+    function applyDojoTheme(styleName) {
+        if (!styleName) return;
+        const key = styleName.toLowerCase();
+        const theme = themeStyles[key];
+        if (!theme) return;
+
+        // Custom borders
+        const nav = document.querySelector('.demon-nav');
+        if (nav) nav.style.borderColor = theme.primary;
+        
+        const welcome = document.querySelector('.hero-welcome');
+        if (welcome) welcome.style.borderLeftColor = theme.primary;
+
+        const sidebar = document.querySelector('.hashira-sidebar');
+        if (sidebar) sidebar.style.borderColor = theme.primary;
+
+        const sidebarName = document.getElementById('slayerName');
+        if (sidebarName) {
+            sidebarName.style.background = `linear-gradient(135deg, #fff, ${theme.primary})`;
+            sidebarName.style.webkitBackgroundClip = 'text';
+            sidebarName.style.backgroundClip = 'text';
+        }
+
+        const navLogoIcon = document.querySelector('.logo-icon');
+        if (navLogoIcon) {
+            navLogoIcon.style.color = theme.primary;
+            navLogoIcon.style.filter = `drop-shadow(0 0 8px ${theme.primary})`;
+        }
+
+        const navLogoSub = document.querySelector('.logo-sub');
+        if (navLogoSub) navLogoSub.style.color = theme.primary;
+
+        const statCard = document.querySelector('.status-card.highlight');
+        if (statCard) {
+            statCard.style.borderColor = `${theme.primary}55`;
+            statCard.style.background = `${theme.primary}12`;
+        }
+
+        const statusLabel = document.querySelector('.status-card.highlight h2');
+        if (statusLabel) statusLabel.style.color = theme.primary;
+
+        // Fill bar colors
+        const masteryBar = document.getElementById('masteryFill');
+        if (masteryBar) {
+            masteryBar.style.background = `linear-gradient(90deg, ${theme.primary}, #fff)`;
+        }
+    }
+
+    // Load progress and user profile from the database
+    function loadProgressData() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('⚠️ Session expired. Please log in first.');
+            window.location.href = '../auth/login.html';
+            return;
+        }
+
+        Promise.all([
+            Auth.getProfile(),
+            Progress.getProgress()
+        ])
+        .then(([userData, progressRecords]) => {
+            currentUser = userData;
+            slayerName = userData.username;
+            trainingStreak = userData.streak || 0;
+
+            // Map progress onto front-end topics
+            topics.forEach(topic => {
+                const record = progressRecords.find(r => 
+                    r.topic.toLowerCase().replace(/[\s-]/g, '') === topic.id.toLowerCase()
+                );
+                topic.progress = record ? (record.score || 0) : 0;
+            });
+
+            updateAllUI();
+            applyDojoTheme(userData.breathingStyle);
+        })
+        .catch(err => {
+            console.error('Failed to initialize Dojo Dashboard:', err);
+            alert('❌ Failed to connect to server: ' + (err.message || 'Check connection to backend server.'));
+        });
+    }
+
+    function updateAllUI() {
+        // Calculate statistics
+        const completedCount = topics.filter(t => t.progress >= 100).length;
+        const totalProgress = topics.reduce((sum, t) => sum + t.progress, 0);
+        const overallPercent = Math.floor(totalProgress / topics.length);
+        
+        // Update sidebar
+        const slayerNameEl = document.getElementById('slayerName');
+        if (slayerNameEl) slayerNameEl.innerText = slayerName;
+        
+        document.getElementById('completedCount').innerText = completedCount;
+        document.getElementById('masteryPercent').innerText = overallPercent;
+        document.getElementById('masteryFill').style.width = overallPercent + '%';
+        document.getElementById('status-topics').innerHTML = `${completedCount} / ${topics.length}`;
+        document.getElementById('status-streak').innerHTML = `${trainingStreak} days`;
+        document.getElementById('streakDays').innerHTML = trainingStreak;
+        
+        // Update rank based on level (not overallPercent) to remain consistent
+        let rank = currentUser && currentUser.rank ? currentUser.rank : "Mizunoto · Junior Slayer 🌙";
+        document.getElementById('rankBadge').innerHTML = `<i class="fas fa-crown"></i> ${rank}`;
+        
+        // Update summary text
+        const summary = document.getElementById('summary-text');
+        if (completedCount === topics.length) {
+            summary.innerHTML = "🏆 EXTRAORDINARY! You have mastered all 6 Breathing Forms! You stand among the Hashira. Continue training to maintain your peak concentration! 🏆";
+        } else if (overallPercent >= 50) {
+            summary.innerHTML = `⚔️ Impressive progress! You've mastered ${completedCount} out of 6 forms. Your total concentration is at ${overallPercent}%. Keep pushing toward Hashira rank! ⚔️`;
+        } else {
+            summary.innerHTML = `🌊 Your journey begins! Complete each DSA topic to unlock new Breathing Forms. Current mastery: ${overallPercent}%. Train daily to increase your rank! 🌊`;
+        }
+        
+        // Render progress cards
+        renderProgressCards();
+    }
+    
+    function renderProgressCards() {
+        const container = document.getElementById('progress-container');
+        if (!container) return;
+        container.innerHTML = '';
+        
+        topics.forEach(topic => {
+            const card = document.createElement('div');
+            card.className = 'progress-item';
+            
+            // Apply customized background/fill if styling is active
+            let customStyle = '';
+            let fillBg = '';
+            if (currentUser && currentUser.breathingStyle) {
+                const key = currentUser.breathingStyle.toLowerCase();
+                const theme = themeStyles[key];
+                if (theme) {
+                    customStyle = `style="color:${theme.primary};"`;
+                    fillBg = `style="background:linear-gradient(90deg, ${theme.primary}, #fff);"`;
+                }
+            }
+
+            card.innerHTML = `
+                <h3><i class="${topic.icon}" ${customStyle}></i> ${topic.name} <span class="breathing-tag">${topic.breathing}</span></h3>
+                <div class="progress-bar"><div class="progress-fill" ${fillBg} style="width: ${topic.progress}%;"></div></div>
+                <div class="progress-meta">
+                    <span>Mastery: ${topic.progress}%</span>
+                    <span>${topic.progress >= 100 ? '✅ Form Mastered' : '⚔️ In Training'}</span>
+                </div>
+                <div class="progress-actions">
+                    <button class="progress-btn primary" onclick="updateProgress('${topic.id}', 25)"><i class="fas fa-plus"></i> Train +25%</button>
+                    <button class="progress-btn secondary" onclick="updateProgress('${topic.id}', 100)"><i class="fas fa-star"></i> Master Form</button>
+                    ${topic.progress > 0 && topic.progress < 100 ? `<button class="progress-btn" onclick="updateProgress('${topic.id}', -10)"><i class="fas fa-undo"></i> Reset -10%</button>` : ''}
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+    
+    // Function to update progress in DB
+    window.updateProgress = function(topicId, amount) {
+        const topic = topics.find(t => t.id === topicId);
+        if (topic) {
+            let newProgress = topic.progress + amount;
+            if (amount === 100) newProgress = 100;
+            if (newProgress > 100) newProgress = 100;
+            if (newProgress < 0) newProgress = 0;
+            
+            // Save to database
+            Progress.updateProgress({
+                topic: topicId,
+                completed: newProgress >= 100,
+                score: newProgress
+            })
+            .then(() => {
+                topic.progress = newProgress;
+                loadProgressData(); // Refresh all elements including sidebar and potential rank-ups
+                
+                // Show feedback message
+                const message = topic.progress >= 100 ? 
+                    `🎉 BREATHING FORM MASTERED! You have mastered ${topic.name} - ${topic.breathing}! Your power grows! 🎉` :
+                    `⚔️ Training ${topic.name} with ${topic.breathing}! Progress: ${topic.progress}% ⚔️`;
+                alert(message);
+            })
+            .catch(err => {
+                alert('❌ Failed to update progress: ' + err.message);
+            });
+        }
+    };
+    
+    // Cursor glow effect
+    const cursorGlow = document.getElementById('cursorGlow');
+    document.addEventListener('mousemove', (e) => {
+        cursorGlow.style.left = e.clientX + 'px';
+        cursorGlow.style.top = e.clientY + 'px';
+    });
+    
+    // Topic card links override - Allow navigation but with custom prompts
+    document.querySelectorAll('.topic-card h3 a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            // Let them navigate to the visualizer! No preventDefault.
+        });
+    });
+    
+    // Initialize dashboard loading
+    loadProgressData();
+</script>
+</body>
+</html>

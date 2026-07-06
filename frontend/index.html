@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Struct-Learn | Demon Slayer Code Corps</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(circle at 10% 20%, #0a050f, #020109);
+            font-family: 'Inter', sans-serif;
+            color: #f0e9e1;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Floating Particles Background */
+        .bg-particles {
+            position: fixed;
+            inset-block-start: 0;
+            inset-inline-start: 0;
+            inline-size: 100%;
+            block-size: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(0, 200, 255, 0.5) 0%, rgba(0, 100, 255, 0) 80%);
+            border-radius: 50%;
+            filter: blur(3px);
+            animation: floatParticle linear infinite;
+            opacity: 0.4;
+        }
+
+        .particle.fire {
+            background: radial-gradient(circle, rgba(255, 80, 40, 0.6) 0%, rgba(255, 30, 0, 0) 80%);
+            box-shadow: 0 0 8px rgba(255, 70, 0, 0.6);
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.3; }
+            100% {
+                transform: translateY(-20vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .main-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Navigation - Demon Slayer Corps Style */
+        .demon-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 3rem;
+            background: rgba(0, 0, 0, 0.7);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border-block-end: 1px solid rgba(255, 80, 40, 0.6);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            position: sticky;
+            inset-block-start: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 2.2rem;
+            filter: drop-shadow(0 0 6px #ff4d1e);
+            color: #e34d2b;
+        }
+
+        .logo-text {
+            font-weight: 800;
+            font-size: 1.6rem;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #f7b42c, #fc575e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo-sub {
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            color: #ffb347;
+            font-weight: 500;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #f0e6d8;
+            font-weight: 600;
+            transition: 0.2s;
+            position: relative;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:before {
+            content: '';
+            position: absolute;
+            inset-block-end: -6px;
+            inset-inline-start: 0;
+            inline-size: 0%;
+            block-size: 2px;
+            background: linear-gradient(90deg, #ff5e2e, #ffb347);
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover:before {
+            inline-size: 100%;
+        }
+
+        .nav-links a:hover {
+            color: #ff8c5a;
+        }
+
+        .kimetsu-btn {
+            background: linear-gradient(95deg, #b52e1c, #e34d2b);
+            border: none;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            font-weight: bold;
+            color: white;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(220, 70, 30, 0.4);
+            transition: 0.2s;
+        }
+
+        .kimetsu-btn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(95deg, #cf3a24, #ff6236);
+            box-shadow: 0 6px 18px #ff3c1e70;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 2rem 5rem;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: 3.8rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #FFF0D4, #FFB347, #FF6633);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(255,80,40,0.3);
+            margin-block-end: 1rem;
+        }
+
+        .hero-sub {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #e6d5b8;
+            max-inline-size: 700px;
+            margin-block-end: 1rem;
+            border-inline-start: 4px solid #ff4d2e;
+            border-inline-end: 4px solid #ff4d2e;
+            padding: 0.5rem 1.2rem;
+            display: inline-block;
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+        }
+
+        .hero-description {
+            max-inline-size: 600px;
+            margin-block-start: 1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .hero-badge {
+            font-size: 0.9rem;
+            background: rgba(0,0,0,0.5);
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            margin-block-end: 1.5rem;
+            display: inline-block;
+            color: #ffb37c;
+            letter-spacing: 1px;
+        }
+
+        .btn-demon {
+            display: inline-block;
+            background: linear-gradient(120deg, #a1301a, #dd4824);
+            border: none;
+            padding: 1rem 2.8rem;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            margin-block-start: 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.5), 0 0 12px rgba(255,70,30,0.6);
+            cursor: pointer;
+        }
+
+        .btn-demon i {
+            margin-inline-end: 8px;
+        }
+
+        .btn-demon:hover {
+            transform: translateY(-5px);
+            background: linear-gradient(120deg, #c54222, #ff5e34);
+            box-shadow: 0 15px 25px rgba(220, 60, 20, 0.5);
+        }
+
+        /* Cards Section */
+        .breath-container {
+            max-inline-size: 1300px;
+            margin: 2rem auto;
+            padding: 1rem 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-block-end: 0.5rem;
+        }
+
+        .section-title span {
+            background: linear-gradient(145deg, #ff9f4a, #ff4d2e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .sword-divider {
+            inline-size: 80px;
+            block-size: 3px;
+            background: #ff4d2e;
+            margin: 1rem auto 2.5rem;
+            border-radius: 4px;
+            box-shadow: 0 0 6px #ff784b;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .ds-card {
+            display: block;
+            background: rgba(10, 5, 20, 0.7);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            border: 1px solid rgba(255, 90, 50, 0.5);
+            padding: 1.8rem 1.2rem;
+            transition: 0.3s ease;
+            text-align: center;
+            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.6);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .ds-card:hover {
+            transform: translateY(-8px);
+            border-color: #ff7540;
+            box-shadow: 0 20px 30px -8px rgba(255, 70, 0, 0.3);
+            background: rgba(20, 8, 32, 0.85);
+        }
+
+        .card-icon {
+            font-size: 3.2rem;
+            margin-block-end: 1rem;
+            display: inline-block;
+            filter: drop-shadow(0 0 6px #ff5e3a);
+            color: #ff8460;
+        }
+
+        .ds-card h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-block-end: 0.5rem;
+        }
+
+        .ds-card p {
+            color: #cdc2b0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .breath-tag {
+            margin-block-start: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(255, 80, 40, 0.2);
+            display: inline-block;
+            padding: 0.25rem 1rem;
+            border-radius: 30px;
+            color: #ffa270;
+        }
+
+        /* Stats Section */
+        .hashira-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin: 3rem 0;
+        }
+
+        .stat-block {
+            text-align: center;
+            background: rgba(0,0,0,0.4);
+            padding: 1rem 2rem;
+            border-radius: 60px;
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+            border: 1px solid #ff6533;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ff7744;
+        }
+
+        /* Footer */
+        .demon-footer {
+            background: rgba(0, 0, 0, 0.8);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            text-align: center;
+            border-block-start: 1px solid #ff5933;
+            margin-block-start: 3rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            max-inline-size: 1200px;
+            margin: auto;
+            gap: 1rem;
+        }
+
+        .social-icons i {
+            font-size: 1.5rem;
+            margin: 0 0.6rem;
+            color: #ffb27a;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .social-icons i:hover {
+            color: #ff4f22;
+            transform: scale(1.2);
+        }
+
+        @media (max-inline-size: 800px) {
+            .demon-nav {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            .hero-title {
+                font-size: 2.2rem;
+            }
+            .hero-sub {
+                font-size: 1rem;
+            }
+            .btn-demon {
+                padding: 0.8rem 1.8rem;
+                font-size: 1rem;
+            }
+            .section-title {
+                font-size: 1.8rem;
+            }
+        }
+
+        .cursor-glow {
+            inline-size: 30px;
+            block-size: 30px;
+            background: radial-gradient(circle, rgba(255,80,40,0.7) 0%, rgba(255,40,0,0) 80%);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: 0.05s linear;
+        }
+
+        @keyframes fadeSlideUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-particles" id="particleContainer"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<div class="main-wrapper">
+    <!-- Navigation - All English -->
+    <nav class="demon-nav">
+        <a href="index.html" class="logo-area">
+            <i class="fas fa-dragon logo-icon"></i>
+            <div>
+                <div class="logo-text">STRUCT-LEARN</div>
+                <div class="logo-sub">Demon Slayer Code Corps</div>
+            </div>
+        </a>
+        <div class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="pages/dashboard/dashboard.html"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+            <a href="pages/practice/practice.html"><i class="fas fa-keyboard"></i> Practice</a>
+            <a href="pages/quiz/quiz.html"><i class="fas fa-book"></i> Quiz</a>
+            <a href="pages/practice/contests.html"><i class="fas fa-trophy"></i> Contests</a>
+            <a href="pages/practice/roadmaps.html"><i class="fas fa-map-signs"></i> Roadmaps</a>
+            <a href="pages/profile/profile.html"><i class="fas fa-user"></i> Profile</a>
+            <a href="pages/auth/login.html" id="loginLink"><i class="fas fa-sign-in-alt"></i> Login</a>
+            <button class="kimetsu-btn" id="startJourneyBtn"><i class="fas fa-khanda"></i> Begin Journey</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section - English Text -->
+    <div class="hero-section">
+        <div class="hero-badge">
+            <i class="fas fa-feather-alt"></i> Total Concentration · Code Breathing <i class="fas fa-feather-alt"></i>
+        </div>
+        <h1 class="hero-title">Master Data Structures</h1>
+        <div class="hero-sub">
+            <i class="fas fa-water"></i> Flexible as Water, Efficient as Flame <i class="fas fa-fire"></i>
+        </div>
+        <p class="hero-description">Join the Demon Slayer Code Corps — Master Arrays, Linked Lists, Trees, Graphs & more. Unlock all breathing forms!</p>
+        <button class="btn-demon" id="getStartedMain"><i class="fas fa-bolt"></i> Start Training Now</button>
+    </div>
+
+    <!-- Data Structure Cards - English -->
+    <div class="breath-container">
+        <div class="section-title"><span>⚔️ Total Concentration Forms ⚔️</span><br>Data Structure Breathing Styles</div>
+        <div class="sword-divider"></div>
+        <div class="card-grid">
+            <a class="ds-card" href="pages/arrays/array.html" data-struct="array">
+                <i class="fas fa-layer-group card-icon"></i>
+                <h3>Array Form</h3>
+                <p>Water Breathing · First Form: Contiguous memory, fast access. Master the foundation of all structures.</p>
+                <div class="breath-tag"><i class="fas fa-tint"></i> Water Breathing</div>
+            </a>
+            <a class="ds-card" href="pages/linked-list/linked-list.html" data-struct="linkedlist">
+                <i class="fas fa-link card-icon"></i>
+                <h3>Linked List</h3>
+                <p>Flame Breathing · First Form: Dynamic expansion, lightning-fast insertions and deletions.</p>
+                <div class="breath-tag"><i class="fas fa-fire"></i> Flame Breathing</div>
+            </a>
+            <a class="ds-card" href="pages/trees/trees.html" data-struct="tree">
+                <i class="fas fa-tree card-icon"></i>
+                <h3>Tree & BST</h3>
+                <p>Mist Breathing · Seventh Form: Hierarchical data, optimized searching and sorting.</p>
+                <div class="breath-tag"><i class="fas fa-cloud-moon"></i> Mist Breathing</div>
+            </a>
+            <a class="ds-card" href="pages/graphs/graphs.html" data-struct="graph">
+                <i class="fas fa-chart-line card-icon"></i>
+                <h3>Graph Algorithms</h3>
+                <p>Sun Breathing · Radiant Arc: Network traversal, shortest paths, and connectivity.</p>
+                <div class="breath-tag"><i class="fas fa-sun"></i> Sun Breathing</div>
+            </a>
+            <a class="ds-card" href="pages/stacks/stacks.html" data-struct="stack">
+                <i class="fas fa-cube card-icon"></i>
+                <h3>Stacks</h3>
+                <p>Thunder Breathing · First Form: LIFO structure for push/pop mastery.</p>
+                <div class="breath-tag"><i class="fas fa-bolt"></i> Thunder Breathing</div>
+            </a>
+            <a class="ds-card" href="pages/queues/queues.html" data-struct="queue">
+                <i class="fas fa-stream card-icon"></i>
+                <h3>Queues</h3>
+                <p>Wind Breathing · Second Form: FIFO flow for orderly processing.</p>
+                <div class="breath-tag"><i class="fas fa-wind"></i> Wind Breathing</div>
+            </a>
+            <a class="ds-card" href="pages/editor/editor.html" data-struct="hash">
+                <i class="fas fa-dice-d6 card-icon"></i>
+                <h3>Hash Table</h3>
+                <p>Beast Breathing · Final Form: O(1) lookups, the ultimate shadow technique.</p>
+                <div class="breath-tag"><i class="fas fa-paw"></i> Beast Breathing</div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Section - English -->
+    <div class="hashira-stats">
+        <div class="stat-block"><div class="stat-number">50+</div><div>Algorithm Forms</div></div>
+        <div class="stat-block"><div class="stat-number">∞</div><div>Code Breathing Mastery</div></div>
+        <div class="stat-block"><div class="stat-number">1000+</div><div>Aspiring Slayers</div></div>
+    </div>
+
+    <!-- Footer - English -->
+    <footer class="demon-footer">
+        <div class="footer-content">
+            <div><i class="fas fa-code-branch"></i> Demon Slayer Code Corps · Total Concentration</div>
+            <div class="social-icons">
+                <i class="fab fa-github"></i>
+                <i class="fab fa-discord"></i>
+                <i class="fab fa-twitter"></i>
+                <i class="fas fa-khanda"></i>
+            </div>
+            <div>© 2025 Struct-Learn · Infinite Training</div>
+        </div>
+    </footer>
+</div>
+
+<script src="assets/js/api.js"></script>
+<script>
+    // Particle System
+    const particleContainer = document.getElementById('particleContainer');
+    function createParticle(type = 'water') {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        if (type === 'fire') particle.classList.add('fire');
+        const size = Math.random() * 9 + 3;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.left = Math.random() * 100 + '%';
+        const duration = Math.random() * 12 + 6;
+        particle.style.animationDuration = duration + 's';
+        particle.style.animationDelay = Math.random() * 5 + 's';
+        particle.style.opacity = Math.random() * 0.5 + 0.2;
+        particleContainer.appendChild(particle);
+        setTimeout(() => { if(particle && particle.remove) particle.remove(); }, duration * 1000);
+    }
+
+    setInterval(() => {
+        if(Math.random() < 0.6) createParticle('water');
+        else createParticle('fire');
+        if(Math.random() < 0.3) createParticle('water');
+    }, 400);
+    
+    for(let i = 0; i < 30; i++) {
+        setTimeout(() => { createParticle(Math.random() > 0.6 ? 'fire' : 'water'); }, i * 100);
+    }
+
+    // Custom cursor glow
+    const cursorGlow = document.getElementById('cursorGlow');
+    document.addEventListener('mousemove', (e) => {
+        cursorGlow.style.left = e.clientX + 'px';
+        cursorGlow.style.top = e.clientY + 'px';
+    });
+
+    // Demon Slayer themed alert messages (English only)
+    const demonMessages = [
+        "⚔️ Total Concentration! Master the Water Breathing of Arrays! ⚔️",
+        "🔥 Flame Breathing: Linked Lists will set your code ablaze! 🔥",
+        "🌊 Every Hashira started as a beginner. Train hard, become the strongest!",
+        "💀 Even Muzan fears those who master Graphs and Trees!",
+        "🍡 Nezuko supports your coding journey! Keep practicing every day!",
+        "⚡ Thunder Breathing: Stacks and Queues strike with precision!",
+        "☀️ Sun Breathing: Hash Tables bring light to O(1) complexity!"
+    ];
+
+    function getRandomMessage() {
+        return demonMessages[Math.floor(Math.random() * demonMessages.length)];
+    }
+
+    function handleStart() {
+        const token = localStorage.getItem('token');
+        if (token) {
+            alert("⚔️ " + getRandomMessage() + " ⚔️\n\nWelcome to Struct-Learn! Together we'll master every breathing form of Data Structures.");
+            return;
+        }
+        alert("⚔️ " + getRandomMessage() + " ⚔️\n\nWelcome to Struct-Learn! Together we'll master every breathing form of Data Structures.");
+        window.location.href = 'pages/auth/login.html#register';
+    }
+
+    const startBtn = document.getElementById('startJourneyBtn');
+    const mainGetStarted = document.getElementById('getStartedMain');
+
+    if (startBtn) {
+        startBtn.addEventListener('click', handleStart);
+    }
+
+    if (mainGetStarted) {
+        mainGetStarted.addEventListener('click', () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'pages/auth/login.html';
+            }
+        });
+    }
+
+    // Toggle Login / Logout on homepage load
+    const token = localStorage.getItem('token');
+    const loginLink = document.getElementById('loginLink');
+
+    if (token && loginLink) {
+        loginLink.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+        loginLink.href = '#';
+        loginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            window.location.reload();
+        });
+    }
+
+    // Homepage topic cards now use direct anchor links for navigation.
+    const cards = document.querySelectorAll('.ds-card');
+
+    // Navbar links click handling (allow navigation and optional message)
+    const navLinks = document.querySelectorAll('.nav-links a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            // Keep default link navigation behavior
+            // Optionally show a friendly tip for special links
+            const text = link.innerText.trim();
+            if (text.includes("Home") || text.includes("Dashboard") || text.includes("Editor") || text.includes("Quiz") || text.includes("Profile")) {
+                return;
+            }
+
+            if (text.includes("Login") || text.includes("Register")) {
+                // no additional alert to maintain straightforward behavior
+                return;
+            }
+        });
+    });
+
+    // Social icons click feedback
+    const socialIcons = document.querySelectorAll('.social-icons i');
+    socialIcons.forEach(icon => {
+        icon.addEventListener('click', () => {
+            alert("⚔️ Join the Demon Slayer Code Corps Community! ⚔️\n\nFollow us for updates, coding challenges, and breathing technique tutorials.");
+        });
+    });
+
+    // Scroll animation for cards
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if(entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.2 });
+    
+    cards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(25px)';
+        card.style.transition = 'all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1)';
+        observer.observe(card);
+    });
+    
+    // Hero fade-in animation
+    const heroElements = document.querySelectorAll('.hero-title, .hero-sub, .hero-badge, .btn-demon');
+    heroElements.forEach((el, i) => {
+        el.style.opacity = '0';
+        el.style.animation = 'fadeSlideUp 0.7s forwards';
+        el.style.animationDelay = (i * 0.1) + 's';
+    });
+    
+    // Additional button hover effect
+    const demonBtns = document.querySelectorAll('.btn-demon, .kimetsu-btn');
+    demonBtns.forEach(btn => {
+        btn.addEventListener('mouseenter', () => {
+            btn.style.transform = 'scale(1.02)';
+        });
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = 'scale(1)';
+        });
+    });
+
+    console.log("%c⚔️ DEMON SLAYER CODE CORPS ⚔️\n\"Total Concentration — Master Data Structures with the Breathing Styles!\"", "color: #ff7b42; font-size: 14px; font-weight: bold;");
+    console.log("%cArray • Linked List • Tree • Graph • Stack • Queue • Hash Table", "color: #87CEFA; font-size: 12px;");
+</script>
+</body>
+</html>

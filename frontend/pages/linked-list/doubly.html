@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Doubly Linked List - Demon Slayer Dojo Visualization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #a78bfa;
+            --primary-dark: #7c3aed;
+            --primary-glow: rgba(167, 139, 250, 0.3);
+            --secondary: #8b5cf6;
+            --accent: #c4b5fd;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --bg-dark: #0a0512;
+            --bg-card: rgba(10, 5, 25, 0.85);
+            --text-light: #f0e9e1;
+            --text-muted: #b9ac9c;
+            --border-glow: rgba(167, 139, 250, 0.3);
+            --shadow-glow: 0 0 30px rgba(167, 139, 250, 0.1);
+            --border-radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 20% 30%, #1a0a2e 0%, #0a0512 45%, #020006 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--border-radius);
+            background: rgba(167, 139, 250, 0.1);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .back:hover {
+            background: rgba(167, 139, 250, 0.2);
+            transform: translateX(-4px);
+            box-shadow: 0 0 20px rgba(167, 139, 250, 0.2);
+        }
+
+        header {
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #c4b5fd, #a78bfa, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        h1 i {
+            color: var(--primary);
+            filter: drop-shadow(0 0 10px rgba(167, 139, 250, 0.4));
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-glow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-glow);
+            transition: border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(167, 139, 250, 0.5);
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        input {
+            padding: 0.7rem 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(167, 139, 250, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        input::placeholder {
+            color: #6a5e4e;
+        }
+
+        .btn {
+            padding: 0.7rem 1.4rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #a78bfa, #7c3aed);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(167, 139, 250, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            color: white;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #34d399, #10b981);
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #1e293b;
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f87171, #ef4444);
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn:disabled {
+            background: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .operation-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.3rem;
+            border-radius: 60px;
+        }
+
+        .tab-btn {
+            padding: 0.6rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-radius: 40px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #a78bfa, #7c3aed);
+            color: white;
+            box-shadow: 0 8px 25px rgba(167, 139, 250, 0.3);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: var(--text-light);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeSlide 0.3s ease both;
+        }
+
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .vis-area {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border: 2px dashed rgba(167, 139, 250, 0.2);
+            min-height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vis-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(167, 139, 250, 0.03), transparent 70%);
+            pointer-events: none;
+        }
+
+        .list-display {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .node {
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, #a78bfa, #7c3aed);
+            color: white;
+            border-radius: var(--border-radius);
+            font-weight: 700;
+            box-shadow: 0 6px 18px rgba(167, 139, 250, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            min-width: 80px;
+            text-align: center;
+            animation: fadeIn 0.3s ease both;
+            z-index: 2;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .node:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 10px 24px rgba(167, 139, 250, 0.4);
+        }
+
+        .node.head::before {
+            content: '⚔️ HEAD';
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: #a78bfa;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+        }
+
+        .node.tail::after {
+            content: '🎯 TAIL';
+            position: absolute;
+            bottom: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: #a78bfa;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+        }
+
+        .node.highlight {
+            animation: highlightPulse 0.8s ease 3;
+            background: linear-gradient(135deg, #34d399, #10b981);
+        }
+
+        @keyframes highlightPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(52, 211, 153, 0.3); }
+            50% { transform: scale(1.08); box-shadow: 0 0 30px rgba(52, 211, 153, 0.6); }
+        }
+
+        .arrow {
+            color: #a78bfa;
+            font-weight: 700;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .null {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 1.1rem;
+            padding: 1rem;
+        }
+
+        .status {
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.8rem 1rem;
+            border-radius: var(--border-radius);
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.8rem 1.2rem;
+            background: rgba(167, 139, 250, 0.08);
+            border-radius: var(--border-radius);
+            flex: 1;
+            min-width: 100px;
+            border: 1px solid rgba(167, 139, 250, 0.1);
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #a78bfa;
+        }
+
+        .legend {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+        }
+
+        .legend-head { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+        .legend-tail { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+        .legend-both { background: linear-gradient(135deg, #34d399, #10b981); }
+
+        .bidirectional-arrows {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 0.5rem;
+            color: #a78bfa;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .bidirectional-arrows i {
+            font-size: 1.2rem;
+        }
+
+        .operation-log {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .operation-log::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .operation-log::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .operation-log::-webkit-scrollbar-thumb {
+            background: #a78bfa;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .controls { flex-direction: column; align-items: stretch; }
+            .input-group { width: 100%; }
+            input { flex: 1; }
+            .btn { justify-content: center; }
+            .operation-tabs { flex-direction: column; border-radius: var(--border-radius); }
+            .tab-btn { text-align: center; }
+            .info-row { flex-direction: column; }
+            .legend { gap: 0.8rem; }
+            .bidirectional-arrows { flex-direction: column; align-items: center; gap: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a class="back" href="linked-list.html">
+            <i class="fas fa-arrow-left"></i> Back to Linked Lists
+        </a>
+
+        <header>
+            <h1><i class="fas fa-link"></i> Doubly Linked List · Dojo Visualization</h1>
+            <p class="subtitle">Each node has both previous and next pointers, enabling bidirectional traversal. Master insertion, deletion, and both-direction traversal.</p>
+        </header>
+
+        <div class="card">
+            <div class="operation-tabs">
+                <button class="tab-btn active" data-tab="basic"><i class="fas fa-play"></i> Basic Operations</button>
+                <button class="tab-btn" data-tab="advanced"><i class="fas fa-cog"></i> Advanced Operations</button>
+                <button class="tab-btn" data-tab="traversal"><i class="fas fa-arrows-left-right"></i> Bidirectional Traversal</button>
+            </div>
+
+            <!-- Basic Operations Tab -->
+            <div class="tab-content active" id="basic-tab">
+                <div class="controls">
+                    <div class="input-group">
+                        <input id="val" type="number" min="1" max="999" placeholder="Value (1-999)">
+                        <button id="insertHead" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Insert Head</button>
+                    </div>
+                    <button id="insertTail" class="btn btn-primary">Insert Tail <i class="fas fa-plus-circle"></i></button>
+                    <button id="deleteHead" class="btn btn-warning" disabled><i class="fas fa-minus-circle"></i> Delete Head</button>
+                    <button id="deleteTail" class="btn btn-warning" disabled>Delete Tail <i class="fas fa-minus-circle"></i></button>
+                    <button id="reset" class="btn btn-danger"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+            </div>
+
+            <!-- Advanced Operations Tab -->
+            <div class="tab-content" id="advanced-tab">
+                <div class="controls">
+                    <div class="input-group">
+                        <input id="val2" type="number" min="1" max="999" placeholder="Value">
+                        <input id="position" type="number" min="0" placeholder="Position">
+                        <button id="insertAt" class="btn btn-success"><i class="fas fa-plus-circle"></i> Insert At Position</button>
+                    </div>
+                    <div class="input-group">
+                        <input id="deleteVal" type="number" min="1" max="999" placeholder="Value to delete">
+                        <button id="deleteByValue" class="btn btn-danger"><i class="fas fa-minus-circle"></i> Delete By Value</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bidirectional Traversal Tab -->
+            <div class="tab-content" id="traversal-tab">
+                <div class="controls">
+                    <div class="input-group">
+                        <input id="searchVal" type="number" min="1" max="999" placeholder="Value to search">
+                        <button id="search" class="btn btn-secondary"><i class="fas fa-search"></i> Search</button>
+                    </div>
+                    <button id="traverseForward" class="btn btn-secondary"><i class="fas fa-arrow-right"></i> Traverse Forward</button>
+                    <button id="traverseBackward" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Traverse Backward</button>
+                    <button id="reverse" class="btn btn-secondary"><i class="fas fa-exchange-alt"></i> Reverse List</button>
+                </div>
+            </div>
+
+            <div class="vis-area">
+                <div class="list-display" id="display">
+                    <div class="null">⚔️ List is empty. Start adding nodes to begin your training.</div>
+                </div>
+            </div>
+
+            <div class="bidirectional-arrows">
+                <span><i class="fas fa-arrow-left"></i> Prev Pointers</span>
+                <span><i class="fas fa-arrows-left-right"></i> ⇄ Both Directions</span>
+                <span>Next Pointers <i class="fas fa-arrow-right"></i></span>
+            </div>
+
+            <div class="status" id="status">⚔️ Ready for operations. List is empty.</div>
+
+            <div class="info-row">
+                <div class="info-item">
+                    <span class="info-label">List Length</span>
+                    <span id="length" class="info-value">0</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Head Value</span>
+                    <span id="headVal" class="info-value">—</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Tail Value</span>
+                    <span id="tailVal" class="info-value">—</span>
+                </div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color legend-head"></div> Head Node</div>
+                <div class="legend-item"><div class="legend-color legend-tail"></div> Tail Node</div>
+                <div class="legend-item"><div class="legend-color legend-both"></div> Highlighted / Found</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 style="display:flex; align-items:center; gap:0.8rem; margin-bottom:1rem; color:#c4b5fd;">
+                <i class="fas fa-history"></i> Operation Log
+            </h2>
+            <div class="operation-log" id="operationLog">⚔️ No operations yet. Begin your training!</div>
+        </div>
+    </div>
+
+    <script>
+        class DoublyLinkedList {
+            constructor(){
+                this.head = null; 
+                this.tail = null; 
+                this.length = 0;
+                this.display = document.getElementById('display');
+                this.status = document.getElementById('status');
+                this.lenDisplay = document.getElementById('length');
+                this.headDisplay = document.getElementById('headVal');
+                this.tailDisplay = document.getElementById('tailVal');
+                this.operationLog = document.getElementById('operationLog');
+                this.logs = [];
+                
+                this.setupTabs();
+                this.attachEvents();
+                this.render();
+            }
+
+            setupTabs() {
+                const tabBtns = document.querySelectorAll('.tab-btn');
+                const tabContents = document.querySelectorAll('.tab-content');
+                
+                tabBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        tabBtns.forEach(b => b.classList.remove('active'));
+                        tabContents.forEach(c => c.classList.remove('active'));
+                        btn.classList.add('active');
+                        const tabId = btn.getAttribute('data-tab') + '-tab';
+                        document.getElementById(tabId).classList.add('active');
+                    });
+                });
+            }
+
+            attachEvents(){
+                document.getElementById('insertHead').addEventListener('click', () => this.insertHead());
+                document.getElementById('insertTail').addEventListener('click', () => this.insertTail());
+                document.getElementById('deleteHead').addEventListener('click', () => this.deleteHead());
+                document.getElementById('deleteTail').addEventListener('click', () => this.deleteTail());
+                document.getElementById('reset').addEventListener('click', () => this.reset());
+                document.getElementById('insertAt').addEventListener('click', () => this.insertAtPosition());
+                document.getElementById('deleteByValue').addEventListener('click', () => this.deleteByValue());
+                document.getElementById('search').addEventListener('click', () => this.search());
+                document.getElementById('traverseForward').addEventListener('click', () => this.traverseForward());
+                document.getElementById('traverseBackward').addEventListener('click', () => this.traverseBackward());
+                document.getElementById('reverse').addEventListener('click', () => this.reverse());
+                
+                document.getElementById('val').addEventListener('keypress', e => { if(e.key === 'Enter') this.insertTail(); });
+                document.getElementById('val2').addEventListener('keypress', e => { if(e.key === 'Enter') this.insertAtPosition(); });
+                document.getElementById('deleteVal').addEventListener('keypress', e => { if(e.key === 'Enter') this.deleteByValue(); });
+                document.getElementById('searchVal').addEventListener('keypress', e => { if(e.key === 'Enter') this.search(); });
+            }
+
+            logOperation(message, color = "#a78bfa") {
+                const timestamp = new Date().toLocaleTimeString();
+                this.logs.unshift(`<span style="color: ${color}">[${timestamp}] ${message}</span>`);
+                if (this.logs.length > 10) this.logs.pop();
+                this.operationLog.innerHTML = this.logs.join('<br>');
+            }
+
+            insertHead(){
+                const v = Number(document.getElementById('val').value);
+                if(!v){ this._setStatus('⚠️ Please enter a value', '#f87171'); return; }
+                const node = {val: v, prev: null, next: this.head};
+                if(this.head) this.head.prev = node;
+                this.head = node;
+                if(!this.tail) this.tail = node;
+                this.length++;
+                this._setStatus(`✅ Inserted ${v} at head`, '#34d399');
+                this.logOperation(`INSERT HEAD: ${v}`);
+                document.getElementById('val').value = '';
+                this.render('head');
+            }
+
+            insertTail(){
+                const v = Number(document.getElementById('val').value);
+                if(!v){ this._setStatus('⚠️ Please enter a value', '#f87171'); return; }
+                const node = {val: v, prev: this.tail, next: null};
+                if(!this.head){ this.head = node; this.tail = node; } 
+                else { this.tail.next = node; this.tail = node; }
+                this.length++;
+                this._setStatus(`✅ Inserted ${v} at tail`, '#34d399');
+                this.logOperation(`INSERT TAIL: ${v}`);
+                document.getElementById('val').value = '';
+                this.render('tail');
+            }
+
+            deleteHead(){
+                if(!this.head){ this._setStatus('⚠️ List is empty', '#f87171'); return; }
+                const v = this.head.val;
+                this.head = this.head.next;
+                if(this.head) this.head.prev = null;
+                else this.tail = null;
+                this.length--;
+                this._setStatus(`🗑️ Deleted ${v} from head`, '#fbbf24');
+                this.logOperation(`DELETE HEAD: ${v}`);
+                this.render();
+            }
+
+            deleteTail(){
+                if(!this.head){ this._setStatus('⚠️ List is empty', '#f87171'); return; }
+                const v = this.tail.val;
+                this.tail = this.tail.prev;
+                if(this.tail) this.tail.next = null;
+                else this.head = null;
+                this.length--;
+                this._setStatus(`🗑️ Deleted ${v} from tail`, '#fbbf24');
+                this.logOperation(`DELETE TAIL: ${v}`);
+                this.render();
+            }
+
+            insertAtPosition() {
+                const v = Number(document.getElementById('val2').value);
+                const pos = Number(document.getElementById('position').value);
+                
+                if(!v){ this._setStatus('⚠️ Please enter a value', '#f87171'); return; }
+                if(pos < 0 || pos > this.length) {
+                    this._setStatus(`⚠️ Invalid position. Must be between 0 and ${this.length}`, '#f87171');
+                    return;
+                }
+                if(pos === 0) { this.insertHead(); return; }
+                if(pos === this.length) { this.insertTail(); return; }
+                
+                let cur = this.head;
+                for(let i = 0; i < pos - 1; i++) cur = cur.next;
+                
+                const node = {val: v, prev: cur, next: cur.next};
+                cur.next.prev = node;
+                cur.next = node;
+                this.length++;
+                
+                this._setStatus(`✅ Inserted ${v} at position ${pos}`, '#34d399');
+                this.logOperation(`INSERT AT POS ${pos}: ${v}`);
+                document.getElementById('val2').value = '';
+                document.getElementById('position').value = '';
+                this.render();
+            }
+
+            deleteByValue() {
+                const v = Number(document.getElementById('deleteVal').value);
+                if(!v){ this._setStatus('⚠️ Please enter a value to delete', '#f87171'); return; }
+                if(!this.head) { this._setStatus('⚠️ List is empty', '#f87171'); return; }
+                if(this.head.val === v) { this.deleteHead(); return; }
+                if(this.tail.val === v) { this.deleteTail(); return; }
+                
+                let cur = this.head;
+                while(cur && cur.val !== v) cur = cur.next;
+                if(!cur) {
+                    this._setStatus(`❌ Value ${v} not found`, '#f87171');
+                    this.logOperation(`DELETE FAILED: ${v} not found`, '#f87171');
+                    return;
+                }
+                
+                cur.prev.next = cur.next;
+                cur.next.prev = cur.prev;
+                this.length--;
+                
+                this._setStatus(`🗑️ Deleted value ${v}`, '#fbbf24');
+                this.logOperation(`DELETE BY VALUE: ${v}`);
+                document.getElementById('deleteVal').value = '';
+                this.render();
+            }
+
+            search() {
+                const v = Number(document.getElementById('searchVal').value);
+                if(!v){ this._setStatus('⚠️ Please enter a value to search', '#f87171'); return; }
+                if(!this.head) { this._setStatus('⚠️ List is empty', '#f87171'); return; }
+                
+                let cur = this.head;
+                let pos = 0;
+                while(cur && cur.val !== v) { cur = cur.next; pos++; }
+                
+                if(cur) {
+                    this._setStatus(`✅ Value ${v} found at position ${pos}`, '#34d399');
+                    this.logOperation(`SEARCH: Found ${v} at position ${pos}`);
+                    this.highlightNode(pos);
+                } else {
+                    this._setStatus(`❌ Value ${v} not found`, '#f87171');
+                    this.logOperation(`SEARCH: ${v} not found`, '#f87171');
+                }
+                document.getElementById('searchVal').value = '';
+            }
+
+            traverseForward() {
+                if(!this.head) { this._setStatus('⚠️ List is empty', '#f87171'); return; }
+                let values = [];
+                let cur = this.head;
+                while(cur) { values.push(cur.val); cur = cur.next; }
+                this._setStatus(`➡️ Forward: ${values.join(' ⇄ ')}`, '#60a5fa');
+                this.logOperation(`FORWARD: ${values.join(' ⇄ ')}`);
+            }
+
+            traverseBackward() {
+                if(!this.head) { this._setStatus('⚠️ List is empty', '#f87171'); return; }
+                let values = [];
+                let cur = this.tail;
+                while(cur) { values.push(cur.val); cur = cur.prev; }
+                this._setStatus(`⬅️ Backward: ${values.join(' ⇄ ')}`, '#60a5fa');
+                this.logOperation(`BACKWARD: ${values.join(' ⇄ ')}`);
+            }
+
+            reverse() {
+                if(!this.head || !this.head.next) {
+                    this._setStatus('⚠️ List has less than 2 nodes', '#f87171');
+                    return;
+                }
+                
+                let cur = this.head;
+                let temp = null;
+                this.tail = this.head;
+                
+                while(cur) {
+                    temp = cur.prev;
+                    cur.prev = cur.next;
+                    cur.next = temp;
+                    cur = cur.prev;
+                }
+                if(temp) this.head = temp.prev;
+                
+                this._setStatus('🔄 List has been reversed', '#34d399');
+                this.logOperation('REVERSE: List reversed');
+                this.render();
+            }
+
+            highlightNode(position) {
+                const nodes = document.querySelectorAll('.node');
+                if (nodes[position]) {
+                    nodes[position].classList.add('highlight');
+                    setTimeout(() => {
+                        nodes[position].classList.remove('highlight');
+                    }, 1500);
+                }
+            }
+
+            reset(){ 
+                this.head = null; 
+                this.tail = null; 
+                this.length = 0; 
+                this._setStatus('⚔️ List reset. Ready for training.', '#64748b'); 
+                this.logs = [];
+                this.operationLog.innerHTML = '⚔️ No operations yet. Begin your training!';
+                this.render(); 
+            }
+
+            _setStatus(msg, color){ 
+                this.status.textContent = msg; 
+                this.status.style.color = color;
+                this.status.style.backgroundColor = color === '#f87171' ? 'rgba(248, 113, 113, 0.1)' : 
+                                                  color === '#34d399' ? 'rgba(52, 211, 153, 0.1)' :
+                                                  color === '#fbbf24' ? 'rgba(251, 191, 36, 0.1)' :
+                                                  color === '#60a5fa' ? 'rgba(96, 165, 250, 0.1)' : 'rgba(255,255,255,0.05)';
+            }
+
+            render(highlight = null){
+                this.display.innerHTML = '';
+                
+                if (!this.head) {
+                    const e = document.createElement('div');
+                    e.className = 'null';
+                    e.textContent = '⚔️ List is empty. Add some nodes to begin your training.';
+                    this.display.appendChild(e);
+                } else {
+                    let cur = this.head;
+                    let index = 0;
+                    
+                    while(cur){
+                        const n = document.createElement('div');
+                        n.className = 'node';
+                        if (cur === this.head) n.classList.add('head');
+                        if (cur === this.tail) n.classList.add('tail');
+                        if (highlight === 'head' && cur === this.head) n.classList.add('highlight');
+                        if (highlight === 'tail' && cur === this.tail) n.classList.add('highlight');
+                        
+                        n.textContent = cur.val;
+                        n.style.animationDelay = `${index * 100}ms`;
+                        this.display.appendChild(n);
+                        
+                        if(cur.next){
+                            const a = document.createElement('div');
+                            a.className = 'arrow';
+                            a.textContent = '⇄';
+                            this.display.appendChild(a);
+                        }
+                        
+                        cur = cur.next;
+                        index++;
+                    }
+                    
+                    const n = document.createElement('div');
+                    n.className = 'null';
+                    n.textContent = '⇄ null';
+                    this.display.appendChild(n);
+                }
+                
+                this.lenDisplay.textContent = this.length;
+                this.headDisplay.textContent = this.head ? this.head.val : '—';
+                this.tailDisplay.textContent = this.tail ? this.tail.val : '—';
+                
+                document.getElementById('deleteHead').disabled = !this.head;
+                document.getElementById('deleteTail').disabled = !this.head;
+                document.getElementById('reverse').disabled = !this.head || this.length < 2;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            new DoublyLinkedList();
+        });
+    </script>
+</body>
+</html>
