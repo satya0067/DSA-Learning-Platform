@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+body {
+  margin: 0;
+  background-color: #1a1a2e;
+  color: #e2e8f0;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a2e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2e3b5e;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475a90;
+}
+
+/* Custom Split.js styling */
+.gutter {
+  background-color: #1a1a2e;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transition: background-color 0.2s;
+}
+
+.gutter:hover {
+  background-color: #2e3b5e;
+}
+
+.gutter.gutter-horizontal {
+  cursor: col-resize;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkft29AAAAIklEQVQoU2M4c+bMfxAGAgYYyNUrfwGpKiDYFChIMBhJPyMAEqQP8WbBoCoAAAAASUVORK5CYII=');
+}
+
+.gutter.gutter-vertical {
+  cursor: row-resize;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFCAYAAAB2mnAtAAAAIklEQVQoU2M4c+bMfxAGAgYYyNUrfwGpKiDYFChIMBhJPyMAEqQP8WbBoCoAAAAASUVORK5CYII=');
+}

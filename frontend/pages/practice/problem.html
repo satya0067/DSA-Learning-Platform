@@ -232,6 +232,7 @@
         <a href="/pages/dashboard/dashboard.html">Dashboard</a>
         <a href="/pages/quiz/quiz.html"><i class="fas fa-book"></i> Quiz</a>
         <a href="/pages/practice/practice.html" class="active">Practice</a>
+        <a href="/code-editor/index.html">Editor</a>
         <a href="/pages/practice/contests.html">Contests</a>
         <a href="/pages/practice/roadmaps.html">Roadmaps</a>
         <a href="/pages/profile/profile.html">Profile</a>
@@ -249,6 +250,7 @@
             <button class="tab-btn" onclick="switchTab('editorial')"><i class="fas fa-scroll"></i> Editorial</button>
             <button class="tab-btn" onclick="switchTab('discussion')"><i class="fas fa-comments"></i> Discussions</button>
             <button class="tab-btn" onclick="switchTab('notes')"><i class="fas fa-pencil-alt"></i> Notepad</button>
+            <button class="tab-btn" onclick="switchTab('snippets')"><i class="fas fa-mask"></i> Snippets</button>
         </div>
 
         <!-- Scrollable content -->
@@ -337,6 +339,15 @@
                     <button class="config-btn" onclick="saveNotesManual()">Saved <i class="fas fa-check"></i></button>
                 </div>
             </div>
+
+            <!-- 5. Snippets Section -->
+            <div id="tab-snippets" class="tab-content">
+                <h3 style="color:#ff7b42; margin-bottom:0.8rem;"><i class="fas fa-mask"></i> Breathing Techniques · Snippets</h3>
+                <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:12px;">Insert custom starter templates for other breathing styles (languages) into your editor.</p>
+                <div class="forum-list" id="snippetsList" style="display:flex; flex-direction:column; gap:10px;">
+                    <!-- Snippets inserted dynamically -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -363,10 +374,19 @@
                 </select>
             </div>
             <div style="display:flex; gap:10px; align-items:center;">
+                <button class="config-btn" id="uploadFileBtn" title="Upload local file"><i class="fas fa-upload"></i> Upload</button>
+                <button class="config-btn" id="downloadFileBtn" title="Download solution code"><i class="fas fa-download"></i> Download</button>
+                <button class="config-btn" id="insertTemplateBtn" title="Insert basic template"><i class="fas fa-scroll"></i> Template</button>
                 <button class="config-btn" id="resetCodeBtn" title="Reset starter code"><i class="fas fa-undo"></i> Reset</button>
                 <button class="config-btn" id="themeToggleBtn" title="Toggle editor theme"><i class="fas fa-moon"></i> Theme</button>
                 <button class="config-btn" id="fullscreenBtn" title="Fullscreen mode"><i class="fas fa-expand"></i></button>
+                <input type="file" id="fileUploadInput" accept=".py,.java,.c,.cpp,.js,.txt" style="display: none;">
             </div>
+        </div>
+
+        <!-- Editor Tabs Header -->
+        <div class="tabs-header" id="editorTabsHeader" style="background: #0d0717;">
+            <!-- Rendered dynamically -->
         </div>
 
         <!-- Monaco container -->
@@ -459,7 +479,8 @@
             c.classList.remove('active');
         });
 
-        event.target.classList.add('active');
+        const btn = event.target.closest('.tab-btn') || event.target;
+        btn.classList.add('active');
         document.getElementById(`tab-${tabId}`).classList.add('active');
 
         // Load discussions / notes if clicked
@@ -469,6 +490,8 @@
             loadNotes();
         } else if (tabId === 'editorial') {
             loadEditorial();
+        } else if (tabId === 'snippets') {
+            loadSnippets();
         }
     }
 
@@ -593,6 +616,14 @@
     }
 
     // Monaco Setup
+    const TEMPLATE_SNIPPETS = {
+        python: `# Python Template\n\ndef main():\n    print('Hello, Struct-Learn!')\n\nif __name__ == '__main__':\n    main()`,
+        java: `// Java Template\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, Struct-Learn!");\n    }\n}`,
+        c: `// C Template\n#include <stdio.h>\n\nint main() {\n    printf("Hello, Struct-Learn!\\n");\n    return 0;\n}`,
+        cpp: `// C++ Template\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, Struct-Learn!" << endl;\n    return 0;\n}`,
+        javascript: `// JavaScript Template\nconsole.log("Hello, Struct-Learn!");`
+    };
+
     function getMonacoLanguage(lang) {
         if (lang === 'python') return 'python';
         if (lang === 'javascript') return 'javascript';
@@ -602,16 +633,43 @@
         return 'plaintext';
     }
 
+    function renderEditorTabs() {
+        const tabsHeader = document.getElementById('editorTabsHeader');
+        if (!tabsHeader) return;
+        
+        const currentLang = document.getElementById('languageSelect').value;
+        const extensions = {
+            python: 'solution.py',
+            javascript: 'solution.js',
+            java: 'Solution.java',
+            cpp: 'solution.cpp',
+            c: 'solution.c'
+        };
+        
+        tabsHeader.innerHTML = Object.entries(extensions).map(([lang, filename]) => {
+            const activeClass = lang === currentLang ? 'active' : '';
+            return `<button class="tab-btn ${activeClass}" style="padding: 8px 16px; border-bottom: 2px solid ${lang === currentLang ? '#ff4d2e' : 'transparent'};" onclick="switchEditorLanguage('${lang}')">${filename}</button>`;
+        }).join('');
+    }
+
+    window.switchEditorLanguage = function(lang) {
+        document.getElementById('languageSelect').value = lang;
+        document.getElementById('languageSelect').dispatchEvent(new Event('change'));
+    };
+
     function initMonacoEditor() {
         window.require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.40.0/min/vs' } });
         window.require(['vs/editor/editor.main'], () => {
             const selectedLang = document.getElementById('languageSelect').value;
             const code = starterCodes[selectedLang] || '// Write your solution here...';
+            
+            const cachedTheme = localStorage.getItem('editorTheme') || 'dark';
+            isDarkTheme = (cachedTheme === 'dark');
 
             monacoEditor = window.monaco.editor.create(document.getElementById('editorContainer'), {
                 value: code,
                 language: getMonacoLanguage(selectedLang),
-                theme: 'vs-dark',
+                theme: isDarkTheme ? 'vs-dark' : 'vs',
                 automaticLayout: true,
                 minimap: { enabled: false },
                 fontSize: 14,
@@ -633,6 +691,9 @@
             if (cachedCode) {
                 monacoEditor.setValue(cachedCode);
             }
+
+            renderEditorTabs();
+            setupPlaygroundActions();
         });
     }
 
@@ -646,6 +707,7 @@
             const model = monacoEditor.getModel();
             window.monaco.editor.setModelLanguage(model, getMonacoLanguage(lang));
         }
+        renderEditorTabs();
     });
 
     // Font size controls
@@ -673,6 +735,7 @@
         if (monacoEditor) {
             window.monaco.editor.setTheme(isDarkTheme ? 'vs-dark' : 'vs');
         }
+        localStorage.setItem('editorTheme', isDarkTheme ? 'dark' : 'light');
     });
 
     // Full screen toggle
@@ -686,6 +749,127 @@
             document.exitFullscreen();
         }
     });
+
+    function setupPlaygroundActions() {
+        // Upload File
+        document.getElementById('uploadFileBtn').addEventListener('click', () => {
+            document.getElementById('fileUploadInput').click();
+        });
+
+        document.getElementById('fileUploadInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const extension = file.name.split('.').pop().toLowerCase();
+            const extToLang = {
+                py: 'python',
+                js: 'javascript',
+                java: 'java',
+                cpp: 'cpp',
+                c: 'c'
+            };
+            const lang = extToLang[extension];
+            if (lang) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    document.getElementById('languageSelect').value = lang;
+                    document.getElementById('languageSelect').dispatchEvent(new Event('change'));
+                    if (monacoEditor) {
+                        monacoEditor.setValue(reader.result);
+                    }
+                    e.target.value = '';
+                };
+                reader.readAsText(file);
+            } else {
+                alert('Unsupported file extension! Please upload .py, .js, .java, .cpp, or .c files.');
+            }
+        });
+
+        // Download File
+        document.getElementById('downloadFileBtn').addEventListener('click', () => {
+            if (!monacoEditor) return;
+            const code = monacoEditor.getValue();
+            const lang = document.getElementById('languageSelect').value;
+            const extensions = {
+                python: 'solution.py',
+                javascript: 'solution.js',
+                java: 'Solution.java',
+                cpp: 'solution.cpp',
+                c: 'solution.c'
+            };
+            const filename = extensions[lang] || 'solution.txt';
+            
+            const blob = new Blob([code], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        });
+
+        // Insert Template
+        document.getElementById('insertTemplateBtn').addEventListener('click', () => {
+            if (!monacoEditor) return;
+            const lang = document.getElementById('languageSelect').value;
+            const template = TEMPLATE_SNIPPETS[lang];
+            if (template) {
+                if (confirm('Insert standard template? This will replace your current editor contents.')) {
+                    monacoEditor.setValue(template);
+                }
+            }
+        });
+
+        // Keyboard shortcuts
+        window.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key.toLowerCase() === 's') {
+                e.preventDefault();
+                const stats = document.getElementById('executionStats');
+                if (stats) {
+                    const old = stats.innerText;
+                    stats.innerText = 'Status: Workspace Saved!';
+                    setTimeout(() => { stats.innerText = old; }, 1500);
+                }
+            }
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                runCode();
+            }
+        });
+    }
+
+    function loadSnippets() {
+        const container = document.getElementById('snippetsList');
+        if (!container) return;
+        
+        container.innerHTML = Object.entries(TEMPLATE_SNIPPETS).map(([lang, code]) => {
+            const prettyLang = lang === 'cpp' ? 'C++ (Beast Breathing)' : 
+                               lang === 'python' ? 'Python (Flame Breathing)' :
+                               lang === 'java' ? 'Java (Sun Breathing)' :
+                               lang === 'c' ? 'C (Water Breathing)' : 'JavaScript (Thunder Breathing)';
+            return `
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,77,46,0.15); border-radius:12px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <strong style="color:#ff8c5a; font-size:0.9rem;">${prettyLang}</strong>
+                        <div style="font-size:0.75rem; color:#cbd5e1; margin-top:4px;">Starter Boilerplate Code</div>
+                    </div>
+                    <button class="btn-solve" style="font-size:0.75rem; padding: 4px 10px;" onclick="insertSnippetCode('${lang}')">Insert <i class="fas fa-khanda"></i></button>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    window.insertSnippetCode = function(lang) {
+        if (!monacoEditor) return;
+        const template = TEMPLATE_SNIPPETS[lang];
+        if (template) {
+            if (confirm(`Switch language to ${lang} and insert boilerplate? This will overwrite the current editor code.`)) {
+                document.getElementById('languageSelect').value = lang;
+                document.getElementById('languageSelect').dispatchEvent(new Event('change'));
+                monacoEditor.setValue(template);
+            }
+        }
+    };
 
     // Code execution judging
     async function runCode() {
@@ -745,6 +929,18 @@
             if (res.status === 'Accepted') {
                 text += `🎉 Congratulations, Slayer! Your program has passed all final hidden tests successfully.\nYour rank points and coins have been credited.`;
                 alert('🏆 Success! Verdict: ACCEPTED 🏆');
+
+                try {
+                    await Progress.updateProgress({
+                        topic: problemDetails.topic || problemDetails.title || 'General',
+                        score: 100,
+                        completed: true
+                    });
+                    localStorage.setItem('progressUpdated', 'true');
+                    console.log('Progress recorded for topic:', problemDetails.topic);
+                } catch (progressErr) {
+                    console.warn('Could not update progress:', progressErr);
+                }
             } else if (res.status === 'Wrong Answer') {
                 text += `❌ Test Case Failed on Input:\n${res.input}\n\nExpected output:\n${res.expected}\n\nYour output:\n${res.actual}`;
             } else if (res.status === 'Compilation Error' || res.status === 'Runtime Error') {

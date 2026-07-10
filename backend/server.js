@@ -58,6 +58,9 @@ app.use('/api/contests', contestRoutes);
 app.use('/api/challenges', challengeRoutes);
 app.use('/api/notifications', notificationRoutes);
 
+// Serve standalone React-based code editor app under /code-editor
+app.use('/code-editor', express.static(path.join(__dirname, '..', 'code editor', 'dist')));
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });

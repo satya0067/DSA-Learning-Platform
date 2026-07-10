@@ -7,6 +7,7 @@ const Leaderboard = require('../models/Leaderboard');
 const DailyChallenge = require('../models/DailyChallenge');
 const WeeklyChallenge = require('../models/WeeklyChallenge');
 const Notification = require('../models/Notification');
+const Progress = require('../models/Progress');
 const judgeService = require('../services/judgeService');
 const codeExecutor = require('../services/codeExecutor');
 

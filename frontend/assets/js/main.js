@@ -45,7 +45,8 @@ function loadNavbar() {
                 </div>
                 <ul class="nav-links">
                     <li><a href="/pages/dashboard/dashboard.html">Dashboard</a></li>
-                    <li><a href="/pages/editor/editor.html">Editor</a></li>
+                    <li><a href="/pages/practice/practice.html">Practice</a></li>
+                    <li><a href="/code-editor/index.html">Editor</a></li>
                     <li><a href="/pages/quiz/quiz.html">Quiz</a></li>
                     <li><a href="/pages/profile/profile.html">Profile</a></li>
                     ${token ? '<li><a href="#" id="logoutLink">Logout</a></li>' : '<li><a href="/pages/auth/login.html">Login</a></li><li><a href="/pages/auth/login.html#register">Register</a></li>'}

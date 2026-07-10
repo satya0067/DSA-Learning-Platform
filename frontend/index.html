@@ -6,7 +6,6 @@
     <title>Struct-Learn | Demon Slayer Code Corps</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -26,10 +25,10 @@
         /* Floating Particles Background */
         .bg-particles {
             position: fixed;
-            inset-block-start: 0;
-            inset-inline-start: 0;
-            inline-size: 100%;
-            block-size: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
             z-index: 0;
             overflow: hidden;
@@ -50,16 +49,10 @@
         }
 
         @keyframes floatParticle {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 0;
-            }
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
             10% { opacity: 0.5; }
             90% { opacity: 0.3; }
-            100% {
-                transform: translateY(-20vh) rotate(360deg);
-                opacity: 0;
-            }
+            100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
         }
 
         .main-wrapper {
@@ -67,200 +60,311 @@
             z-index: 2;
         }
 
-        /* Navigation - Demon Slayer Corps Style */
+        /* ===== ENHANCED HEADER ===== */
         .demon-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 3rem;
-            background: rgba(0, 0, 0, 0.7);
-            -webkit-backdrop-filter: blur(12px);
-            backdrop-filter: blur(12px);
-            border-block-end: 1px solid rgba(255, 80, 40, 0.6);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            padding: 0.6rem 2.5rem;
+            background: linear-gradient(180deg, rgba(8, 3, 15, 0.95) 0%, rgba(10, 5, 20, 0.85) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 80, 40, 0.3);
+            box-shadow: 0 5px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
             position: sticky;
-            inset-block-start: 0;
+            top: 0;
             z-index: 100;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 0.6rem;
+            transition: all 0.3s ease;
         }
 
+        /* Left side - Logo */
         .logo-area {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
+            text-decoration: none;
+            padding: 4px 0;
+        }
+
+        .logo-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .logo-icon {
-            font-size: 2.2rem;
-            filter: drop-shadow(0 0 6px #ff4d1e);
+            font-size: 2.4rem;
             color: #e34d2b;
+            filter: drop-shadow(0 0 20px rgba(255, 77, 30, 0.4));
+            transition: all 0.4s ease;
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 77, 30, 0.3)); }
+            50% { filter: drop-shadow(0 0 30px rgba(255, 77, 30, 0.6)); }
+        }
+
+        .logo-area:hover .logo-icon {
+            transform: scale(1.1) rotate(-8deg);
+            animation-play-state: paused;
+        }
+
+        .logo-text-wrapper {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
         }
 
         .logo-text {
-            font-weight: 800;
-            font-size: 1.6rem;
-            letter-spacing: 1px;
-            background: linear-gradient(135deg, #f7b42c, #fc575e);
+            font-weight: 900;
+            font-size: 1.7rem;
+            letter-spacing: 1.5px;
+            background: linear-gradient(135deg, #f7b42c, #fc575e, #ff7d40);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            text-shadow: 0 0 30px rgba(252, 87, 94, 0.15);
         }
 
         .logo-sub {
-            font-size: 0.7rem;
-            letter-spacing: 1px;
+            font-size: 0.6rem;
+            letter-spacing: 2.5px;
             color: #ffb347;
-            font-weight: 500;
+            font-weight: 600;
+            text-transform: uppercase;
+            opacity: 0.8;
+            margin-top: -2px;
         }
 
+        /* Center - Navigation Links */
         .nav-links {
             display: flex;
-            gap: 2rem;
+            gap: 0.5rem;
             align-items: center;
             flex-wrap: wrap;
         }
 
         .nav-links a {
             text-decoration: none;
-            color: #f0e6d8;
-            font-weight: 600;
-            transition: 0.2s;
+            color: #cbd5e1;
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 40px;
+            transition: all 0.3s ease;
             position: relative;
-            font-size: 0.95rem;
+            letter-spacing: 0.3px;
         }
 
-        .nav-links a:before {
-            content: '';
-            position: absolute;
-            inset-block-end: -6px;
-            inset-inline-start: 0;
-            inline-size: 0%;
-            block-size: 2px;
-            background: linear-gradient(90deg, #ff5e2e, #ffb347);
-            transition: 0.3s;
-        }
-
-        .nav-links a:hover:before {
-            inline-size: 100%;
+        .nav-links a i {
+            margin-right: 6px;
+            font-size: 0.8rem;
         }
 
         .nav-links a:hover {
             color: #ff8c5a;
+            background: rgba(255, 80, 40, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a:active {
+            transform: scale(0.95);
+        }
+
+        /* Right side - Action buttons */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .header-icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 103, 57, 0.85), rgba(255, 150, 90, 0.85));
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 80, 40, 0.2);
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .header-icon-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(255, 80, 40, 0.35);
+            background: linear-gradient(135deg, rgba(255, 103, 57, 1), rgba(255, 150, 90, 1));
+        }
+
+        .header-icon-btn i {
+            font-size: 0.9rem;
+        }
+
+        .header-avatar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff7a3d, #ffc06f);
+            color: #1a0a05;
+            font-weight: 800;
+            font-size: 0.9rem;
+            border: 2px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .header-avatar:hover {
+            transform: scale(1.08);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 6px 25px rgba(255, 122, 61, 0.3);
         }
 
         .kimetsu-btn {
             background: linear-gradient(95deg, #b52e1c, #e34d2b);
             border: none;
-            padding: 0.6rem 1.4rem;
+            padding: 0.6rem 1.6rem;
             border-radius: 40px;
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 0.85rem;
             color: white;
             font-family: inherit;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(220, 70, 30, 0.4);
-            transition: 0.2s;
+            box-shadow: 0 4px 20px rgba(220, 70, 30, 0.35);
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .kimetsu-btn:hover {
-            transform: scale(1.05);
+            transform: scale(1.05) translateY(-2px);
             background: linear-gradient(95deg, #cf3a24, #ff6236);
-            box-shadow: 0 6px 18px #ff3c1e70;
+            box-shadow: 0 8px 35px #ff3c1e70;
         }
 
-        /* Hero Section */
+        .kimetsu-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* ===== HERO SECTION ===== */
         .hero-section {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 4rem 2rem 5rem;
+            padding: 5rem 2rem 6rem;
             position: relative;
         }
 
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(255, 80, 40, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
         .hero-title {
-            font-size: 3.8rem;
+            font-size: 4rem;
             font-weight: 900;
             letter-spacing: 2px;
             background: linear-gradient(135deg, #FFF0D4, #FFB347, #FF6633);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-shadow: 0 0 20px rgba(255,80,40,0.3);
-            margin-block-end: 1rem;
+            text-shadow: 0 0 40px rgba(255,80,40,0.2);
+            margin-bottom: 1rem;
         }
 
         .hero-sub {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: 500;
             color: #e6d5b8;
-            max-inline-size: 700px;
-            margin-block-end: 1rem;
-            border-inline-start: 4px solid #ff4d2e;
-            border-inline-end: 4px solid #ff4d2e;
-            padding: 0.5rem 1.2rem;
+            max-width: 700px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #ff4d2e;
+            border-right: 4px solid #ff4d2e;
+            padding: 0.5rem 1.5rem;
             display: inline-block;
-            -webkit-backdrop-filter: blur(4px);
             backdrop-filter: blur(4px);
         }
 
         .hero-description {
-            max-inline-size: 600px;
-            margin-block-start: 1rem;
-            opacity: 0.9;
-            line-height: 1.6;
+            max-width: 600px;
+            margin-top: 1rem;
+            opacity: 0.85;
+            line-height: 1.7;
+            font-size: 1.05rem;
+            color: #d4c8b8;
         }
 
         .hero-badge {
-            font-size: 0.9rem;
-            background: rgba(0,0,0,0.5);
-            padding: 0.3rem 1.2rem;
+            font-size: 0.85rem;
+            background: rgba(255,80,40,0.15);
+            padding: 0.4rem 1.5rem;
             border-radius: 40px;
-            margin-block-end: 1.5rem;
+            margin-bottom: 1.5rem;
             display: inline-block;
             color: #ffb37c;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            border: 1px solid rgba(255,80,40,0.2);
         }
 
         .btn-demon {
             display: inline-block;
             background: linear-gradient(120deg, #a1301a, #dd4824);
             border: none;
-            padding: 1rem 2.8rem;
+            padding: 1rem 3rem;
             font-size: 1.2rem;
             font-weight: 800;
             border-radius: 50px;
             color: white;
             text-decoration: none;
-            margin-block-start: 2rem;
+            margin-top: 2rem;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 18px rgba(0,0,0,0.5), 0 0 12px rgba(255,70,30,0.6);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5), 0 0 20px rgba(255,70,30,0.4);
             cursor: pointer;
+            letter-spacing: 0.5px;
         }
 
         .btn-demon i {
-            margin-inline-end: 8px;
+            margin-right: 10px;
         }
 
         .btn-demon:hover {
-            transform: translateY(-5px);
+            transform: translateY(-5px) scale(1.02);
             background: linear-gradient(120deg, #c54222, #ff5e34);
-            box-shadow: 0 15px 25px rgba(220, 60, 20, 0.5);
+            box-shadow: 0 15px 40px rgba(220, 60, 20, 0.5);
         }
 
-        /* Cards Section */
+        /* ===== CARDS SECTION ===== */
         .breath-container {
-            max-inline-size: 1300px;
+            max-width: 1300px;
             margin: 2rem auto;
             padding: 1rem 2rem;
         }
 
         .section-title {
             text-align: center;
-            font-size: 2.2rem;
+            font-size: 2.3rem;
             font-weight: 800;
-            margin-block-end: 0.5rem;
+            margin-bottom: 0.5rem;
         }
 
         .section-title span {
@@ -271,12 +375,12 @@
         }
 
         .sword-divider {
-            inline-size: 80px;
-            block-size: 3px;
-            background: #ff4d2e;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ff4d2e, transparent);
             margin: 1rem auto 2.5rem;
             border-radius: 4px;
-            box-shadow: 0 0 6px #ff784b;
+            box-shadow: 0 0 15px rgba(255, 70, 30, 0.3);
         }
 
         .card-grid {
@@ -287,92 +391,124 @@
 
         .ds-card {
             display: block;
-            background: rgba(10, 5, 20, 0.7);
-            -webkit-backdrop-filter: blur(8px);
-            backdrop-filter: blur(8px);
+            background: rgba(10, 5, 20, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-radius: 28px;
-            border: 1px solid rgba(255, 90, 50, 0.5);
-            padding: 1.8rem 1.2rem;
-            transition: 0.3s ease;
+            border: 1px solid rgba(255, 90, 50, 0.4);
+            padding: 2rem 1.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             text-align: center;
-            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.6);
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.5);
             cursor: pointer;
             text-decoration: none;
             color: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ds-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(255,80,40,0.05), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .ds-card:hover::before {
+            opacity: 1;
         }
 
         .ds-card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-10px);
             border-color: #ff7540;
-            box-shadow: 0 20px 30px -8px rgba(255, 70, 0, 0.3);
+            box-shadow: 0 20px 50px -10px rgba(255, 70, 0, 0.3);
             background: rgba(20, 8, 32, 0.85);
         }
 
         .card-icon {
             font-size: 3.2rem;
-            margin-block-end: 1rem;
+            margin-bottom: 1rem;
             display: inline-block;
-            filter: drop-shadow(0 0 6px #ff5e3a);
+            filter: drop-shadow(0 0 10px rgba(255, 94, 58, 0.3));
             color: #ff8460;
         }
 
         .ds-card h3 {
             font-size: 1.6rem;
             font-weight: 700;
-            margin-block-end: 0.5rem;
+            margin-bottom: 0.5rem;
         }
 
         .ds-card p {
             color: #cdc2b0;
             font-size: 0.9rem;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .breath-tag {
-            margin-block-start: 1rem;
+            margin-top: 1rem;
             font-size: 0.75rem;
             font-weight: 600;
             background: rgba(255, 80, 40, 0.2);
             display: inline-block;
-            padding: 0.25rem 1rem;
+            padding: 0.3rem 1.2rem;
             border-radius: 30px;
             color: #ffa270;
+            border: 1px solid rgba(255,80,40,0.15);
         }
 
-        /* Stats Section */
+        /* ===== STATS ===== */
         .hashira-stats {
             display: flex;
             justify-content: center;
-            gap: 3rem;
+            gap: 4rem;
             flex-wrap: wrap;
             margin: 3rem 0;
         }
 
         .stat-block {
             text-align: center;
-            background: rgba(0,0,0,0.4);
-            padding: 1rem 2rem;
+            background: rgba(0,0,0,0.35);
+            padding: 1.2rem 2.5rem;
             border-radius: 60px;
-            -webkit-backdrop-filter: blur(4px);
-            backdrop-filter: blur(4px);
-            border: 1px solid #ff6533;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 100, 50, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .stat-block:hover {
+            border-color: rgba(255, 100, 50, 0.5);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255,80,40,0.1);
         }
 
         .stat-number {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 800;
             color: #ff7744;
         }
 
-        /* Footer */
+        .stat-block div:last-child {
+            font-size: 0.9rem;
+            color: #b8aa9a;
+            margin-top: 0.2rem;
+        }
+
+        /* ===== FOOTER ===== */
         .demon-footer {
-            background: rgba(0, 0, 0, 0.8);
-            -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
-            padding: 2rem;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 2.5rem 2rem;
             text-align: center;
-            border-block-start: 1px solid #ff5933;
-            margin-block-start: 3rem;
+            border-top: 1px solid rgba(255, 89, 51, 0.4);
+            margin-top: 3rem;
         }
 
         .footer-content {
@@ -380,47 +516,33 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            max-inline-size: 1200px;
+            max-width: 1200px;
             margin: auto;
             gap: 1rem;
         }
 
+        .footer-content > div {
+            font-size: 0.9rem;
+            color: #b8aa9a;
+        }
+
         .social-icons i {
-            font-size: 1.5rem;
-            margin: 0 0.6rem;
+            font-size: 1.4rem;
+            margin: 0 0.7rem;
             color: #ffb27a;
-            transition: 0.2s;
+            transition: all 0.3s ease;
             cursor: pointer;
         }
 
         .social-icons i:hover {
             color: #ff4f22;
-            transform: scale(1.2);
+            transform: scale(1.2) translateY(-2px);
         }
 
-        @media (max-inline-size: 800px) {
-            .demon-nav {
-                flex-direction: column;
-                padding: 1rem;
-            }
-            .hero-title {
-                font-size: 2.2rem;
-            }
-            .hero-sub {
-                font-size: 1rem;
-            }
-            .btn-demon {
-                padding: 0.8rem 1.8rem;
-                font-size: 1rem;
-            }
-            .section-title {
-                font-size: 1.8rem;
-            }
-        }
-
+        /* ===== CURSOR GLOW ===== */
         .cursor-glow {
-            inline-size: 30px;
-            block-size: 30px;
+            width: 30px;
+            height: 30px;
             background: radial-gradient(circle, rgba(255,80,40,0.7) 0%, rgba(255,40,0,0) 80%);
             border-radius: 50%;
             position: fixed;
@@ -431,8 +553,85 @@
         }
 
         @keyframes fadeSlideUp {
-            0% { opacity: 0; transform: translateY(20px); }
+            0% { opacity: 0; transform: translateY(30px); }
             100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 1024px) {
+            .demon-nav {
+                padding: 0.6rem 1.5rem;
+            }
+            .nav-links a {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.6rem;
+            }
+        }
+
+        @media (max-width: 850px) {
+            .demon-nav {
+                flex-direction: column;
+                padding: 0.8rem 1rem;
+                gap: 0.8rem;
+            }
+            .nav-links {
+                justify-content: center;
+            }
+            .nav-actions {
+                justify-content: center;
+            }
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .hero-sub {
+                font-size: 1rem;
+                padding: 0.3rem 1rem;
+            }
+            .btn-demon {
+                padding: 0.8rem 2rem;
+                font-size: 1rem;
+            }
+            .section-title {
+                font-size: 1.8rem;
+            }
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .hashira-stats {
+                gap: 1.5rem;
+            }
+            .stat-block {
+                padding: 0.8rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-text {
+                font-size: 1.3rem;
+            }
+            .logo-icon {
+                font-size: 1.8rem;
+            }
+            .nav-links a {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.5rem;
+            }
+            .kimetsu-btn {
+                font-size: 0.75rem;
+                padding: 0.5rem 1rem;
+            }
+            .header-icon-btn {
+                width: 32px;
+                height: 32px;
+            }
+            .header-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 0.75rem;
+            }
+            .hero-title {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
@@ -442,29 +641,41 @@
 <div class="cursor-glow" id="cursorGlow"></div>
 
 <div class="main-wrapper">
-    <!-- Navigation - All English -->
+    <!-- ===== ENHANCED HEADER ===== -->
     <nav class="demon-nav">
+        <!-- Left: Logo -->
         <a href="index.html" class="logo-area">
-            <i class="fas fa-dragon logo-icon"></i>
-            <div>
+            <div class="logo-wrapper">
+                <i class="fas fa-dragon logo-icon"></i>
+            </div>
+            <div class="logo-text-wrapper">
                 <div class="logo-text">STRUCT-LEARN</div>
                 <div class="logo-sub">Demon Slayer Code Corps</div>
             </div>
         </a>
+
+        <!-- Center: Navigation -->
         <div class="nav-links">
             <a href="index.html"><i class="fas fa-home"></i> Home</a>
-            <a href="pages/dashboard/dashboard.html"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+            <a href="pages/dashboard/dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
             <a href="pages/practice/practice.html"><i class="fas fa-keyboard"></i> Practice</a>
             <a href="pages/quiz/quiz.html"><i class="fas fa-book"></i> Quiz</a>
             <a href="pages/practice/contests.html"><i class="fas fa-trophy"></i> Contests</a>
             <a href="pages/practice/roadmaps.html"><i class="fas fa-map-signs"></i> Roadmaps</a>
             <a href="pages/profile/profile.html"><i class="fas fa-user"></i> Profile</a>
-            <a href="pages/auth/login.html" id="loginLink"><i class="fas fa-sign-in-alt"></i> Login</a>
+        </div>
+
+        <!-- Right: Actions -->
+        <div class="nav-actions">
+            <a href="pages/editor/editor.html" class="header-icon-btn" title="Code Editor"><i class="fas fa-code"></i></a>
+            <a href="pages/practice/dojo.html" class="header-icon-btn" title="Dojo Studio"><i class="fas fa-dumbbell"></i></a>
+            <a href="pages/auth/login.html" id="loginLink" style="text-decoration:none; color:#f0e6d8; font-weight:600; font-size:0.85rem; padding:0.4rem 0.8rem; border-radius:40px; transition:0.3s; background:rgba(255,255,255,0.05);"><i class="fas fa-sign-in-alt"></i> Login</a>
+            <div class="header-avatar" title="User profile">U</div>
             <button class="kimetsu-btn" id="startJourneyBtn"><i class="fas fa-khanda"></i> Begin Journey</button>
         </div>
     </nav>
 
-    <!-- Hero Section - English Text -->
+    <!-- ===== HERO SECTION ===== -->
     <div class="hero-section">
         <div class="hero-badge">
             <i class="fas fa-feather-alt"></i> Total Concentration · Code Breathing <i class="fas fa-feather-alt"></i>
@@ -477,7 +688,7 @@
         <button class="btn-demon" id="getStartedMain"><i class="fas fa-bolt"></i> Start Training Now</button>
     </div>
 
-    <!-- Data Structure Cards - English -->
+    <!-- ===== DATA STRUCTURE CARDS ===== -->
     <div class="breath-container">
         <div class="section-title"><span>⚔️ Total Concentration Forms ⚔️</span><br>Data Structure Breathing Styles</div>
         <div class="sword-divider"></div>
@@ -518,23 +729,29 @@
                 <p>Wind Breathing · Second Form: FIFO flow for orderly processing.</p>
                 <div class="breath-tag"><i class="fas fa-wind"></i> Wind Breathing</div>
             </a>
-            <a class="ds-card" href="pages/editor/editor.html" data-struct="hash">
-                <i class="fas fa-dice-d6 card-icon"></i>
-                <h3>Hash Table</h3>
-                <p>Beast Breathing · Final Form: O(1) lookups, the ultimate shadow technique.</p>
-                <div class="breath-tag"><i class="fas fa-paw"></i> Beast Breathing</div>
+            <a class="ds-card" href="pages/editor/editor.html" data-struct="editor">
+                <i class="fas fa-code card-icon"></i>
+                <h3>Code Editor</h3>
+                <p>Open a full coding workspace to write, test, and run solutions in Python, Java, C, C++, or JavaScript.</p>
+                <div class="breath-tag"><i class="fas fa-bolt"></i> Thunder Breathing</div>
+            </a>
+            <a class="ds-card" href="pages/practice/dojo.html" data-struct="dojo">
+                <i class="fas fa-dumbbell card-icon"></i>
+                <h3>Dojo Studio</h3>
+                <p>Create your own challenge, save the prompt, and solve it in a focused practice environment.</p>
+                <div class="breath-tag"><i class="fas fa-fire"></i> Flame Breathing</div>
             </a>
         </div>
     </div>
 
-    <!-- Stats Section - English -->
+    <!-- ===== STATS ===== -->
     <div class="hashira-stats">
         <div class="stat-block"><div class="stat-number">50+</div><div>Algorithm Forms</div></div>
         <div class="stat-block"><div class="stat-number">∞</div><div>Code Breathing Mastery</div></div>
         <div class="stat-block"><div class="stat-number">1000+</div><div>Aspiring Slayers</div></div>
     </div>
 
-    <!-- Footer - English -->
+    <!-- ===== FOOTER ===== -->
     <footer class="demon-footer">
         <div class="footer-content">
             <div><i class="fas fa-code-branch"></i> Demon Slayer Code Corps · Total Concentration</div>
@@ -586,7 +803,7 @@
         cursorGlow.style.top = e.clientY + 'px';
     });
 
-    // Demon Slayer themed alert messages (English only)
+    // Demon Slayer themed alert messages
     const demonMessages = [
         "⚔️ Total Concentration! Master the Water Breathing of Arrays! ⚔️",
         "🔥 Flame Breathing: Linked Lists will set your code ablaze! 🔥",
@@ -649,7 +866,6 @@
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             // Keep default link navigation behavior
-            // Optionally show a friendly tip for special links
             const text = link.innerText.trim();
             if (text.includes("Home") || text.includes("Dashboard") || text.includes("Editor") || text.includes("Quiz") || text.includes("Profile")) {
                 return;
@@ -709,5 +925,6 @@
     console.log("%c⚔️ DEMON SLAYER CODE CORPS ⚔️\n\"Total Concentration — Master Data Structures with the Breathing Styles!\"", "color: #ff7b42; font-size: 14px; font-weight: bold;");
     console.log("%cArray • Linked List • Tree • Graph • Stack • Queue • Hash Table", "color: #87CEFA; font-size: 12px;");
 </script>
+<script src="assets/js/theme-switcher.js"></script>
 </body>
 </html>

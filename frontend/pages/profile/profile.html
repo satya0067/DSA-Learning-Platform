@@ -824,6 +824,28 @@
         if (e.target === modal) closeEditProfile();
     });
 
+    function refreshProgressIfNeeded() {
+        const updated = localStorage.getItem('progressUpdated');
+        if (updated === 'true') {
+            Progress.getProgress()
+                .then(records => renderProgress(records))
+                .catch(err => console.error('Failed to refresh progress:', err));
+            localStorage.removeItem('progressUpdated');
+        }
+    }
+
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'progressUpdated' && event.newValue === 'true') {
+            refreshProgressIfNeeded();
+        }
+    });
+
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            refreshProgressIfNeeded();
+        }
+    });
+
     document.addEventListener('DOMContentLoaded', initProfile);
 
     // ==================== NAVIGATION ====================

@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Shadow Hashira | Tactical Code Corps</title>
+<!-- Google Fonts: Sharp & Professional -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+        :root {
+            --obsidian: #0a0a0c;
+            --charcoal: #16161a;
+            --neon-orange: #ff5f1f;
+            --muted-gray: #4a4a4e;
+            --off-white: #e1e1e6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--obsidian);
+            font-family: 'Inter', sans-serif;
+            color: var(--off-white);
+            overflow-x: hidden;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        /* ===== SWORD SLASH BACKGROUND (VERTICAL STREAKS) ===== */
+        .bg-slashes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .slash {
+            position: absolute;
+            width: 1px;
+            height: 150px;
+            background: linear-gradient(to bottom, transparent, var(--neon-orange), transparent);
+            opacity: 0;
+            animation: slashDrop linear infinite;
+        }
+
+        @keyframes slashDrop {
+            0% { transform: translateY(-200px); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.1; }
+            100% { transform: translateY(110vh); opacity: 0; }
+        }
+
+        .main-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ===== TACTICAL COMPACT NAVIGATION ===== */
+        .demon-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 2rem;
+            background: rgba(10, 10, 12, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 95, 31, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            font-size: 1.2rem;
+            color: var(--neon-orange);
+            border: 1px solid var(--neon-orange);
+            padding: 5px;
+            border-radius: 2px;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--off-white);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--muted-gray);
+            font-weight: 500;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--neon-orange);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-minimal {
+            background: transparent;
+            border: 1px solid var(--muted-gray);
+            padding: 0.4rem 1rem;
+            color: var(--off-white);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-minimal:hover {
+            border-color: var(--neon-orange);
+            color: var(--neon-orange);
+        }
+
+        .btn-primary-tactical {
+            background: var(--neon-orange);
+            color: var(--obsidian);
+            border: none;
+            padding: 0.4rem 1.2rem;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+
+        /* ===== HERO SECTION: ULTRA-CLEAN ===== */
+        .hero-section {
+            padding: 8rem 2rem 6rem;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-size: 4.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            line-height: 0.9;
+            margin-bottom: 1.5rem;
+            letter-spacing: -2px;
+        }
+
+        .hero-title span {
+            color: var(--neon-orange);
+        }
+
+        .hero-description {
+            font-size: 1rem;
+            color: var(--muted-gray);
+            max-width: 500px;
+            margin: 0 auto 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero-cta {
+            display: inline-block;
+            border: 2px solid var(--neon-orange);
+            padding: 1rem 3rem;
+            color: var(--neon-orange);
+            text-decoration: none;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+        }
+
+        .hero-cta:hover {
+            background: var(--neon-orange);
+            color: var(--obsidian);
+        }
+
+        /* ===== HIGH-CONTRAST GRID ===== */
+        .grid-container {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--muted-gray);
+            padding-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--muted-gray);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background-color: var(--muted-gray); /* Border lines */
+            border: 1px solid var(--muted-gray);
+        }
+
+        .ds-card {
+            background-color: var(--obsidian);
+            padding: 2.5rem 1.5rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .ds-card:hover {
+            background-color: var(--charcoal);
+        }
+
+        .ds-card:hover .card-id {
+            color: var(--neon-orange);
+        }
+
+        .card-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--muted-gray);
+            transition: color 0.2s;
+        }
+
+        .ds-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .ds-card p {
+            font-size: 0.8rem;
+            color: var(--muted-gray);
+            line-height: 1.4;
+        }
+
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            display: flex;
+            border-top: 1px solid var(--muted-gray);
+            border-bottom: 1px solid var(--muted-gray);
+            margin: 4rem 0;
+        }
+
+        .stat-item {
+            flex: 1;
+            padding: 2rem;
+            text-align: center;
+            border-right: 1px solid var(--muted-gray);
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stat-val {
+            display: block;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--neon-orange);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--muted-gray);
+        }
+
+        /* ===== FOOTER ===== */
+        .demon-footer {
+            padding: 4rem 2rem;
+            border-top: 1px solid var(--muted-gray);
+            background-color: var(--obsidian);
+        }
+
+        .footer-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .footer-brand .logo-text {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .footer-brand p {
+            font-size: 0.75rem;
+            color: var(--muted-gray);
+            max-width: 300px;
+        }
+
+        .footer-col h4 {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+            color: var(--off-white);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            font-size: 0.75rem;
+            color: var(--muted-gray);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--neon-orange);
+        }
+
+        /* Cursor / Interactive */
+        .cursor-dot {
+            width: 4px;
+            height: 4px;
+            background: var(--neon-orange);
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            border-radius: 50%;
+        }
+
+        @media (max-width: 1024px) {
+            .card-grid { grid-template-columns: repeat(2, 1fr); }
+            .hero-title { font-size: 3rem; }
+        }
+
+        @media (max-width: 640px) {
+            .nav-links { display: none; }
+            .card-grid { grid-template-columns: 1fr; }
+            .hero-title { font-size: 2.5rem; }
+            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="bg-slashes" id="slashContainer"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="main-wrapper">
+<!-- ===== COMPACT NAVIGATION ===== -->
+<nav class="demon-nav">
+<a class="logo-area" href="index.html">
+<i class="fas fa-terminal logo-icon"></i>
+<span class="logo-text">Struct.Shadow</span>
+</a>
+<div class="nav-links">
+<a class="active" href="index.html">Root</a>
+<a href="pages/dashboard/dashboard.html">System</a>
+<a href="pages/practice/practice.html">Training</a>
+<a href="pages/quiz/quiz.html">Eval</a>
+<a href="pages/profile/profile.html">Slayer_ID</a>
+</div>
+<div class="nav-actions">
+<a class="btn-minimal" href="pages/auth/login.html" id="loginBtn">Auth_Login</a>
+<button class="btn-primary-tactical" id="startJourneyBtn">Execute_Mission</button>
+</div>
+</nav>
+<!-- ===== HERO SECTION ===== -->
+<header class="hero-section">
+<h1 class="hero-title">Shadow <span>Hashira</span> Deployment.</h1>
+<p class="hero-description">Total concentration data management. Tactical breathing for efficient memory structures.</p>
+<a class="hero-cta" href="#training">Initialize Training</a>
+</header>
+<!-- ===== DATA STRUCTURE GRID ===== -->
+<main class="grid-container" id="training">
+<div class="section-header">
+<div class="section-title">// Modules.Select</div>
+<div class="card-id" style="color: var(--neon-orange)">SYSTEM_READY: 0.8.4</div>
+</div>
+<div class="card-grid">
+<a class="ds-card" href="pages/arrays/array.html">
+<span class="card-id">#01_ARRAY</span>
+<h3>Contiguous Block</h3>
+<p>Linear memory allocation. Constant time access. Water Breathing efficiency.</p>
+</a>
+<a class="ds-card" href="pages/linked-list/linked-list.html">
+<span class="card-id">#02_LINKED</span>
+<h3>Node Sequence</h3>
+<p>Dynamic pointer chaining. Flame Breathing insertions. Non-contiguous structure.</p>
+</a>
+<a class="ds-card" href="pages/trees/trees.html">
+<span class="card-id">#03_TREES</span>
+<h3>Hierarchy Logic</h3>
+<p>Mist Breathing recursion. Optimized search patterns. Branching complexity.</p>
+</a>
+<a class="ds-card" href="pages/graphs/graphs.html">
+<span class="card-id">#04_GRAPH</span>
+<h3>Network Mesh</h3>
+<p>Sun Breathing traversal. Pathfinding logic. Connectivity matrix.</p>
+</a>
+<a class="ds-card" href="pages/stacks/stacks.html">
+<span class="card-id">#05_STACK</span>
+<h3>LIFO Buffer</h3>
+<p>Last-in, First-out. Thunder Breathing stack frames. Execution flow control.</p>
+</a>
+<a class="ds-card" href="pages/queues/queues.html">
+<span class="card-id">#06_QUEUE</span>
+<h3>FIFO Pipeline</h3>
+<p>Wind Breathing scheduling. Orderly processing. Task queuing systems.</p>
+</a>
+<a class="ds-card" href="pages/editor/editor.html">
+<span class="card-id">#07_IDE</span>
+<h3>Combat Studio</h3>
+<p>Multi-language runtime. Write. Compile. Execute. Python/C++/JS.</p>
+</a>
+<a class="ds-card" href="pages/practice/dojo.html">
+<span class="card-id">#08_DOJO</span>
+<h3>Neural Sandbox</h3>
+<p>Custom scenario generation. Focused practice against synthetic demons.</p>
+</a>
+</div>
+</main>
+<!-- ===== TACTICAL STATS ===== -->
+<section class="stats-bar">
+<div class="stat-item">
+<span class="stat-val">50+</span>
+<span class="stat-label">Tactical Forms</span>
+</div>
+<div class="stat-item">
+<span class="stat-val">24/7</span>
+<span class="stat-label">Active Surveillance</span>
+</div>
+<div class="stat-item">
+<span class="stat-val">1000+</span>
+<span class="stat-label">Deployed Slayers</span>
+</div>
+</section>
+<!-- ===== FOOTER ===== -->
+<footer class="demon-footer">
+<div class="footer-grid">
+<div class="footer-brand">
+<span class="logo-text">Struct.Shadow // Code Corps</span>
+<p>The elite division of tactical data management. Minimalist design for maximum cognitive focus.</p>
+</div>
+<div class="footer-col">
+<h4>// Protocol</h4>
+<ul class="footer-links">
+<li><a href="#">Privacy_Policy</a></li>
+<li><a href="#">Terms_of_Service</a></li>
+<li><a href="#">Security_Audit</a></li>
+</ul>
+</div>
+<div class="footer-col">
+<h4>// Comms</h4>
+<ul class="footer-links">
+<li><a href="#">Github_Link</a></li>
+<li><a href="#">Discord_Server</a></li>
+<li><a href="#">Operator_Contact</a></li>
+</ul>
+</div>
+</div>
+<div style="margin-top: 4rem; font-size: 0.6rem; color: var(--muted-gray); text-transform: uppercase; letter-spacing: 2px;">
+            © 2025 SHADOW_HASHIRA_CORPS. ALL RIGHTS RESERVED.
+        </div>
+</footer>
+</div>
+<script>
+    // Minimalist Slash Particles (Thin Vertical Streaks)
+    const slashContainer = document.getElementById('slashContainer');
+    function createSlash() {
+        const slash = document.createElement('div');
+        slash.classList.add('slash');
+        
+        const left = Math.random() * 100;
+        const duration = 0.5 + Math.random() * 1.5;
+        const delay = Math.random() * 5;
+        const height = 50 + Math.random() * 200;
+
+        slash.style.left = left + '%';
+        slash.style.animationDuration = duration + 's';
+        slash.style.animationDelay = delay + 's';
+        slash.style.height = height + 'px';
+        
+        slashContainer.appendChild(slash);
+
+        // Clean up
+        setTimeout(() => {
+            slash.remove();
+        }, (duration + delay) * 1000);
+    }
+
+    // Initial burst
+    for(let i = 0; i < 20; i++) createSlash();
+    // Continuous generation
+    setInterval(createSlash, 200);
+
+    // Custom Cursor Dot
+    const cursorDot = document.getElementById('cursorDot');
+    document.addEventListener('mousemove', (e) => {
+        cursorDot.style.left = e.clientX + 'px';
+        cursorDot.style.top = e.clientY + 'px';
+    });
+
+    // Start Journey Handler
+    document.getElementById('startJourneyBtn').addEventListener('click', () => {
+        alert("PROTOCOL INITIATED: Deployment sequence starting...");
+    });
+
+    // Logout / Login toggle mock
+    const loginBtn = document.getElementById('loginBtn');
+    let loggedIn = localStorage.getItem('token');
+    if (loggedIn) {
+        loginBtn.innerText = 'Auth_Signout';
+        loginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            location.reload();
+        });
+    }
+
+    console.log("%c[SYSTEM]: SHADOW HASHIRA UI LOADED", "color: #ff5f1f; font-weight: bold;");
+</script>
+<script src="assets/js/theme-switcher.js"></script>
+</body></html>
