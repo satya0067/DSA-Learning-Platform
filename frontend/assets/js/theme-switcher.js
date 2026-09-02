@@ -15,8 +15,7 @@
         { href: 'pages/practice/contests.html', icon: 'fa-trophy', label: 'Contests' },
         { href: 'pages/practice/roadmaps.html', icon: 'fa-map-signs', label: 'Roadmaps' },
         { href: 'pages/profile/profile.html', icon: 'fa-user', label: 'Profile' },
-        { href: 'pages/editor/editor.html', icon: 'fa-code', label: 'Editor' },
-        { href: 'pages/practice/dojo.html', icon: 'fa-dumbbell', label: 'Dojo' }
+        { href: 'pages/editor/editor.html', icon: 'fa-code', label: 'Editor' }
     ];
 
     if (document.querySelector('.theme-switcher')) return;

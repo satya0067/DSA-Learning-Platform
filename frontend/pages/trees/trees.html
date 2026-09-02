@@ -437,6 +437,29 @@
                 margin: 1.5rem 1.8rem !important;
             }
         }
+    
+        /* Dynamic premium back button */
+        .back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            width: fit-content;
+            cursor: pointer;
+        }
+        .back:hover {
+            background: rgba(255, 255, 255, 0.16);
+            color: #fff;
+            transform: translateX(-4px);
+        }
     </style>
 </head>
 <body>
@@ -451,6 +474,10 @@
             </ul>
         </aside>
         <main class="container">
+        <a class="back" href="../dashboard/dashboard.html" onclick="if(document.referrer){ history.back(); return false; }">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+
             <h1>Trees · Mist Breathing First Form</h1>
             <p>A tree is a hierarchical data structure consisting of nodes connected by edges. The Binary Search Tree (BST) organizes nodes such that for any parent, the left subtree holds lesser values, and the right subtree holds greater values — like the clear, layered mist separating heaven and earth.</p>
             

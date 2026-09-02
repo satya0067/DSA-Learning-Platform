@@ -491,7 +491,7 @@
 </head>
 <body>
     <div class="container">
-        <a class="back" href="index.html">
+        <a class="back" href="index.html" onclick="if(document.referrer){ history.back(); return false; }">
             <i class="fas fa-arrow-left"></i> Back to Home
         </a>
 

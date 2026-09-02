@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<template id="disabled-alternate-homepage"><!-- Alternate homepage disabled; index.html is the active homepage.
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -156,6 +157,7 @@
             align-items: center;
             gap: 0.6rem;
             flex-wrap: wrap;
+            justify-content: flex-end;
         }
 
         .header-icon-btn {
@@ -183,23 +185,31 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 38px;
-            height: 38px;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
             background: linear-gradient(135deg, #ff7a3d, #ffc06f);
             color: #1a0a05;
             font-weight: 800;
-            font-size: 0.9rem;
+            font-size: 1.15rem;
             border: 2px solid rgba(255, 255, 255, 0.12);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             cursor: pointer;
             transition: all 0.3s ease;
+            flex: 0 0 auto;
         }
 
         .header-avatar:hover {
             transform: scale(1.08);
             border-color: rgba(255, 255, 255, 0.3);
             box-shadow: 0 6px 25px rgba(255, 122, 61, 0.3);
+        }
+
+        .header-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
         .kimetsu-btn {
@@ -578,7 +588,7 @@
             .nav-links a { font-size: 0.7rem; padding: 0.2rem 0.4rem; }
             .kimetsu-btn { font-size: 0.7rem; padding: 0.4rem 0.8rem; }
             .header-icon-btn { width: 32px; height: 32px; }
-            .header-avatar { width: 32px; height: 32px; font-size: 0.7rem; }
+            .header-avatar { width: 44px; height: 44px; font-size: 0.95rem; }
             .hero-title { font-size: 2rem; }
             .ds-card { padding: 1.5rem; }
         }
@@ -613,10 +623,9 @@
 
         <div class="nav-actions">
             <a href="pages/editor/editor.html" class="header-icon-btn" title="Code Editor"><i class="fas fa-code"></i></a>
-            <a href="pages/practice/dojo.html" class="header-icon-btn" title="Dojo Studio"><i class="fas fa-dumbbell"></i></a>
             <a href="pages/auth/login.html" id="loginLink"><i class="fas fa-sign-in-alt"></i> Login</a>
-            <div class="header-avatar" title="User profile">U</div>
             <button class="kimetsu-btn" id="startJourneyBtn"><i class="fas fa-khanda"></i> Begin</button>
+            <div class="header-avatar" id="homeHeaderAvatar" title="User profile">U</div>
         </div>
     </nav>
 
@@ -757,16 +766,6 @@
             </a>
         </div>
 
-        <div class="journey-step">
-            <div class="path-dot"></div>
-            <a class="ds-card" href="pages/practice/dojo.html">
-                <span class="card-number">08</span>
-                <i class="fas fa-dumbbell card-icon"></i>
-                <h3>Dojo Studio</h3>
-                <p>Create your own challenge, save the prompt, and solve it in a focused practice environment.</p>
-                <div class="breath-tag"><i class="fas fa-fire"></i> Flame Breathing</div>
-            </a>
-        </div>
     </div>
 
     <!-- ===== STATS ===== -->
@@ -791,6 +790,7 @@
     </footer>
 </div>
 
+<script src="assets/js/api.js"></script>
 <script>
     // ==================== PARTICLES ====================
     const particleContainer = document.getElementById('particleContainer');
@@ -858,6 +858,55 @@
     // Toggle Login / Logout
     const token = localStorage.getItem('token');
     const loginLink = document.getElementById('loginLink');
+    const homeHeaderAvatar = document.getElementById('homeHeaderAvatar');
+
+    function setHomeAvatarImage(imageData) {
+        if (!homeHeaderAvatar || !imageData || !imageData.startsWith('data:image')) return;
+        homeHeaderAvatar.textContent = '';
+        const img = document.createElement('img');
+        img.src = imageData;
+        img.alt = 'Profile';
+        homeHeaderAvatar.replaceChildren(img);
+    }
+
+    function setHomeAvatarLetter(user) {
+        if (!homeHeaderAvatar) return;
+        const username = user && user.username ? user.username : 'User';
+        homeHeaderAvatar.textContent = username.charAt(0).toUpperCase();
+    }
+
+    function initializeHomeAvatar() {
+        if (!homeHeaderAvatar) return;
+
+        homeHeaderAvatar.addEventListener('click', () => {
+            window.location.href = token ? 'pages/profile/profile.html' : 'pages/auth/login.html';
+        });
+
+        if (!token) {
+            setHomeAvatarLetter(null);
+            return;
+        }
+
+        const savedImage = localStorage.getItem('profileImage');
+        if (savedImage && savedImage.startsWith('data:image')) {
+            setHomeAvatarImage(savedImage);
+        }
+
+        if (window.Auth && typeof Auth.getProfile === 'function') {
+            Auth.getProfile()
+                .then(user => {
+                    if (user.avatar && user.avatar.startsWith('data:image')) {
+                        localStorage.setItem('profileImage', user.avatar);
+                        setHomeAvatarImage(user.avatar);
+                    } else if (!savedImage) {
+                        setHomeAvatarLetter(user);
+                    }
+                })
+                .catch(() => {
+                    if (!savedImage) setHomeAvatarLetter(null);
+                });
+        }
+    }
 
     if (token && loginLink) {
         loginLink.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
@@ -868,6 +917,8 @@
             window.location.reload();
         });
     }
+
+    initializeHomeAvatar();
 
     // Social icons click feedback
     document.querySelectorAll('.social-icons i').forEach(icon => {
@@ -880,4 +931,4 @@
 </script>
 <script src="assets/js/theme-switcher.js"></script>
 </body>
-</html>
+</html></template>

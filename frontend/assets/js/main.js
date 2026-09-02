@@ -2,6 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     initializeApp();
     loadComponents();
+    initializeSharedAvatar();
 });
 
 function initializeApp() {
@@ -85,6 +86,25 @@ function logout() {
     window.location.href = '/pages/auth/login.html';
 }
 
+function initializeSharedAvatar() {
+    const profileImage = localStorage.getItem('profileImage');
+    const avatarElements = document.querySelectorAll('[data-avatar-root]');
+
+    avatarElements.forEach((element) => {
+        const img = element.querySelector('img');
+        if (img) img.remove();
+        if (profileImage && profileImage.startsWith('data:image')) {
+            const avatarImg = document.createElement('img');
+            avatarImg.src = profileImage;
+            avatarImg.alt = 'Profile';
+            element.appendChild(avatarImg);
+        } else {
+            const letter = document.createElement('span');
+            letter.textContent = 'U';
+            element.replaceChildren(letter);
+        }
+    });
+}
 
 function loadFooter() {
     const footer = document.getElementById('footer');

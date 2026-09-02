@@ -336,9 +336,36 @@
             .live-detail { grid-template-columns: 1fr; }
             .detail-grid { grid-template-columns: 1fr; }
         }
+    
+        /* Dynamic premium back button */
+        .back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            width: fit-content;
+            cursor: pointer;
+        }
+        .back:hover {
+            background: rgba(255, 255, 255, 0.16);
+            color: #fff;
+            transform: translateX(-4px);
+        }
     </style>
 </head>
 <body>
+        <a class="back" href="array.html" onclick="if(document.referrer){ history.back(); return false; }">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+
 
 <div class="particle-bg" id="particleBg"></div>
 <div class="cursor-glow" id="cursorGlow"></div>
@@ -347,7 +374,7 @@
     <div class="logo"><i class="fas fa-water"></i><span>STRUCT-LEARN</span></div>
     <div class="nav-links">
         <a href="../dashboard/dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
-        <a href="array.html"><i class="fas fa-chart-line"></i> Algorithms</a>
+        <!-- <a href="array.html"><i class="fas fa-chart-line"></i> Algorithms</a> -->
         <a href="../editor/editor.html"><i class="fas fa-laptop-code"></i> Practice</a>
     </div>
 </nav>

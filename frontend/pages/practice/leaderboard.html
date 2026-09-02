@@ -95,6 +95,29 @@
 
         /* Cursor trail */
         .cursor-glow { width: 30px; height: 30px; background: radial-gradient(circle, rgba(255,80,40,0.4) 0%, rgba(255,40,0,0) 80%); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); }
+    
+        /* Dynamic premium back button */
+        .back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            width: fit-content;
+            cursor: pointer;
+        }
+        .back:hover {
+            background: rgba(255, 255, 255, 0.16);
+            color: #fff;
+            transform: translateX(-4px);
+        }
     </style>
 </head>
 <body>
@@ -121,10 +144,14 @@
         <a href="/pages/practice/leaderboard.html" class="active"><i class="fas fa-users-cog"></i> Standings</a>
         <a href="/pages/profile/profile.html"><i class="fas fa-user-ninja"></i> Profile</a>
     </div>
-    <div class="nav-avatar" id="navAvatar">U</div>
+    <div class="nav-avatar" id="navAvatar" data-avatar-root>U</div>
 </nav>
 
 <div class="main-container">
+        <a class="back" href="../dashboard/dashboard.html" onclick="if(document.referrer){ history.back(); return false; }">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+
     <header class="standing-header">
         <h1>⚔️ Hall of Standings ⚔️</h1>
         <p>Honor standings of the Code Corps Slayers, cataloged by training power, execution count, and daily streaks.</p>

@@ -181,6 +181,7 @@
             align-items: center;
             gap: 0.6rem;
             flex-wrap: wrap;
+            justify-content: flex-end;
         }
 
         .header-icon-btn {
@@ -212,23 +213,31 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 38px;
-            height: 38px;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
             background: linear-gradient(135deg, #ff7a3d, #ffc06f);
             color: #1a0a05;
             font-weight: 800;
-            font-size: 0.9rem;
+            font-size: 1.15rem;
             border: 2px solid rgba(255, 255, 255, 0.12);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             cursor: pointer;
             transition: all 0.3s ease;
+            flex: 0 0 auto;
         }
 
         .header-avatar:hover {
             transform: scale(1.08);
             border-color: rgba(255, 255, 255, 0.3);
             box-shadow: 0 6px 25px rgba(255, 122, 61, 0.3);
+        }
+
+        .header-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
         .kimetsu-btn {
@@ -625,9 +634,9 @@
                 height: 32px;
             }
             .header-avatar {
-                width: 32px;
-                height: 32px;
-                font-size: 0.75rem;
+                width: 44px;
+                height: 44px;
+                font-size: 0.95rem;
             }
             .hero-title {
                 font-size: 2rem;
@@ -662,16 +671,15 @@
             <a href="pages/quiz/quiz.html"><i class="fas fa-book"></i> Quiz</a>
             <a href="pages/practice/contests.html"><i class="fas fa-trophy"></i> Contests</a>
             <a href="pages/practice/roadmaps.html"><i class="fas fa-map-signs"></i> Roadmaps</a>
-            <a href="pages/profile/profile.html"><i class="fas fa-user"></i> Profile</a>
+            <!-- <a href="pages/profile/profile.html"><i class="fas fa-user"></i> Profile</a> -->
         </div>
 
         <!-- Right: Actions -->
         <div class="nav-actions">
             <a href="pages/editor/editor.html" class="header-icon-btn" title="Code Editor"><i class="fas fa-code"></i></a>
-            <a href="pages/practice/dojo.html" class="header-icon-btn" title="Dojo Studio"><i class="fas fa-dumbbell"></i></a>
             <a href="pages/auth/login.html" id="loginLink" style="text-decoration:none; color:#f0e6d8; font-weight:600; font-size:0.85rem; padding:0.4rem 0.8rem; border-radius:40px; transition:0.3s; background:rgba(255,255,255,0.05);"><i class="fas fa-sign-in-alt"></i> Login</a>
-            <div class="header-avatar" title="User profile">U</div>
-            <button class="kimetsu-btn" id="startJourneyBtn"><i class="fas fa-khanda"></i> Begin Journey</button>
+            <!-- <button class="kimetsu-btn" id="startJourneyBtn"><i class="fas fa-khanda"></i> Begin Journey</button> -->
+            <div class="header-avatar" id="homeHeaderAvatar" title="User profile">U</div>
         </div>
     </nav>
 
@@ -734,12 +742,6 @@
                 <h3>Code Editor</h3>
                 <p>Open a full coding workspace to write, test, and run solutions in Python, Java, C, C++, or JavaScript.</p>
                 <div class="breath-tag"><i class="fas fa-bolt"></i> Thunder Breathing</div>
-            </a>
-            <a class="ds-card" href="pages/practice/dojo.html" data-struct="dojo">
-                <i class="fas fa-dumbbell card-icon"></i>
-                <h3>Dojo Studio</h3>
-                <p>Create your own challenge, save the prompt, and solve it in a focused practice environment.</p>
-                <div class="breath-tag"><i class="fas fa-fire"></i> Flame Breathing</div>
             </a>
         </div>
     </div>
@@ -847,6 +849,55 @@
     // Toggle Login / Logout on homepage load
     const token = localStorage.getItem('token');
     const loginLink = document.getElementById('loginLink');
+    const homeHeaderAvatar = document.getElementById('homeHeaderAvatar');
+
+    function setHomeAvatarImage(imageData) {
+        if (!homeHeaderAvatar || !imageData || !imageData.startsWith('data:image')) return;
+        homeHeaderAvatar.textContent = '';
+        const img = document.createElement('img');
+        img.src = imageData;
+        img.alt = 'Profile';
+        homeHeaderAvatar.replaceChildren(img);
+    }
+
+    function setHomeAvatarLetter(user) {
+        if (!homeHeaderAvatar) return;
+        const username = user && user.username ? user.username : 'User';
+        homeHeaderAvatar.textContent = username.charAt(0).toUpperCase();
+    }
+
+    function initializeHomeAvatar() {
+        if (!homeHeaderAvatar) return;
+
+        homeHeaderAvatar.addEventListener('click', () => {
+            window.location.href = token ? 'pages/profile/profile.html' : 'pages/auth/login.html';
+        });
+
+        if (!token) {
+            setHomeAvatarLetter(null);
+            return;
+        }
+
+        const savedImage = localStorage.getItem('profileImage');
+        if (savedImage && savedImage.startsWith('data:image')) {
+            setHomeAvatarImage(savedImage);
+        }
+
+        if (window.Auth && typeof Auth.getProfile === 'function') {
+            Auth.getProfile()
+                .then(user => {
+                    if (user.avatar && user.avatar.startsWith('data:image')) {
+                        localStorage.setItem('profileImage', user.avatar);
+                        setHomeAvatarImage(user.avatar);
+                    } else if (!savedImage) {
+                        setHomeAvatarLetter(user);
+                    }
+                })
+                .catch(() => {
+                    if (!savedImage) setHomeAvatarLetter(null);
+                });
+        }
+    }
 
     if (token && loginLink) {
         loginLink.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
@@ -857,6 +908,8 @@
             window.location.reload();
         });
     }
+
+    initializeHomeAvatar();
 
     // Homepage topic cards now use direct anchor links for navigation.
     const cards = document.querySelectorAll('.ds-card');
@@ -925,6 +978,5 @@
     console.log("%c⚔️ DEMON SLAYER CODE CORPS ⚔️\n\"Total Concentration — Master Data Structures with the Breathing Styles!\"", "color: #ff7b42; font-size: 14px; font-weight: bold;");
     console.log("%cArray • Linked List • Tree • Graph • Stack • Queue • Hash Table", "color: #87CEFA; font-size: 12px;");
 </script>
-<script src="assets/js/theme-switcher.js"></script>
 </body>
 </html>

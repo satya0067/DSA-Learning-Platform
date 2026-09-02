@@ -423,6 +423,29 @@
             align-items: center;
             gap: 10px;
         }
+    
+        /* Dynamic premium back button */
+        .back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            width: fit-content;
+            cursor: pointer;
+        }
+        .back:hover {
+            background: rgba(255, 255, 255, 0.16);
+            color: #fff;
+            transform: translateX(-4px);
+        }
     </style>
 </head>
 <body>
@@ -433,6 +456,10 @@
 <div class="cursor-glow" id="cursorGlow"></div>
 
 <div class="main-wrapper">
+        <a class="back" href="../../index.html" onclick="if(document.referrer){ history.back(); return false; }">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+
     <nav class="demon-nav">
         <a href="../../index.html" class="logo-area">
             <i class="fas fa-dragon logo-icon"></i>

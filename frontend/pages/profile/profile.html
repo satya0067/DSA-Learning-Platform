@@ -333,6 +333,29 @@
             .profile-avatar-wrapper { width: 60px; height: 60px; }
             .profile-extra { grid-template-columns: 1fr; }
         }
+    
+        /* Dynamic premium back button */
+        .back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            width: fit-content;
+            cursor: pointer;
+        }
+        .back:hover {
+            background: rgba(255, 255, 255, 0.16);
+            color: #fff;
+            transform: translateX(-4px);
+        }
     </style>
 </head>
 <body>
@@ -347,12 +370,16 @@
         <a href="../practice/practice.html"><i class="fas fa-keyboard"></i> Practice</a>
         <a href="../practice/contests.html"><i class="fas fa-trophy"></i> Contests</a>
         <a href="../practice/roadmaps.html"><i class="fas fa-map-signs"></i> Roadmaps</a>
-        <a href="profile.html" class="active"><i class="fas fa-user-ninja"></i> Profile</a>
+        <!-- <a href="profile.html" class="active"><i class="fas fa-user-ninja"></i> Profile</a> -->
         <div class="nav-avatar" id="navAvatar" onclick="logout()">U</div>
     </div>
 </nav>
 
 <div class="main-container">
+        <a class="back" href="../dashboard/dashboard.html" onclick="if(document.referrer){ history.back(); return false; }">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+
     <section class="profile-hero">
         <div class="hero-copy">
             <span class="eyebrow"><i class="fas fa-fire"></i> Welcome back, Hashira-in-Training</span>
@@ -485,6 +512,7 @@
 <script src="../../config/config.js"></script>
 <script src="../../assets/js/main.js"></script>
 <script src="../../assets/js/api.js"></script>
+<script src="../../assets/js/page-navigation.js"></script>
 <script>
     // ==================== USER PROFILE DASHBOARD ====================
     let currentUser = null;
@@ -596,6 +624,9 @@
             navAvatar.textContent = (currentUser ? currentUser.username.charAt(0).toUpperCase() : 'U');
             const navImg = navAvatar.querySelector('img');
             if (navImg) navImg.remove();
+            if (navAvatar && !navAvatar.querySelector('img')) {
+                navAvatar.textContent = currentUser ? currentUser.username.charAt(0).toUpperCase() : 'U';
+            }
         }
     }
 
@@ -619,6 +650,7 @@
         img.src = imageData;
         img.alt = 'Profile';
         navAvatar.appendChild(img);
+        localStorage.setItem('profileImage', imageData);
     }
 
     function handleImageUpload(event) {
@@ -850,7 +882,7 @@
 
     // ==================== NAVIGATION ====================
     function goHome() {
-        window.location.href = '../../pages/dashboard/dashboard.html';
+        window.location.href = '../../index.html';
     }
 
     // Expose local functions for navbar compatibility
