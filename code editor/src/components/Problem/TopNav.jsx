@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useStore } from '../../store/useStore';
-import { ChevronLeft, ChevronRight, Star, Play, CheckCircle, Search, Hash, BookOpen } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, Star, Play, CheckCircle, Search, Hash, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TopNav() {
@@ -25,6 +25,20 @@ export default function TopNav() {
   const [topicFilter, setTopicFilter] = useState('All');
 
   const isFavorite = favorites.includes(activeProblem.id);
+
+  const handleBack = () => {
+    // If user has history in current session, navigate back to previous page
+    if (window.history.length > 1 && document.referrer) {
+      window.history.back();
+    } else if (document.referrer && document.referrer.startsWith(window.location.origin)) {
+      window.location.href = document.referrer;
+    } else if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      // Fallback destination if opened in a fresh tab or direct URL
+      window.location.href = '/pages/practice/practice.html';
+    }
+  };
 
   // Extract all unique categories/topics
   const categories = useMemo(() => {
@@ -52,15 +66,33 @@ export default function TopNav() {
   const getDifficultyColor = (diff) => difficultyColors[diff] || '#ffffff';
 
   return (
-    <div className="h-16 bg-[#16213e] border-b border-[#2e3b5e] flex items-center justify-between px-6 select-none relative z-50">
+    <div className="h-16 bg-[#16213e] border-b border-[#2e3b5e] flex items-center justify-between px-4 sm:px-6 select-none relative z-50">
       
-      {/* Left: Problem Selection & Pagination */}
-      <div className="flex items-center space-x-4">
+      {/* Left: Navigation, Platform Brand & Problem Selection */}
+      <div className="flex items-center space-x-3 sm:space-x-4">
+        {/* Back Button to Redirect to Previous Page */}
+        <button
+          onClick={handleBack}
+          className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#1a1a2e] hover:bg-[#202d4f] text-gray-300 hover:text-white border border-[#2e3b5e] hover:border-blue-500/50 transition-all text-xs sm:text-sm font-semibold shadow-sm group active:scale-95 cursor-pointer"
+          title="Back to previous page"
+          aria-label="Back to previous page"
+        >
+          <ArrowLeft size={16} className="text-gray-400 group-hover:text-blue-400 group-hover:-translate-x-0.5 transition-transform" />
+          <span className="hidden sm:inline">Back</span>
+        </button>
+
+        {/* Vertical divider */}
+        <div className="h-5 w-[1px] bg-[#2e3b5e] hidden sm:block"></div>
+
         {/* Logo / Platform Name */}
-        <div className="flex items-center space-x-2 text-xl font-bold tracking-wider text-white">
+        <button
+          onClick={handleBack}
+          className="flex items-center space-x-2 text-xl font-bold tracking-wider text-white hover:opacity-90 transition-opacity cursor-pointer text-left"
+          title="Return to previous page"
+        >
           <span className="bg-gradient-to-r from-blue-500 to-indigo-600 px-2.5 py-1 rounded-xl text-sm font-black shadow-md border border-indigo-500/20">STRUCT</span>
           <span className="text-gray-400 font-medium text-sm">LEARN</span>
-        </div>
+        </button>
 
         {/* Vertical divider */}
         <div className="h-5 w-[1px] bg-gray-600 hidden sm:block"></div>

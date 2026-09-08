@@ -11,11 +11,11 @@
     const featureLinks = [
         { href: 'pages/dashboard/dashboard.html', icon: 'fa-tachometer-alt', label: 'Dashboard' },
         { href: 'pages/practice/practice.html', icon: 'fa-keyboard', label: 'Practice' },
+        { href: '/code-editor/index.html', icon: 'fa-code', label: 'Code Editor' },
         { href: 'pages/quiz/quiz.html', icon: 'fa-book', label: 'Quiz' },
         { href: 'pages/practice/contests.html', icon: 'fa-trophy', label: 'Contests' },
         { href: 'pages/practice/roadmaps.html', icon: 'fa-map-signs', label: 'Roadmaps' },
-        { href: 'pages/profile/profile.html', icon: 'fa-user', label: 'Profile' },
-        { href: 'pages/editor/editor.html', icon: 'fa-code', label: 'Editor' }
+        { href: 'pages/profile/profile.html', icon: 'fa-user', label: 'Profile' }
     ];
 
     if (document.querySelector('.theme-switcher')) return;

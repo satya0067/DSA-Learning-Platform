@@ -59,7 +59,11 @@ app.use('/api/challenges', challengeRoutes);
 app.use('/api/notifications', notificationRoutes);
 
 // Serve standalone React-based code editor app under /code-editor
-app.use('/code-editor', express.static(path.join(__dirname, '..', 'code editor', 'dist')));
+const codeEditorDist = path.join(__dirname, '..', 'code editor', 'dist');
+app.use('/code-editor', express.static(codeEditorDist));
+app.get(['/code-editor', '/code-editor/*'], (req, res) => {
+  res.sendFile(path.join(codeEditorDist, 'index.html'));
+});
 
 // 404 handler
 app.use((req, res) => {
