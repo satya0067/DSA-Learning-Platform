@@ -6,6 +6,8 @@
     <title>Login / Register · Demon Slayer Code Corps</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../../assets/css/hashira-themes.css">
+    <script src="../../assets/js/hashira-theme.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -1055,6 +1057,14 @@
         currentHashira = hashiraKey;
         particleType = data.particle;
 
+        // Persist globally so all pages adapt
+        if (window.HashiraTheme && typeof window.HashiraTheme.set === 'function') {
+            try { localStorage.setItem('selectedHashiraTheme', hashiraKey); } catch(e){}
+            document.documentElement.setAttribute('data-theme', hashiraKey);
+        } else {
+            try { localStorage.setItem('selectedHashiraTheme', hashiraKey); } catch(e){}
+        }
+
         // Body
         document.body.className = `hashira-${hashiraKey}`;
 
@@ -1523,7 +1533,8 @@
     window.togglePasswordVisibility = togglePasswordVisibility;
 
     // ==================== INIT ====================
-    updateHashiraTheme('flame');
+    const savedInitialTheme = (window.HashiraTheme && HashiraTheme.get()) || localStorage.getItem('selectedHashiraTheme') || 'flame';
+    updateHashiraTheme(savedInitialTheme);
     console.log('%c⚔️ STRUCT-LEARN · Demon Slayer Auth Page ⚔️', 'color: #ff7540; font-size: 14px; font-weight: bold;');
     console.log('%cFlame • Water • Thunder • Mist • Wind • Sun — Total Concentration!', 'color: #ffb347; font-size: 12px;');
 </script>

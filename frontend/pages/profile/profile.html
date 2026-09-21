@@ -6,6 +6,8 @@
     <title>User Profile - Struct-Learn | Hashira Training Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../../assets/css/hashira-themes.css">
+    <script src="../../assets/js/hashira-theme.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -371,6 +373,14 @@
         <a href="../practice/contests.html"><i class="fas fa-trophy"></i> Contests</a>
         <a href="../practice/roadmaps.html"><i class="fas fa-map-signs"></i> Roadmaps</a>
         <!-- <a href="profile.html" class="active"><i class="fas fa-user-ninja"></i> Profile</a> -->
+        <div class="hashira-selector" id="profileHashiraSelector">
+            <div class="hashira-option" data-hashira="flame"><i class="fas fa-fire"></i><span class="tooltip">Flame</span></div>
+            <div class="hashira-option" data-hashira="water"><i class="fas fa-tint"></i><span class="tooltip">Water</span></div>
+            <div class="hashira-option" data-hashira="thunder"><i class="fas fa-bolt"></i><span class="tooltip">Thunder</span></div>
+            <div class="hashira-option" data-hashira="mist"><i class="fas fa-moon"></i><span class="tooltip">Mist</span></div>
+            <div class="hashira-option" data-hashira="wind"><i class="fas fa-wind"></i><span class="tooltip">Wind</span></div>
+            <div class="hashira-option" data-hashira="sun"><i class="fas fa-sun"></i><span class="tooltip">Sun</span></div>
+        </div>
         <div class="nav-avatar" id="navAvatar" onclick="logout()">U</div>
     </div>
 </nav>

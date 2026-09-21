@@ -1,0 +1,269 @@
+/* =========================================================
+   STRUCT-LEARN · GLOBAL HASHIRA ELEMENTAL THEMES
+   Supports: Flame (Fire), Water, Thunder, Mist (Moon), Wind, Sun
+   ========================================================= */
+
+:root {
+    --theme-flame: #ff4d2e;
+    --theme-flame-glow: rgba(255, 77, 46, 0.45);
+    --theme-flame-subtle: rgba(255, 77, 46, 0.12);
+    --theme-flame-bg: radial-gradient(circle at 20% 30%, #1a0505 0%, #0a0000 70%, #050000 100%);
+    --theme-flame-border: rgba(255, 77, 46, 0.4);
+
+    --theme-water: #2e9eff;
+    --theme-water-glow: rgba(46, 158, 255, 0.45);
+    --theme-water-subtle: rgba(46, 158, 255, 0.12);
+    --theme-water-bg: radial-gradient(circle at 20% 30%, #05101a 0%, #00050a 70%, #000205 100%);
+    --theme-water-border: rgba(46, 158, 255, 0.4);
+
+    --theme-thunder: #ffd966;
+    --theme-thunder-glow: rgba(255, 217, 102, 0.45);
+    --theme-thunder-subtle: rgba(255, 217, 102, 0.12);
+    --theme-thunder-bg: radial-gradient(circle at 20% 30%, #1a1a05 0%, #0a0a00 70%, #050500 100%);
+    --theme-thunder-border: rgba(255, 217, 102, 0.4);
+
+    --theme-mist: #b8a9ff;
+    --theme-mist-glow: rgba(184, 169, 255, 0.45);
+    --theme-mist-subtle: rgba(184, 169, 255, 0.12);
+    --theme-mist-bg: radial-gradient(circle at 20% 30%, #0f0a1a 0%, #05020a 70%, #020105 100%);
+    --theme-mist-border: rgba(184, 169, 255, 0.4);
+
+    --theme-wind: #5fdc7a;
+    --theme-wind-glow: rgba(95, 220, 122, 0.45);
+    --theme-wind-subtle: rgba(95, 220, 122, 0.12);
+    --theme-wind-bg: radial-gradient(circle at 20% 30%, #0a1a0a 0%, #000a00 70%, #000500 100%);
+    --theme-wind-border: rgba(95, 220, 122, 0.4);
+
+    --theme-sun: #ffaa33;
+    --theme-sun-glow: rgba(255, 170, 51, 0.45);
+    --theme-sun-subtle: rgba(255, 170, 51, 0.12);
+    --theme-sun-bg: radial-gradient(circle at 20% 30%, #1a1205 0%, #0a0600 70%, #050300 100%);
+    --theme-sun-border: rgba(255, 170, 51, 0.4);
+
+    /* Default Theme fallback (Flame) */
+    --theme-primary: var(--theme-flame);
+    --theme-glow: var(--theme-flame-glow);
+    --theme-subtle: var(--theme-flame-subtle);
+    --theme-bg: var(--theme-flame-bg);
+    --theme-border: var(--theme-flame-border);
+    --theme-name: 'Flame';
+}
+
+/* =========================================================
+   THEME VARIANT SELECTORS (Supports body class & html data-theme)
+   ========================================================= */
+
+/* 🔥 Flame / Fire Theme */
+:root[data-theme="flame"],
+body.hashira-flame {
+    --theme-primary: var(--theme-flame);
+    --theme-glow: var(--theme-flame-glow);
+    --theme-subtle: var(--theme-flame-subtle);
+    --theme-bg: var(--theme-flame-bg);
+    --theme-border: var(--theme-flame-border);
+    --theme-name: 'Flame';
+}
+
+/* 💧 Water Theme */
+:root[data-theme="water"],
+body.hashira-water {
+    --theme-primary: var(--theme-water);
+    --theme-glow: var(--theme-water-glow);
+    --theme-subtle: var(--theme-water-subtle);
+    --theme-bg: var(--theme-water-bg);
+    --theme-border: var(--theme-water-border);
+    --theme-name: 'Water';
+}
+
+/* ⚡ Thunder Theme */
+:root[data-theme="thunder"],
+body.hashira-thunder {
+    --theme-primary: var(--theme-thunder);
+    --theme-glow: var(--theme-thunder-glow);
+    --theme-subtle: var(--theme-thunder-subtle);
+    --theme-bg: var(--theme-thunder-bg);
+    --theme-border: var(--theme-thunder-border);
+    --theme-name: 'Thunder';
+}
+
+/* 🌙 Mist / Moon Theme */
+:root[data-theme="mist"],
+body.hashira-mist {
+    --theme-primary: var(--theme-mist);
+    --theme-glow: var(--theme-mist-glow);
+    --theme-subtle: var(--theme-mist-subtle);
+    --theme-bg: var(--theme-mist-bg);
+    --theme-border: var(--theme-mist-border);
+    --theme-name: 'Mist';
+}
+
+/* 💨 Wind Theme */
+:root[data-theme="wind"],
+body.hashira-wind {
+    --theme-primary: var(--theme-wind);
+    --theme-glow: var(--theme-wind-glow);
+    --theme-subtle: var(--theme-wind-subtle);
+    --theme-bg: var(--theme-wind-bg);
+    --theme-border: var(--theme-wind-border);
+    --theme-name: 'Wind';
+}
+
+/* ☀️ Sun Theme */
+:root[data-theme="sun"],
+body.hashira-sun {
+    --theme-primary: var(--theme-sun);
+    --theme-glow: var(--theme-sun-glow);
+    --theme-subtle: var(--theme-sun-subtle);
+    --theme-bg: var(--theme-sun-bg);
+    --theme-border: var(--theme-sun-border);
+    --theme-name: 'Sun';
+}
+
+/* =========================================================
+   GLOBAL ADAPTIVE THEME STYLES
+   ========================================================= */
+
+body.hashira-flame,
+body.hashira-water,
+body.hashira-thunder,
+body.hashira-mist,
+body.hashira-wind,
+body.hashira-sun {
+    background: var(--theme-bg) !important;
+    transition: background 0.6s ease, color 0.3s ease;
+}
+
+/* Navbar Adaptive Borders & Glows */
+.demon-nav,
+.top-nav {
+    border-bottom: 1px solid var(--theme-border) !important;
+    transition: border-color 0.4s ease;
+}
+
+.logo-area i,
+.top-nav .logo i {
+    color: var(--theme-primary) !important;
+    filter: drop-shadow(0 0 10px var(--theme-glow));
+    transition: color 0.4s ease, filter 0.4s ease;
+}
+
+/* Buttons & Active Elements */
+.btn-demon,
+.action-btn.primary,
+.cta-btn,
+.auth-submit,
+.nav-btn.primary,
+.hero-btn.primary {
+    background: linear-gradient(135deg, var(--theme-primary), rgba(0, 0, 0, 0.4)) !important;
+    box-shadow: 0 4px 20px var(--theme-subtle) !important;
+    border: 1px solid var(--theme-border) !important;
+}
+
+.btn-demon:hover,
+.action-btn.primary:hover,
+.cta-btn:hover,
+.auth-submit:hover {
+    box-shadow: 0 6px 28px var(--theme-glow) !important;
+    transform: translateY(-2px);
+}
+
+/* Cards & Sidebars */
+.demon-card,
+.stat-card,
+.module-card,
+.auth-card,
+.hashira-sidebar,
+.auth-sidebar {
+    border-color: var(--theme-border) !important;
+    box-shadow: 0 10px 30px var(--theme-subtle);
+}
+
+/* Glowing text & Highlights */
+.hashira-accent,
+.highlight-text,
+.topic-count,
+.xp-badge,
+.rank-badge {
+    color: var(--theme-primary) !important;
+}
+
+/* Progress bars */
+.progress-fill,
+.xp-fill,
+.progress-bar-fill {
+    background: linear-gradient(90deg, var(--theme-primary), var(--theme-glow)) !important;
+    box-shadow: 0 0 12px var(--theme-glow);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar-thumb {
+    background: var(--theme-primary) !important;
+    border-radius: 4px;
+}
+
+/* =========================================================
+   HASHIRA THEME SELECTOR BAR COMPONENT
+   ========================================================= */
+.hashira-selector {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 0.25rem 0.6rem;
+    border-radius: 50px;
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--theme-border);
+    transition: all 0.4s ease;
+}
+
+.hashira-option {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border: 2px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: #888;
+    background: rgba(255, 255, 255, 0.05);
+    position: relative;
+}
+
+.hashira-option:hover {
+    transform: scale(1.15);
+    color: #fff;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.hashira-option.active {
+    border-color: var(--theme-primary);
+    box-shadow: 0 0 16px var(--theme-glow);
+    background: var(--theme-subtle);
+    transform: scale(1.1);
+    color: var(--theme-primary);
+}
+
+.hashira-option .tooltip {
+    position: absolute;
+    bottom: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: #ffdbb5;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.65rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 1000;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hashira-option:hover .tooltip {
+    opacity: 1;
+}

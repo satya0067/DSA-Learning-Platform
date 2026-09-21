@@ -21,8 +21,12 @@ function loadComponents() {
 }
 
 function loadTheme() {
-    const theme = localStorage.getItem('theme') || 'light';
-    document.body.classList.toggle('dark-theme', theme === 'dark');
+    const hashiraTheme = localStorage.getItem('selectedHashiraTheme') || 'flame';
+    document.documentElement.setAttribute('data-theme', hashiraTheme);
+    if (document.body) {
+        ['flame', 'water', 'thunder', 'mist', 'wind', 'sun'].forEach(t => document.body.classList.remove('hashira-' + t));
+        document.body.classList.add('hashira-' + hashiraTheme);
+    }
 }
 
 function checkAuthStatus() {
