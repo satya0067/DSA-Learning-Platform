@@ -1,6 +1,7 @@
 {
   "version": 2,
   "buildCommand": "npm run build",
+  "outputDirectory": "public",
   "rewrites": [
     {
       "source": "/api/(.*)",
@@ -8,19 +9,7 @@
     },
     {
       "source": "/code-editor",
-      "destination": "/code editor/dist/index.html"
-    },
-    {
-      "source": "/code-editor/(.*)",
-      "destination": "/code editor/dist/$1"
-    },
-    {
-      "source": "/frontend/(.*)",
-      "destination": "/frontend/$1"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/frontend/$1"
+      "destination": "/code-editor/index.html"
     }
   ]
 }

@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build:editor": "npm --prefix \"code editor\" install --include=dev && npm --prefix \"code editor\" run build",
-    "build": "npm run build:editor",
+    "build": "node build.js",
     "start": "node backend/server.js"
   },
   "dependencies": {
