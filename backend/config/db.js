@@ -1,41 +1,26 @@
 const mongoose = require('mongoose');
 
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
-
 const connectDB = async () => {
+  // If already connected, return existing connection
+  if (mongoose.connection.readyState >= 1) {
+    return mongoose.connection;
+  }
+
   const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/structlearn';
 
-  if (cached.conn) {
-    return cached.conn;
-  }
-
-  if (!cached.promise) {
-    const opts = {
-      bufferCommands: false,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
-      console.log(`✅ MongoDB Connected: ${mongooseInstance.connection.host}`);
-      return mongooseInstance;
-    });
-  }
-
   try {
-    cached.conn = await cached.promise;
+    const conn = await mongoose.connect(MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000,
+    });
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+    return conn;
   } catch (error) {
-    cached.promise = null;
     console.error('❌ Database connection error:', error.message);
     if (process.env.NODE_ENV !== 'production' && require.main === module) {
       process.exit(1);
     }
     throw error;
   }
-
-  return cached.conn;
 };
 
 // Optional logs
