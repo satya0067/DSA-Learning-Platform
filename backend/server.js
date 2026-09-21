@@ -21,6 +21,7 @@ const leaderboardRoutes = require('./routes/leaderboardRoutes');
 const contestRoutes = require('./routes/contestRoutes');
 const challengeRoutes = require('./routes/challengeRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 const frontendPath = path.join(__dirname, '..', 'frontend');
@@ -45,6 +46,7 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/quiz', quizRoutes);
 app.use('/api/code', codeRoutes);
@@ -75,9 +77,15 @@ app.use(require('./middleware/errorMiddleware'));
 
 const PORT = process.env.PORT || 3000;
 
-// Start server AFTER DB connect
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+// Start server AFTER DB connect only when executed directly
+if (require.main === module) {
+  connectDB().then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  }).catch((err) => {
+    console.error('Failed to start server:', err);
   });
-});
+}
+
+module.exports = app;

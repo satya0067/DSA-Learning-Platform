@@ -1062,30 +1062,3 @@
 </body>
 
 </html>
-
-// Hero fade-in animation
-const heroElements = document.querySelectorAll('.hero-title, .hero-sub, .hero-badge, .btn-demon');
-heroElements.forEach((el, i) => {
-el.style.opacity = '0';
-el.style.animation = 'fadeSlideUp 0.7s forwards';
-el.style.animationDelay = (i * 0.1) + 's';
-});
-
-// Additional button hover effect
-const demonBtns = document.querySelectorAll('.btn-demon, .kimetsu-btn');
-demonBtns.forEach(btn => {
-btn.addEventListener('mouseenter', () => {
-btn.style.transform = 'scale(1.02)';
-});
-btn.addEventListener('mouseleave', () => {
-btn.style.transform = 'scale(1)';
-});
-});
-
-console.log("%c⚔️ DEMON SLAYER CODE CORPS ⚔️\n\"Total Concentration — Master Data Structures with the Breathing
-Styles!\"", "color: #ff7b42; font-size: 14px; font-weight: bold;");
-console.log("%cArray • Linked List • Tree • Graph • Stack • Queue • Hash Table", "color: #87CEFA; font-size: 12px;");
-</script>
-</body>
-
-</html>

@@ -669,6 +669,20 @@
 
             updateAllUI();
             applyDojoTheme(userData.breathingStyle);
+
+            // Dynamically show Admin Dojo link if user is administrator
+            if (userData.role === 'admin' && !document.getElementById('adminDojoNavLink')) {
+                const navLinks = document.querySelector('.nav-links');
+                if (navLinks) {
+                    const adminLink = document.createElement('a');
+                    adminLink.id = 'adminDojoNavLink';
+                    adminLink.href = '../practice/admin.html';
+                    adminLink.style.color = '#ff4d2e';
+                    adminLink.style.fontWeight = '800';
+                    adminLink.innerHTML = '<i class="fas fa-shield-alt"></i> Admin Dojo';
+                    navLinks.appendChild(adminLink);
+                }
+            }
         })
         .catch(err => {
             console.error('Failed to initialize Dojo Dashboard:', err);

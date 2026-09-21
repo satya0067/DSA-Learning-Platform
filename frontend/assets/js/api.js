@@ -141,8 +141,30 @@ const Notifications = {
     markAllRead: () => apiCall('/notifications/read-all', 'POST')
 };
 
+const Admin = {
+    getStats: () => apiCall('/admin/stats'),
+    getUsers: (params) => {
+        const query = params ? '?' + new URLSearchParams(params).toString() : '';
+        return apiCall(`/admin/users${query}`);
+    },
+    updateUserRole: (id, role) => apiCall(`/admin/users/${id}/role`, 'PUT', { role }),
+    deleteUser: (id) => apiCall(`/admin/users/${id}`, 'DELETE'),
+    getProblems: (params) => {
+        const query = params ? '?' + new URLSearchParams(params).toString() : '';
+        return apiCall(`/admin/problems${query}`);
+    },
+    createProblem: (data) => apiCall('/admin/problems', 'POST', data),
+    updateProblem: (id, data) => apiCall(`/admin/problems/${id}`, 'PUT', data),
+    deleteProblem: (id) => apiCall(`/admin/problems/${id}`, 'DELETE'),
+    getContests: () => apiCall('/admin/contests'),
+    deleteContest: (id) => apiCall(`/admin/contests/${id}`, 'DELETE'),
+    getQuizzes: () => apiCall('/admin/quizzes'),
+    deleteQuiz: (id) => apiCall(`/admin/quizzes/${id}`, 'DELETE')
+};
+
 // Expose API helpers globally so page scripts can use them reliably.
 window.Auth = Auth;
+window.Admin = Admin;
 window.Progress = Progress;
 window.Quiz = Quiz;
 window.Code = Code;
@@ -155,4 +177,5 @@ window.Leaderboards = Leaderboards;
 window.Contests = Contests;
 window.Challenges = Challenges;
 window.Notifications = Notifications;
+
 

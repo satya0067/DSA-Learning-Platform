@@ -144,6 +144,11 @@ const forgotPassword = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    // Security check: Protect administrator accounts from unauthorized external reset
+    if (user.role === 'admin') {
+      return res.status(403).json({ message: 'Administrator accounts cannot be reset via public password recovery. Please use administrative keys or contact root support.' });
+    }
+
     const newPasswordMatchesCurrent = await bcrypt.compare(newPassword, user.password);
     if (newPasswordMatchesCurrent) {
       return res.status(400).json({ message: 'New password must be different from current password' });

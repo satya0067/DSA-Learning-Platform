@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/code-editor",
+      "destination": "/code editor/dist/index.html"
+    },
+    {
+      "source": "/code-editor/(.*)",
+      "destination": "/code editor/dist/$1"
+    },
+    {
+      "source": "/frontend/(.*)",
+      "destination": "/frontend/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/frontend/$1"
+    }
+  ]
+}

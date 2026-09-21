@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dojo - Struct-Learn | Demon Slayer Code Corps</title>
+    <title>Admin Command Dojo - Struct-Learn | Demon Slayer Code Corps</title>
     <!-- Google Fonts & Font Awesome -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -33,29 +33,136 @@
         .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; }
         .logo-icon { font-size: 2rem; color: #ff4d2e; filter: drop-shadow(0 0 6px #ff4d2e); }
         .logo-text { font-weight: 800; font-size: 1.5rem; background: linear-gradient(135deg, #f7b42c, #fc575e); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
-        .nav-links a { text-decoration: none; color: #cbd5e1; font-weight: 600; transition: 0.2s; font-size: 0.9rem; }
-        .nav-links a:hover { color: #ff8c5a; }
+        .logo-sub { font-size: 0.75rem; color: #94a3b8; letter-spacing: 1px; }
+        .nav-links { display: flex; gap: 1.2rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: #cbd5e1; font-weight: 600; transition: 0.2s; font-size: 0.85rem; }
+        .nav-links a:hover, .nav-links a.active { color: #ff8c5a; }
         .nav-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #ff4d2e, #ff8c5a); display: flex; align-items: center; justify-content: center; font-weight: 700; color: black; cursor: pointer; }
 
-        .main-container { max-width: 900px; margin: 2rem auto; padding: 0 1.5rem; }
+        .main-container { max-width: 1250px; margin: 2rem auto; padding: 0 1.5rem; }
 
+        /* Dojo Header */
         .header-box { margin-bottom: 2rem; text-align: center; }
-        .header-box h1 { font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, #fff, #ff7b42); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .header-box p { color: #94a3b8; font-size: 1rem; margin-top: 6px; }
+        .header-box h1 { font-size: 2.3rem; font-weight: 900; background: linear-gradient(135deg, #fff, #ff7b42); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -0.5px; }
+        .header-box p { color: #94a3b8; font-size: 0.95rem; margin-top: 6px; }
 
-        /* Form panel */
-        .form-card {
+        /* Admin Tabs */
+        .admin-tabs {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            background: rgba(15, 8, 25, 0.8);
+            padding: 0.5rem;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 77, 46, 0.2);
+            overflow-x: auto;
+        }
+        .admin-tab-btn {
+            background: transparent;
+            border: none;
+            color: #cbd5e1;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        .admin-tab-btn:hover { background: rgba(255, 77, 46, 0.15); color: #fff; }
+        .admin-tab-btn.active {
+            background: #ff4d2e;
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 77, 46, 0.4);
+        }
+
+        /* Content Sections */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* KPI Cards Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        .kpi-card {
             background: rgba(15, 8, 25, 0.85);
             border: 1px solid rgba(255, 77, 46, 0.15);
-            border-radius: 28px;
+            border-radius: 20px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            transition: 0.2s;
+        }
+        .kpi-card:hover { transform: translateY(-3px); border-color: #ff4d2e; }
+        .kpi-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .kpi-icon.users { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .kpi-icon.problems { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .kpi-icon.submissions { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .kpi-icon.contests { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .kpi-value { font-size: 1.8rem; font-weight: 800; color: #fff; line-height: 1.1; }
+        .kpi-label { font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; margin-top: 4px; }
+
+        /* Panels & Cards */
+        .admin-card {
+            background: rgba(15, 8, 25, 0.85);
+            border: 1px solid rgba(255, 77, 46, 0.15);
+            border-radius: 24px;
             padding: 2rem;
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             margin-bottom: 2rem;
         }
-        .form-section-title { font-size: 1.25rem; font-weight: 800; color: #ff7b42; margin-bottom: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #ff7b42;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Form Inputs */
+        .form-section-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #ff7b42;
+            margin: 1.5rem 0 1rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
         .form-group { margin-bottom: 1.2rem; }
-        .form-group label { display: block; font-size: 0.85rem; font-weight: bold; color: #cbd5e1; margin-bottom: 6px; text-transform: uppercase; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 700; color: #cbd5e1; margin-bottom: 6px; text-transform: uppercase; }
         .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             background: #090410;
@@ -67,17 +174,135 @@
             outline: none;
             transition: 0.2s;
         }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #ff4d2e; box-shadow: 0 0 8px rgba(255,77,46,0.3); }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        textarea { resize: vertical; min-height: 100px; font-family: inherit; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #ff4d2e;
+            box-shadow: 0 0 8px rgba(255,77,46,0.3);
+        }
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        textarea { resize: vertical; min-height: 90px; font-family: inherit; }
 
-        .btn-action { background: #ff4d2e; border: none; color: black; padding: 12px 24px; border-radius: 20px; font-weight: 800; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem; }
+        /* Dynamic Test Cases Block */
+        .testcase-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,77,46,0.2);
+            border-radius: 14px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        .btn-remove-item {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            border-radius: 8px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+        .btn-remove-item:hover { background: #ef4444; color: white; }
+
+        .btn-add-secondary {
+            background: rgba(255,255,255,0.06);
+            color: #ff8c5a;
+            border: 1px dashed rgba(255,77,46,0.4);
+            border-radius: 12px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-add-secondary:hover { background: rgba(255,77,46,0.15); }
+
+        /* Buttons */
+        .btn-action {
+            background: #ff4d2e;
+            border: none;
+            color: black;
+            padding: 10px 20px;
+            border-radius: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
         .btn-action:hover { background: #ff6a4f; box-shadow: 0 0 12px #ff4d2e; }
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-danger:hover { background: #ef4444; color: white; }
+        .btn-edit {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-edit:hover { background: #3b82f6; color: white; }
 
-        /* Cursor trail */
-        .cursor-glow { width: 30px; height: 30px; background: radial-gradient(circle, rgba(255,80,40,0.4) 0%, rgba(255,40,0,0) 80%); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); }
-    
-        /* Dynamic premium back button */
+        /* Data Tables */
+        .table-responsive { overflow-x: auto; margin-top: 1rem; }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            text-align: left;
+        }
+        .admin-table th {
+            background: rgba(255,255,255,0.03);
+            color: #ff8c5a;
+            padding: 12px 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid rgba(255, 77, 46, 0.2);
+        }
+        .admin-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #e2e8f0;
+        }
+        .admin-table tr:hover td { background: rgba(255, 77, 46, 0.04); }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .badge.easy { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .badge.medium { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+        .badge.hard { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+        .badge.admin { background: rgba(239, 68, 68, 0.2); color: #ff6a4f; border: 1px solid #ff4d2e; }
+        .badge.student { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .badge.mentor { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+        .badge.instructor { background: rgba(236, 72, 153, 0.15); color: #f472b6; }
+
+        /* Back Button */
         .back {
             display: inline-flex;
             align-items: center;
@@ -99,6 +324,34 @@
             color: #fff;
             transform: translateX(-4px);
         }
+
+        /* Modal styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(6px);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: #0d0718;
+            border: 1px solid #ff4d2e;
+            border-radius: 24px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(255,77,46,0.3);
+        }
+
+        /* Cursor trail */
+        .cursor-glow { width: 30px; height: 30px; background: radial-gradient(circle, rgba(255,80,40,0.4) 0%, rgba(255,40,0,0) 80%); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); }
     </style>
 </head>
 <body>
@@ -121,199 +374,538 @@
         <a href="/pages/practice/practice.html"><i class="fas fa-keyboard"></i> Practice</a>
         <a href="/pages/editor/editor.html"><i class="fas fa-code"></i> Editor</a>
         <a href="/pages/practice/contests.html"><i class="fas fa-trophy"></i> Contests</a>
-        <a href="/pages/practice/roadmaps.html"><i class="fas fa-map-signs"></i> Roadmaps</a>
-        <a href="/pages/practice/leaderboard.html"><i class="fas fa-users-cog"></i> Standings</a>
+        <a href="/pages/practice/admin.html" class="active"><i class="fas fa-shield-alt"></i> Admin Dojo</a>
         <a href="/pages/profile/profile.html"><i class="fas fa-user-ninja"></i> Profile</a>
     </div>
-    <div class="nav-avatar" id="navAvatar" data-avatar-root>U</div>
+    <div class="nav-avatar" id="navAvatar" data-avatar-root>A</div>
 </nav>
 
 <div class="main-container">
-        <a class="back" href="../dashboard/dashboard.html" onclick="if(document.referrer){ history.back(); return false; }">
-            <i class="fas fa-arrow-left"></i> Back
-        </a>
+    <a class="back" href="../dashboard/dashboard.html">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
 
     <header class="header-box">
         <h1>⚔️ Administrative Command Dojo ⚔️</h1>
-        <p>Authorize final problem configurations, register test cases, and establish upcoming tournaments.</p>
+        <p>Hashira Headquarters: Manage problems, test cases, tournaments, quizzes, and slayer permissions.</p>
     </header>
 
-    <main class="form-card">
-        <form id="createProblemForm" onsubmit="handleProblemSubmit(event)">
-            <!-- 1. Metadata -->
-            <div class="form-section-title"><i class="fas fa-info-circle"></i> Problem configuration metadata</div>
-            <div class="form-group">
-                <label for="probTitle">Problem Title</label>
-                <input type="text" id="probTitle" placeholder="e.g. Reverse Linked List" required>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="probDifficulty">Difficulty</label>
-                    <select id="probDifficulty">
-                        <option value="Easy">Easy</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Hard">Hard</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="probTopic">Topic Category</label>
-                    <select id="probTopic">
-                        <option value="Arrays">Arrays</option>
-                        <option value="Strings">Strings</option>
-                        <option value="Linked List">Linked Lists</option>
-                        <option value="Stack">Stacks</option>
-                        <option value="Queue">Queues</option>
-                        <option value="HashMap">HashMaps</option>
-                        <option value="Trees">Trees</option>
-                        <option value="Graphs">Graphs</option>
-                        <option value="Recursion">Recursion</option>
-                        <option value="DP">Dynamic Programming</option>
-                    </select>
-                </div>
-            </div>
+    <!-- Admin Navigation Tabs -->
+    <div class="admin-tabs">
+        <button class="admin-tab-btn active" onclick="switchTab('overview')"><i class="fas fa-chart-pie"></i> Headquarters Overview</button>
+        <button class="admin-tab-btn" onclick="switchTab('problems')"><i class="fas fa-code"></i> Problems & Test Cases</button>
+        <button class="admin-tab-btn" onclick="switchTab('contests')"><i class="fas fa-trophy"></i> Tournaments & Contests</button>
+        <button class="admin-tab-btn" onclick="switchTab('quizzes')"><i class="fas fa-scroll"></i> Quizzes</button>
+        <button class="admin-tab-btn" onclick="switchTab('users')"><i class="fas fa-users-cog"></i> Slayer Corps Directory</button>
+    </div>
 
-            <!-- 2. Statement Details -->
-            <div class="form-section-title"><i class="fas fa-file-alt"></i> Problem Description & Constraints</div>
-            <div class="form-group">
-                <label for="probDescription">Problem Statement</label>
-                <textarea id="probDescription" placeholder="Write statement using standard markdown..." required></textarea>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="probInput">Input Format Description</label>
-                    <textarea id="probInput" placeholder="First line contains N..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="probOutput">Output Format Description</label>
-                    <textarea id="probOutput" placeholder="Print the indices..."></textarea>
+    <!-- 1. OVERVIEW TAB -->
+    <section id="tab-overview" class="tab-content active">
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon users"><i class="fas fa-user-ninja"></i></div>
+                <div>
+                    <div class="kpi-value" id="kpiUsers">0</div>
+                    <div class="kpi-label">Registered Slayers</div>
                 </div>
             </div>
-            <div class="form-group">
-                <label for="probConstraints">Constraints</label>
-                <textarea id="probConstraints" placeholder="1 <= nums.length <= 10^5"></textarea>
+            <div class="kpi-card">
+                <div class="kpi-icon problems"><i class="fas fa-brain"></i></div>
+                <div>
+                    <div class="kpi-value" id="kpiProblems">0</div>
+                    <div class="kpi-label">Dojo Problems</div>
+                </div>
             </div>
+            <div class="kpi-card">
+                <div class="kpi-icon submissions"><i class="fas fa-check-circle"></i></div>
+                <div>
+                    <div class="kpi-value" id="kpiSubmissions">0</div>
+                    <div class="kpi-label">Total Submissions</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon contests"><i class="fas fa-trophy"></i></div>
+                <div>
+                    <div class="kpi-value" id="kpiContests">0</div>
+                    <div class="kpi-label">Tournaments</div>
+                </div>
+            </div>
+        </div>
 
-            <!-- 3. Test Cases -->
-            <div class="form-section-title"><i class="fas fa-check-double"></i> Visible Sample Test Cases</div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="sampleInput">Sample Input</label>
-                    <textarea id="sampleInput" placeholder="2 7 11 15\n9" style="font-family:'Fira Code',monospace; font-size:0.85rem;"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="sampleOutput">Sample Expected Output</label>
-                    <textarea id="sampleOutput" placeholder="0 1" style="font-family:'Fira Code',monospace; font-size:0.85rem;"></textarea>
-                </div>
+        <div class="admin-card">
+            <div class="card-title"><i class="fas fa-history"></i> Recent Slayer Submissions</div>
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Slayer</th>
+                            <th>Problem</th>
+                            <th>Status</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentSubmissionsBody">
+                        <tr><td colspan="4" style="text-align:center; opacity:0.6;">Loading recent activity...</td></tr>
+                    </tbody>
+                </table>
             </div>
+        </div>
+    </section>
 
-            <div style="text-align:right;">
-                <button type="submit" class="btn-action">Publish configuration <i class="fas fa-check-circle"></i></button>
+    <!-- 2. PROBLEMS TAB -->
+    <section id="tab-problems" class="tab-content">
+        <!-- Create Problem Form -->
+        <div class="admin-card">
+            <div class="card-title"><i class="fas fa-plus-circle"></i> Deploy New Kata (Problem)</div>
+            <form id="problemForm" onsubmit="handleProblemSubmit(event)">
+                <div class="form-row">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label for="pTitle">Problem Title</label>
+                        <input type="text" id="pTitle" placeholder="e.g. Reverse Linked List" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pDifficulty">Difficulty</label>
+                        <select id="pDifficulty">
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="pTopic">Topic</label>
+                        <select id="pTopic">
+                            <option value="Arrays">Arrays</option>
+                            <option value="Strings">Strings</option>
+                            <option value="Linked List">Linked Lists</option>
+                            <option value="Stack">Stacks</option>
+                            <option value="Queue">Queues</option>
+                            <option value="HashMap">HashMaps</option>
+                            <option value="Trees">Trees</option>
+                            <option value="Graphs">Graphs</option>
+                            <option value="Recursion">Recursion</option>
+                            <option value="DP">Dynamic Programming</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="pDescription">Problem Description (Markdown)</label>
+                    <textarea id="pDescription" placeholder="Write full problem statement and logic specifications..." required></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pInputFormat">Input Format</label>
+                        <textarea id="pInputFormat" placeholder="e.g. First line contains N..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="pOutputFormat">Output Format</label>
+                        <textarea id="pOutputFormat" placeholder="e.g. Print single integer answer..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="pConstraints">Constraints</label>
+                    <textarea id="pConstraints" placeholder="1 <= N <= 10^5"></textarea>
+                </div>
+
+                <!-- Sample Test Cases -->
+                <div class="form-section-title">
+                    <span><i class="fas fa-eye"></i> Visible Sample Test Cases</span>
+                    <button type="button" class="btn-add-secondary" onclick="addSampleCaseRow()"><i class="fas fa-plus"></i> Add Sample Case</button>
+                </div>
+                <div id="sampleCasesContainer"></div>
+
+                <!-- Hidden Test Cases -->
+                <div class="form-section-title">
+                    <span><i class="fas fa-user-secret"></i> Hidden Judge Test Cases</span>
+                    <button type="button" class="btn-add-secondary" onclick="addHiddenCaseRow()"><i class="fas fa-plus"></i> Add Hidden Case</button>
+                </div>
+                <div id="hiddenCasesContainer"></div>
+
+                <div style="text-align:right; margin-top:1.5rem;">
+                    <button type="submit" class="btn-action"><i class="fas fa-cloud-upload-alt"></i> Publish Kata & Test Cases</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Problem List & Management -->
+        <div class="admin-card">
+            <div class="card-header-row">
+                <div class="card-title"><i class="fas fa-list"></i> Dojo Problem Archive</div>
+                <input type="text" id="problemSearch" placeholder="Search problems..." oninput="loadProblemsList()" style="max-width:280px; background:#090410; border:1px solid rgba(255,77,46,0.3); border-radius:12px; padding:6px 12px; color:#fff;">
             </div>
-        </form>
-    </main>
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Topic</th>
+                            <th>Difficulty</th>
+                            <th>Points</th>
+                            <th>Samples</th>
+                            <th>Hidden</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="problemsTableBody">
+                        <tr><td colspan="7" style="text-align:center; opacity:0.6;">Loading problems...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. CONTESTS TAB -->
+    <section id="tab-contests" class="tab-content">
+        <div class="admin-card">
+            <div class="card-title"><i class="fas fa-plus-circle"></i> Create Grand Tournament</div>
+            <form id="contestForm" onsubmit="handleContestSubmit(event)">
+                <div class="form-group">
+                    <label for="cTitle">Tournament Title</label>
+                    <input type="text" id="cTitle" placeholder="e.g. Final Selection Bi-Weekly Clash" required>
+                </div>
+                <div class="form-group">
+                    <label for="cDesc">Tournament Description</label>
+                    <textarea id="cDesc" placeholder="Rules, rewards, and eligibility..." required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cStartTime">Start Date & Time</label>
+                        <input type="datetime-local" id="cStartTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cEndTime">End Date & Time</label>
+                        <input type="datetime-local" id="cEndTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cDuration">Duration (Minutes)</label>
+                        <input type="number" id="cDuration" value="120" required>
+                    </div>
+                </div>
+                <div style="text-align:right; margin-top:1rem;">
+                    <button type="submit" class="btn-action"><i class="fas fa-trophy"></i> Announce Tournament</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="admin-card">
+            <div class="card-title"><i class="fas fa-calendar-alt"></i> Existing Tournaments</div>
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Tournament Title</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Duration</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contestsTableBody">
+                        <tr><td colspan="5" style="text-align:center; opacity:0.6;">Loading contests...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. QUIZZES TAB -->
+    <section id="tab-quizzes" class="tab-content">
+        <div class="admin-card">
+            <div class="card-title"><i class="fas fa-plus-circle"></i> Create Structured Quiz</div>
+            <form id="quizForm" onsubmit="handleQuizSubmit(event)">
+                <div class="form-row">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label for="qTitle">Quiz Title</label>
+                        <input type="text" id="qTitle" placeholder="e.g. Master Tree Traversals" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="qTopic">Topic</label>
+                        <input type="text" id="qTopic" placeholder="e.g. trees" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="qDifficulty">Difficulty</label>
+                        <select id="qDifficulty">
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section-title">
+                    <span><i class="fas fa-question-circle"></i> Quiz Questions</span>
+                    <button type="button" class="btn-add-secondary" onclick="addQuizQuestionRow()"><i class="fas fa-plus"></i> Add Question</button>
+                </div>
+                <div id="quizQuestionsContainer"></div>
+
+                <div style="text-align:right; margin-top:1.5rem;">
+                    <button type="submit" class="btn-action"><i class="fas fa-scroll"></i> Publish Quiz</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="admin-card">
+            <div class="card-title"><i class="fas fa-book-open"></i> Published Quizzes</div>
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Quiz Title</th>
+                            <th>Topic</th>
+                            <th>Difficulty</th>
+                            <th>Questions</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quizzesTableBody">
+                        <tr><td colspan="5" style="text-align:center; opacity:0.6;">Loading quizzes...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. USERS TAB -->
+    <section id="tab-users" class="tab-content">
+        <div class="admin-card">
+            <div class="card-header-row">
+                <div class="card-title"><i class="fas fa-users"></i> Slayer Corps Roster</div>
+                <input type="text" id="userSearch" placeholder="Search slayer name / email..." oninput="loadUsersList()" style="max-width:280px; background:#090410; border:1px solid rgba(255,77,46,0.3); border-radius:12px; padding:6px 12px; color:#fff;">
+            </div>
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role Permission</th>
+                            <th>Rank</th>
+                            <th>Level & XP</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr><td colspan="6" style="text-align:center; opacity:0.6;">Loading slayers...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
 </div>
 
 <script src="../../config/config.js"></script>
 <script src="../../assets/js/api.js"></script>
 <script>
-    // Theme links
-    const themeStyles = {
-        flame: { primary: '#ff4d2e' },
-        water: { primary: '#2e9eff' },
-        thunder: { primary: '#ffd966' },
-        mist: { primary: '#b8a9ff' },
-        wind: { primary: '#5fdc7a' },
-        sun: { primary: '#ffaa33' }
-    };
+    let currentAdminProfile = null;
 
-    function applyDojoTheme(styleName) {
-        if (!styleName) return;
-        const key = styleName.toLowerCase();
-        const theme = themeStyles[key];
-        if (!theme) return;
+    // Tab switcher
+    function switchTab(tabName) {
+        document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         
-        const nav = document.querySelector('.demon-nav');
-        if (nav) nav.style.borderColor = theme.primary;
-        document.querySelectorAll('.form-card').forEach(el => el.style.borderColor = `${theme.primary}25`);
-        document.querySelectorAll('.form-section-title').forEach(el => el.style.color = theme.primary);
+        event.currentTarget.classList.add('active');
+        const target = document.getElementById(`tab-${tabName}`);
+        if (target) target.classList.add('active');
+
+        // Lazy load tab data
+        if (tabName === 'overview') loadStats();
+        if (tabName === 'problems') loadProblemsList();
+        if (tabName === 'contests') loadContestsList();
+        if (tabName === 'quizzes') loadQuizzesList();
+        if (tabName === 'users') loadUsersList();
     }
 
-    document.addEventListener('mousemove', (e) => {
-        const glow = document.getElementById('cursorGlow');
-        glow.style.left = e.clientX + 'px';
-        glow.style.top = e.clientY + 'px';
-    });
-
-    async function initPage() {
+    // Auth & Permission Security Check
+    async function initAdminDojo() {
         const token = localStorage.getItem('token');
         if (!token) {
-            alert('⚠️ Session expired. Please log in first.');
+            alert('🛑 Unauthorized. Please sign in with an Administrator Slayer account.');
             window.location.href = '../auth/login.html';
             return;
         }
 
         try {
             const profile = await Auth.getProfile();
-            if (profile.role !== 'admin' && profile.role !== 'mentor' && profile.role !== 'instructor') {
-                alert('🛑 ACCESS DENIED: Only Administrator Slayers are permitted inside the admin command dojo.');
+            if (profile.role !== 'admin') {
+                alert('🛑 ACCESS DENIED: Only Hashira Administrators are permitted inside the command dojo.');
                 window.location.href = 'practice.html';
                 return;
             }
 
-            applyDojoTheme(profile.breathingStyle);
+            currentAdminProfile = profile;
             
+            // Set Avatar
             const avatar = document.getElementById('navAvatar');
             if (profile.avatar) {
                 avatar.innerHTML = `<img src="${profile.avatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
             } else {
                 avatar.innerText = profile.username.charAt(0).toUpperCase();
             }
+
+            // Load initial overview stats
+            loadStats();
+
+            // Init sample & hidden testcase rows
+            addSampleCaseRow();
+            addHiddenCaseRow();
+            addQuizQuestionRow();
+
         } catch (err) {
-            console.error('Failed to load profile:', err);
+            console.error('Failed to verify admin status:', err);
+            alert('⚠️ Session expired or verification failed.');
+            window.location.href = '../auth/login.html';
         }
     }
 
-    async function handleProblemSubmit(event) {
-        event.preventDefault();
+    // 1. Overview Stats
+    async function loadStats() {
+        try {
+            const data = await Admin.getStats();
+            document.getElementById('kpiUsers').innerText = data.stats.totalUsers || 0;
+            document.getElementById('kpiProblems').innerText = data.stats.totalProblems || 0;
+            document.getElementById('kpiSubmissions').innerText = data.stats.totalSubmissions || 0;
+            document.getElementById('kpiContests').innerText = data.stats.totalContests || 0;
 
-        const title = document.getElementById('probTitle').value.trim();
-        const difficulty = document.getElementById('probDifficulty').value;
-        const topic = document.getElementById('probTopic').value;
-        const description = document.getElementById('probDescription').value.trim();
-        const inputFormat = document.getElementById('probInput').value.trim();
-        const outputFormat = document.getElementById('probOutput').value.trim();
-        const constraints = document.getElementById('probConstraints').value.trim();
-        
-        // Sample test cases
-        const sampleInput = document.getElementById('sampleInput').value;
-        const sampleOutput = document.getElementById('sampleOutput').value;
-
-        // Auto mock starter templates for the 5 languages
-        const starterCode = [
-            {
-                language: 'python',
-                code: `import sys\n\ndef solve():\n    lines = sys.stdin.read().splitlines()\n    # Write logic here\n\nif __name__ == '__main__':\n    solve()`
-            },
-            {
-                language: 'javascript',
-                code: `const fs = require('fs');\n\nfunction solve() {\n    const input = fs.readFileSync(0, 'utf-8').trim().split('\\n');\n    // Write logic here\n}\n\nsolve();`
-            },
-            {
-                language: 'java',
-                code: `import java.util.*;\nimport java.io.*;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        // Write logic here\n    }\n}`
-            },
-            {
-                language: 'cpp',
-                code: `#include <iostream>\nusing namespace std;\n\nint main() {\n    // Write logic here\n    return 0;\n}`
-            },
-            {
-                language: 'c',
-                code: `#include <stdio.h>\n\nint main() {\n    // Write logic here\n    return 0;\n}`
+            const tbody = document.getElementById('recentSubmissionsBody');
+            if (!data.recentSubmissions || data.recentSubmissions.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; opacity:0.6;">No recent submissions recorded.</td></tr>`;
+            } else {
+                tbody.innerHTML = data.recentSubmissions.map(s => `
+                    <tr>
+                        <td><strong>${s.userId?.username || 'Unknown'}</strong></td>
+                        <td>${s.problemId?.title || 'Problem'}</td>
+                        <td><span class="badge ${s.status === 'Accepted' ? 'easy' : 'hard'}">${s.status}</span></td>
+                        <td>${new Date(s.submittedAt).toLocaleTimeString()}</td>
+                    </tr>
+                `).join('');
             }
+        } catch (err) {
+            console.error('Failed to load stats:', err);
+        }
+    }
+
+    // Dynamic Test Cases UI Builders
+    function addSampleCaseRow() {
+        const container = document.getElementById('sampleCasesContainer');
+        const div = document.createElement('div');
+        div.className = 'testcase-item';
+        div.innerHTML = `
+            <button type="button" class="btn-remove-item" onclick="this.parentElement.remove()"><i class="fas fa-trash"></i></button>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Sample Input</label>
+                    <textarea class="sample-in" placeholder="e.g. 2 7 11 15\n9" style="font-family:'Fira Code',monospace; font-size:0.85rem; min-height:60px;" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Sample Expected Output</label>
+                    <textarea class="sample-out" placeholder="e.g. 0 1" style="font-family:'Fira Code',monospace; font-size:0.85rem; min-height:60px;" required></textarea>
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+    }
+
+    function addHiddenCaseRow() {
+        const container = document.getElementById('hiddenCasesContainer');
+        const div = document.createElement('div');
+        div.className = 'testcase-item';
+        div.innerHTML = `
+            <button type="button" class="btn-remove-item" onclick="this.parentElement.remove()"><i class="fas fa-trash"></i></button>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Hidden Test Input</label>
+                    <textarea class="hidden-in" placeholder="e.g. 100000\n[...]" style="font-family:'Fira Code',monospace; font-size:0.85rem; min-height:60px;" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Hidden Expected Output</label>
+                    <textarea class="hidden-out" placeholder="e.g. 42" style="font-family:'Fira Code',monospace; font-size:0.85rem; min-height:60px;" required></textarea>
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+    }
+
+    function addQuizQuestionRow() {
+        const container = document.getElementById('quizQuestionsContainer');
+        const count = container.children.length + 1;
+        const div = document.createElement('div');
+        div.className = 'testcase-item';
+        div.innerHTML = `
+            <button type="button" class="btn-remove-item" onclick="this.parentElement.remove()"><i class="fas fa-trash"></i></button>
+            <div class="form-group">
+                <label>Question #${count}</label>
+                <input type="text" class="quiz-q-text" placeholder="What is the time complexity of..." required>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><input type="text" class="quiz-opt-0" placeholder="Option 1" required></div>
+                <div class="form-group"><input type="text" class="quiz-opt-1" placeholder="Option 2" required></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><input type="text" class="quiz-opt-2" placeholder="Option 3" required></div>
+                <div class="form-group"><input type="text" class="quiz-opt-3" placeholder="Option 4" required></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Correct Option Index</label>
+                    <select class="quiz-correct-idx">
+                        <option value="0">Option 1</option>
+                        <option value="1">Option 2</option>
+                        <option value="2">Option 3</option>
+                        <option value="3">Option 4</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Hint / Explanation</label>
+                    <input type="text" class="quiz-hint" placeholder="Brief hint or solution explanation">
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+    }
+
+    // 2. Problems CRUD
+    async function handleProblemSubmit(e) {
+        e.preventDefault();
+        
+        const title = document.getElementById('pTitle').value.trim();
+        const difficulty = document.getElementById('pDifficulty').value;
+        const topic = document.getElementById('pTopic').value;
+        const description = document.getElementById('pDescription').value.trim();
+        const inputFormat = document.getElementById('pInputFormat').value.trim();
+        const outputFormat = document.getElementById('pOutputFormat').value.trim();
+        const constraints = document.getElementById('pConstraints').value.trim();
+
+        // Collect sample test cases
+        const sampleTestCases = [];
+        document.querySelectorAll('#sampleCasesContainer .testcase-item').forEach(el => {
+            const input = el.querySelector('.sample-in').value;
+            const expectedOutput = el.querySelector('.sample-out').value;
+            if (input.trim() || expectedOutput.trim()) {
+                sampleTestCases.push({ input, expectedOutput });
+            }
+        });
+
+        // Collect hidden test cases
+        const hiddenTestCases = [];
+        document.querySelectorAll('#hiddenCasesContainer .testcase-item').forEach(el => {
+            const input = el.querySelector('.hidden-in').value;
+            const expectedOutput = el.querySelector('.hidden-out').value;
+            if (input.trim() || expectedOutput.trim()) {
+                hiddenTestCases.push({ input, expectedOutput });
+            }
+        });
+
+        const starterCode = [
+            { language: 'python', code: "import sys\n\ndef solve():\n    lines = sys.stdin.read().splitlines()\n    # Write your solution here\n\nif __name__ == '__main__':\n    solve()" },
+            { language: 'javascript', code: "const fs = require('fs');\n\nfunction solve() {\n    const input = fs.readFileSync(0, 'utf-8').trim().split('\\n');\n    // Write solution\n}\nsolve();" },
+            { language: 'cpp', code: "#include <iostream>\nusing namespace std;\n\nint main() {\n    // Write solution\n    return 0;\n}" },
+            { language: 'java', code: "import java.util.*;\nimport java.io.*;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        // Write solution\n    }\n}" }
         ];
 
         try {
-            const prob = await Problems.createProblem({
+            await Admin.createProblem({
                 title,
                 difficulty,
                 topic,
@@ -322,18 +914,259 @@
                 outputFormat,
                 constraints,
                 starterCode,
-                points: difficulty === 'Easy' ? 10 : difficulty === 'Medium' ? 20 : 30
+                sampleTestCases,
+                hiddenTestCases
             });
 
-            alert(`✅ Problem "${title}" created successfully! Problem ID: ${prob._id}`);
-            window.location.reload();
-
+            alert(`✅ Problem "${title}" and all test cases deployed successfully!`);
+            document.getElementById('problemForm').reset();
+            loadProblemsList();
+            loadStats();
         } catch (err) {
-            alert('Failed to publish configuration: ' + err.message);
+            alert('❌ Failed to deploy problem: ' + err.message);
         }
     }
 
-    document.addEventListener('DOMContentLoaded', initPage);
+    async function loadProblemsList() {
+        const search = document.getElementById('problemSearch')?.value || '';
+        try {
+            const problems = await Admin.getProblems({ search });
+            const tbody = document.getElementById('problemsTableBody');
+            if (problems.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; opacity:0.6;">No matching problems found.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = problems.map(p => `
+                <tr>
+                    <td><strong>${p.title}</strong></td>
+                    <td>${p.topic}</td>
+                    <td><span class="badge ${p.difficulty.toLowerCase()}">${p.difficulty}</span></td>
+                    <td>${p.points || 10} XP</td>
+                    <td><i class="fas fa-eye"></i> ${p.sampleCount || 0}</td>
+                    <td><i class="fas fa-user-secret"></i> ${p.hiddenCount || 0}</td>
+                    <td>
+                        <button class="btn-danger" onclick="deleteProblem('${p._id}', '${p.title.replace(/'/g, "\\'")}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        } catch (err) {
+            console.error('Failed to load problems:', err);
+        }
+    }
+
+    async function deleteProblem(id, title) {
+        if (!confirm(`Are you sure you want to delete problem "${title}"? All test cases and user submissions for it will be removed.`)) {
+            return;
+        }
+        try {
+            await Admin.deleteProblem(id);
+            alert(`✅ Problem "${title}" deleted.`);
+            loadProblemsList();
+            loadStats();
+        } catch (err) {
+            alert('Failed to delete problem: ' + err.message);
+        }
+    }
+
+    // 3. Contests CRUD
+    async function handleContestSubmit(e) {
+        e.preventDefault();
+        const title = document.getElementById('cTitle').value.trim();
+        const description = document.getElementById('cDesc').value.trim();
+        const startTime = document.getElementById('cStartTime').value;
+        const endTime = document.getElementById('cEndTime').value;
+        const duration = parseInt(document.getElementById('cDuration').value) || 120;
+
+        try {
+            await Contests.createContest({ title, description, startTime, endTime, duration });
+            alert(`✅ Tournament "${title}" announced successfully!`);
+            document.getElementById('contestForm').reset();
+            loadContestsList();
+            loadStats();
+        } catch (err) {
+            alert('❌ Failed to announce tournament: ' + err.message);
+        }
+    }
+
+    async function loadContestsList() {
+        try {
+            const list = await Admin.getContests();
+            const tbody = document.getElementById('contestsTableBody');
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; opacity:0.6;">No tournaments registered.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = list.map(c => `
+                <tr>
+                    <td><strong>${c.title}</strong></td>
+                    <td>${new Date(c.startTime).toLocaleString()}</td>
+                    <td>${new Date(c.endTime).toLocaleString()}</td>
+                    <td>${c.duration} mins</td>
+                    <td>
+                        <button class="btn-danger" onclick="deleteContest('${c._id}', '${c.title.replace(/'/g, "\\'")}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        } catch (err) {
+            console.error('Failed to load contests:', err);
+        }
+    }
+
+    async function deleteContest(id, title) {
+        if (!confirm(`Delete tournament "${title}"?`)) return;
+        try {
+            await Admin.deleteContest(id);
+            alert('✅ Tournament deleted.');
+            loadContestsList();
+            loadStats();
+        } catch (err) {
+            alert('Failed to delete contest: ' + err.message);
+        }
+    }
+
+    // 4. Quizzes CRUD
+    async function handleQuizSubmit(e) {
+        e.preventDefault();
+        const title = document.getElementById('qTitle').value.trim();
+        const topic = document.getElementById('qTopic').value.trim();
+        const difficulty = document.getElementById('qDifficulty').value;
+
+        const questions = [];
+        document.querySelectorAll('#quizQuestionsContainer .testcase-item').forEach(el => {
+            const question = el.querySelector('.quiz-q-text').value.trim();
+            const options = [
+                el.querySelector('.quiz-opt-0').value.trim(),
+                el.querySelector('.quiz-opt-1').value.trim(),
+                el.querySelector('.quiz-opt-2').value.trim(),
+                el.querySelector('.quiz-opt-3').value.trim()
+            ];
+            const correctAnswer = parseInt(el.querySelector('.quiz-correct-idx').value) || 0;
+            const hint = el.querySelector('.quiz-hint').value.trim();
+            if (question) {
+                questions.push({ question, options, correctAnswer, hint });
+            }
+        });
+
+        if (questions.length === 0) {
+            alert('Please include at least 1 question for the quiz.');
+            return;
+        }
+
+        try {
+            await Quiz.createQuiz({ title, topic, difficulty, questions });
+            alert(`✅ Quiz "${title}" created successfully!`);
+            document.getElementById('quizForm').reset();
+            loadQuizzesList();
+        } catch (err) {
+            alert('❌ Failed to create quiz: ' + err.message);
+        }
+    }
+
+    async function loadQuizzesList() {
+        try {
+            const list = await Admin.getQuizzes();
+            const tbody = document.getElementById('quizzesTableBody');
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; opacity:0.6;">No quizzes registered.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = list.map(q => `
+                <tr>
+                    <td><strong>${q.title}</strong></td>
+                    <td>${q.topic}</td>
+                    <td><span class="badge ${q.difficulty}">${q.difficulty}</span></td>
+                    <td>${q.questions?.length || 0} Questions</td>
+                    <td>
+                        <button class="btn-danger" onclick="deleteQuiz('${q._id}', '${q.title.replace(/'/g, "\\'")}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        } catch (err) {
+            console.error('Failed to load quizzes:', err);
+        }
+    }
+
+    async function deleteQuiz(id, title) {
+        if (!confirm(`Delete quiz "${title}"?`)) return;
+        try {
+            await Admin.deleteQuiz(id);
+            alert('✅ Quiz deleted.');
+            loadQuizzesList();
+        } catch (err) {
+            alert('Failed to delete quiz: ' + err.message);
+        }
+    }
+
+    // 5. Users Management
+    async function loadUsersList() {
+        const search = document.getElementById('userSearch')?.value || '';
+        try {
+            const data = await Admin.getUsers({ search });
+            const tbody = document.getElementById('usersTableBody');
+            if (!data.users || data.users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.6;">No slayers found.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = data.users.map(u => `
+                <tr>
+                    <td><strong>${u.username}</strong></td>
+                    <td>${u.email}</td>
+                    <td>
+                        <select onchange="updateRole('${u._id}', this.value)" style="background:#090410; color:#fff; border:1px solid rgba(255,77,46,0.3); border-radius:8px; padding:4px 8px; font-size:0.8rem;">
+                            <option value="student" ${u.role === 'student' ? 'selected' : ''}>Student</option>
+                            <option value="mentor" ${u.role === 'mentor' ? 'selected' : ''}>Mentor</option>
+                            <option value="instructor" ${u.role === 'instructor' ? 'selected' : ''}>Instructor</option>
+                            <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option>
+                        </select>
+                    </td>
+                    <td>${u.rank || 'Mizunoto 🌙'}</td>
+                    <td>Lv. ${u.level || 1} (${u.xp || 0} XP)</td>
+                    <td>
+                        ${u._id !== currentAdminProfile?._id ? `<button class="btn-danger" onclick="deleteSlayer('${u._id}', '${u.username}')"><i class="fas fa-user-slash"></i></button>` : '<span style="opacity:0.5; font-size:0.8rem;">Current Account</span>'}
+                    </td>
+                </tr>
+            `).join('');
+        } catch (err) {
+            console.error('Failed to load users:', err);
+        }
+    }
+
+    async function updateRole(userId, newRole) {
+        try {
+            await Admin.updateUserRole(userId, newRole);
+            alert(`✅ Slayer permission updated to "${newRole}".`);
+            loadUsersList();
+        } catch (err) {
+            alert('Failed to update role: ' + err.message);
+            loadUsersList();
+        }
+    }
+
+    async function deleteSlayer(userId, username) {
+        if (!confirm(`Are you sure you want to ban/remove slayer "${username}"?`)) return;
+        try {
+            await Admin.deleteUser(userId);
+            alert(`✅ Slayer "${username}" removed.`);
+            loadUsersList();
+            loadStats();
+        } catch (err) {
+            alert('Failed to delete user: ' + err.message);
+        }
+    }
+
+    document.addEventListener('mousemove', (e) => {
+        const glow = document.getElementById('cursorGlow');
+        if (glow) {
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', initAdminDojo);
 </script>
 </body>
 </html>
