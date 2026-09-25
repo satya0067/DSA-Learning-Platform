@@ -1,4 +1,3 @@
-const Code = require('../models/Code');
 const codeExecutor = require('../services/codeExecutor');
 
 const executeCode = async (req, res) => {
@@ -9,34 +8,15 @@ const executeCode = async (req, res) => {
     }
 
     const result = await codeExecutor.execute(language, code, stdin);
-
-    const codeData = {
-      language,
-      code,
-      output: result.output,
-      status: result.status,
-      input: stdin,
-    };
-
-    if (req.user && req.user.id) {
-      codeData.userId = req.user.id;
-      const codeRecord = new Code(codeData);
-      await codeRecord.save();
-    }
-
     res.json(result);
   } catch (error) {
+    console.error('Execute code error:', error);
     res.status(500).json({ error: error.message });
   }
 };
 
 const getCodeHistory = async (req, res) => {
-  try {
-    const history = await Code.find({ userId: req.user.id }).sort({ submittedAt: -1 });
-    res.json(history);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+  res.json([]);
 };
 
 module.exports = { executeCode, getCodeHistory };

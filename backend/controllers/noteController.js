@@ -1,46 +1,74 @@
-const Note = require('../models/Note');
+const { getSupabase } = require('../config/supabase');
 
 const getNote = async (req, res) => {
   try {
+    const supabase = getSupabase();
     const { problemId } = req.params;
     const userId = req.user.id;
 
-    const note = await Note.findOne({ userId, problemId }).lean();
-    res.json(note || { content: '' });
+    const { data: note, error } = await supabase
+      .from('notes')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('problem_id', problemId)
+      .maybeSingle();
+
+    if (error) throw error;
+    res.json(note ? { _id: note.id, id: note.id, content: note.content } : { content: '' });
   } catch (error) {
+    console.error('Get note error:', error);
     res.status(500).json({ error: error.message });
   }
 };
 
 const saveNote = async (req, res) => {
   try {
-    const { problemId, content, isRevision = false } = req.body;
+    const supabase = getSupabase();
+    const { problemId, content } = req.body;
     const userId = req.user.id;
 
     if (!problemId) {
       return res.status(400).json({ message: 'Problem ID is required' });
     }
 
-    const note = await Note.findOneAndUpdate(
-      { userId, problemId },
-      { content, isRevision, updatedAt: Date.now() },
-      { upsert: true, new: true }
-    );
+    const { data: note, error } = await supabase
+      .from('notes')
+      .upsert(
+        {
+          user_id: userId,
+          problem_id: problemId,
+          content: content || '',
+          updated_at: new Date().toISOString()
+        },
+        { onConflict: 'user_id,problem_id' }
+      )
+      .select()
+      .single();
 
-    res.json(note);
+    if (error) throw error;
+    res.json({ _id: note.id, id: note.id, content: note.content });
   } catch (error) {
+    console.error('Save note error:', error);
     res.status(500).json({ error: error.message });
   }
 };
 
 const deleteNote = async (req, res) => {
   try {
+    const supabase = getSupabase();
     const { problemId } = req.params;
     const userId = req.user.id;
 
-    await Note.deleteOne({ userId, problemId });
+    const { error } = await supabase
+      .from('notes')
+      .delete()
+      .eq('user_id', userId)
+      .eq('problem_id', problemId);
+
+    if (error) throw error;
     res.json({ message: 'Note deleted successfully' });
   } catch (error) {
+    console.error('Delete note error:', error);
     res.status(500).json({ error: error.message });
   }
 };

@@ -6,7 +6,7 @@ const path = require('path');
 
 dotenv.config();
 
-const connectDB = require('./config/db');
+const { getSupabase } = require('./config/supabase');
 
 const authRoutes = require('./routes/authRoutes');
 const progressRoutes = require('./routes/progressRoutes');
@@ -37,46 +37,59 @@ app.use('/frontend', express.static(frontendPath));
 
 // API health route
 app.get('/api/ping', (req, res) => {
-  res.send('API is running');
+  res.send('API is running (Supabase Edition)');
 });
 
-// Diagnostic database status route
+// Diagnostic database status route for Supabase
 app.get('/api/db-status', async (req, res) => {
-  const mongoose = require('mongoose');
-  const uri = process.env.MONGODB_URI || process.env.MONGO_URI || process.env.MONGODB_URL || process.env.DATABASE_URL || '';
-  const maskedUri = uri ? uri.replace(/:([^:@]+)@/, ':****@') : 'NOT SET';
+  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_KEY || '';
+  const maskedUrl = url ? url.replace(/^(https?:\/\/[^.]+).*/, '$1.supabase.co') : 'NOT SET';
+  const maskedKey = key ? key.substring(0, 8) + '...' : 'NOT SET';
 
   const envInfo = {
-    MONGODB_URI_configured: Boolean(process.env.MONGODB_URI),
-    MONGO_URI_configured: Boolean(process.env.MONGO_URI),
+    SUPABASE_URL_configured: Boolean(url),
+    SUPABASE_KEY_configured: Boolean(key),
     JWT_SECRET_configured: Boolean(process.env.JWT_SECRET),
     isVercel: Boolean(process.env.VERCEL)
   };
 
   try {
-    const connectDB = require('./config/db');
-    await connectDB();
+    const supabase = getSupabase();
+    const { count: usersCount, error: userError } = await supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true });
+
+    if (userError) throw userError;
+
+    const { count: problemsCount } = await supabase
+      .from('problems')
+      .select('*', { count: 'exact', head: true });
+
     res.json({
       status: 'success',
       database: 'connected',
-      connectionState: mongoose.connection.readyState === 1 ? 'connected' : mongoose.connection.readyState,
-      databaseHost: mongoose.connection.host || 'unknown',
-      databaseName: mongoose.connection.name || 'unknown',
-      detectedUri: maskedUri,
+      provider: 'Supabase (PostgreSQL)',
+      supabaseUrl: maskedUrl,
+      tableCounts: {
+        users: usersCount || 0,
+        problems: problemsCount || 0
+      },
       environment: envInfo
     });
   } catch (err) {
     res.status(500).json({
       status: 'error',
       database: 'disconnected',
+      provider: 'Supabase (PostgreSQL)',
       errorMessage: err.message,
-      detectedUri: maskedUri,
+      supabaseUrl: maskedUrl,
       environment: envInfo,
       troubleshooting: [
-        !uri ? 'CRITICAL: No MongoDB URI found in environment variables. Add MONGODB_URI in Vercel Settings -> Environment Variables.' : 'URI detected: ' + maskedUri,
-        'Ensure MongoDB Atlas -> Network Access has 0.0.0.0/0 (Allow Access from Anywhere) enabled.',
-        'Ensure your Database User password in MongoDB Atlas has no < > brackets and matches your connection string.',
-        'IMPORTANT: In Vercel, after updating Environment Variables, go to Deployments -> ... -> Redeploy.'
+        !url ? 'CRITICAL: SUPABASE_URL is missing. Add it in Vercel Settings -> Environment Variables.' : 'URL detected: ' + maskedUrl,
+        !key ? 'CRITICAL: SUPABASE_ANON_KEY (or SUPABASE_SERVICE_ROLE_KEY) is missing. Add it in Vercel Settings -> Environment Variables.' : 'Key detected: ' + maskedKey,
+        'Make sure you ran the SQL script (supabase-schema.sql) in your Supabase SQL Editor.',
+        'IMPORTANT: In Vercel, go to Deployments -> ... -> Redeploy after saving Environment Variables.'
       ]
     });
   }
@@ -86,34 +99,21 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
-// Middleware to guard database routes if connection failed
-const requireDB = (req, res, next) => {
-  if (req.dbError) {
-    return res.status(500).json({
-      error: 'Database Connection Error',
-      message: 'Failed to connect to MongoDB database.',
-      details: req.dbError,
-      suggestion: 'Visit /api/db-status for full diagnostic information.'
-    });
-  }
-  next();
-};
-
 // Routes
-app.use('/api/auth', requireDB, authRoutes);
-app.use('/api/admin', requireDB, adminRoutes);
-app.use('/api/progress', requireDB, progressRoutes);
-app.use('/api/quiz', requireDB, quizRoutes);
-app.use('/api/code', requireDB, codeRoutes);
-app.use('/api/problems', requireDB, problemRoutes);
-app.use('/api/submissions', requireDB, submissionRoutes);
-app.use('/api/bookmarks', requireDB, bookmarkRoutes);
-app.use('/api/notes', requireDB, noteRoutes);
-app.use('/api/discussions', requireDB, discussionRoutes);
-app.use('/api/leaderboard', requireDB, leaderboardRoutes);
-app.use('/api/contests', requireDB, contestRoutes);
-app.use('/api/challenges', requireDB, challengeRoutes);
-app.use('/api/notifications', requireDB, notificationRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/progress', progressRoutes);
+app.use('/api/quiz', quizRoutes);
+app.use('/api/code', codeRoutes);
+app.use('/api/problems', problemRoutes);
+app.use('/api/submissions', submissionRoutes);
+app.use('/api/bookmarks', bookmarkRoutes);
+app.use('/api/notes', noteRoutes);
+app.use('/api/discussions', discussionRoutes);
+app.use('/api/leaderboard', leaderboardRoutes);
+app.use('/api/contests', contestRoutes);
+app.use('/api/challenges', challengeRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Serve standalone React-based code editor app under /code-editor
 const codeEditorDist = path.join(__dirname, '..', 'code editor', 'dist');
@@ -132,14 +132,9 @@ app.use(require('./middleware/errorMiddleware'));
 
 const PORT = process.env.PORT || 3000;
 
-// Start server AFTER DB connect only when executed directly
 if (require.main === module) {
-  connectDB().then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  }).catch((err) => {
-    console.error('Failed to start server:', err);
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT} with Supabase`);
   });
 }
 

@@ -1,100 +1,137 @@
-const Contest = require('../models/Contest');
+const { getSupabase } = require('../config/supabase');
 
-// Get all contests grouped by status
 const getContests = async (req, res) => {
   try {
-    const contests = await Contest.find({}).lean();
-    const now = new Date();
+    const supabase = getSupabase();
+    const { data: contests, error } = await supabase
+      .from('contests')
+      .select('*')
+      .order('start_time', { ascending: true });
 
-    const categorized = contests.map(c => {
+    if (error) throw error;
+
+    const now = new Date();
+    const categorized = (contests || []).map(c => {
       let status = 'completed';
-      if (now < new Date(c.startTime)) {
+      if (c.start_time && now < new Date(c.start_time)) {
         status = 'upcoming';
-      } else if (now >= new Date(c.startTime) && now <= new Date(c.endTime)) {
+      } else if (c.start_time && c.end_time && now >= new Date(c.start_time) && now <= new Date(c.end_time)) {
         status = 'live';
       }
-      return { ...c, status };
+      return {
+        _id: c.id,
+        id: c.id,
+        title: c.title,
+        description: c.description,
+        startTime: c.start_time,
+        endTime: c.end_time,
+        problems: c.problems || [],
+        participants: c.participants || [],
+        status
+      };
     });
 
     res.json(categorized);
   } catch (error) {
+    console.error('Get contests error:', error);
     res.status(500).json({ error: error.message });
   }
 };
 
-// Get single contest by ID with its problems (problems hidden if upcoming)
 const getContestById = async (req, res) => {
   try {
-    const contest = await Contest.findById(req.params.id)
-      .populate('problems', 'title difficulty topic acceptanceRate')
-      .lean();
+    const supabase = getSupabase();
+    const { data: contest, error } = await supabase
+      .from('contests')
+      .select('*')
+      .eq('id', req.params.id)
+      .maybeSingle();
 
-    if (!contest) {
+    if (error || !contest) {
       return res.status(404).json({ message: 'Contest not found' });
     }
 
-    const now = new Date();
-    // Hide problems if contest hasn't started yet
-    if (now < new Date(contest.startTime)) {
-      contest.problems = [];
-    }
-
-    res.json(contest);
+    res.json({
+      _id: contest.id,
+      id: contest.id,
+      title: contest.title,
+      description: contest.description,
+      startTime: contest.start_time,
+      endTime: contest.end_time,
+      problems: contest.problems || [],
+      participants: contest.participants || []
+    });
   } catch (error) {
+    console.error('Get contest by id error:', error);
     res.status(500).json({ error: error.message });
   }
 };
 
-// Register user for a contest
 const joinContest = async (req, res) => {
   try {
+    const supabase = getSupabase();
     const userId = req.user.id;
-    const contest = await Contest.findById(req.params.id);
+
+    const { data: contest } = await supabase
+      .from('contests')
+      .select('participants')
+      .eq('id', req.params.id)
+      .maybeSingle();
 
     if (!contest) {
       return res.status(404).json({ message: 'Contest not found' });
     }
 
-    const isRegistered = contest.participants.some(p => p.userId.toString() === userId.toString());
+    const participants = contest.participants || [];
+    const isRegistered = participants.some(p => p.userId === userId);
     if (isRegistered) {
       return res.status(400).json({ message: 'Already registered for this contest' });
     }
 
-    contest.participants.push({
+    participants.push({
       userId,
       score: 0,
-      penaltyTime: 0,
-      submissions: []
+      joinedAt: new Date().toISOString()
     });
 
-    await contest.save();
+    await supabase
+      .from('contests')
+      .update({ participants })
+      .eq('id', req.params.id);
+
     res.json({ message: 'Successfully registered for the contest' });
   } catch (error) {
+    console.error('Join contest error:', error);
     res.status(500).json({ error: error.message });
   }
 };
 
-// Admin only: Create a contest
 const createContest = async (req, res) => {
   try {
-    const { title, description, problems, startTime, endTime, duration } = req.body;
+    const supabase = getSupabase();
+    const { title, description, problems, startTime, endTime } = req.body;
 
     if (!title || !startTime || !endTime) {
       return res.status(400).json({ message: 'Title, startTime, and endTime are required' });
     }
 
-    const contest = new Contest({
-      title,
-      description,
-      problems,
-      startTime,
-      endTime,
-      duration
-    });
+    const { data: contest, error } = await supabase
+      .from('contests')
+      .insert({
+        title,
+        description: description || '',
+        problems: problems || [],
+        start_time: startTime,
+        end_time: endTime,
+        participants: []
+      })
+      .select()
+      .single();
 
-    await contest.save();
-    res.status(201).json(contest);
+    if (error) throw error;
+    res.status(201).json({ _id: contest.id, id: contest.id, ...contest });
   } catch (error) {
+    console.error('Create contest error:', error);
     res.status(500).json({ error: error.message });
   }
 };

@@ -1,91 +1,74 @@
-const Submission = require('../models/Submission');
-const Problem = require('../models/Problem');
-const TestCase = require('../models/TestCase');
-const HiddenTestCase = require('../models/HiddenTestCase');
-const User = require('../models/User');
-const Leaderboard = require('../models/Leaderboard');
-const DailyChallenge = require('../models/DailyChallenge');
-const WeeklyChallenge = require('../models/WeeklyChallenge');
-const Notification = require('../models/Notification');
-const Progress = require('../models/Progress');
+const { getSupabase } = require('../config/supabase');
 const judgeService = require('../services/judgeService');
 const codeExecutor = require('../services/codeExecutor');
 
 // Helper to award gamification rewards to user
 const awardUserRewards = async (userId, points, coinsAwarded = 5, category = 'practice') => {
-  const user = await User.findById(userId);
-  if (!user) return null;
+  const supabase = getSupabase();
+  const { data: user, error: userError } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', userId)
+    .maybeSingle();
 
-  user.xp = (user.xp || 0) + points;
-  user.practiceScore = (user.practiceScore || 0) + points; // Accumulate practice score
+  if (userError || !user) return null;
 
-  // Increment completed challenges
-  user.completedChallenges = (user.completedChallenges || 0) + 1;
+  const currentXp = (user.xp || 0) + points;
+  const currentPracticeScore = (user.practice_score || 0) + points;
+  const completedChallenges = (user.completed_challenges || 0) + 1;
 
   // Level up calculation: 100 XP per level
   const oldLevel = user.level || 1;
-  const newLevel = Math.floor(user.xp / 100) + 1;
+  const newLevel = Math.floor(currentXp / 100) + 1;
   let leveledUp = false;
+  let rank = user.rank || 'Mizunoto 🌙';
+
   if (newLevel > oldLevel) {
-    user.level = newLevel;
     leveledUp = true;
+    if (newLevel >= 11) rank = 'Hashira ⚔️';
+    else if (newLevel >= 9) rank = 'Hinoto ☀️';
+    else if (newLevel >= 7) rank = 'Kanoe 🌫️';
+    else if (newLevel >= 5) rank = 'Kanoto ⚡';
+    else if (newLevel >= 3) rank = 'Mizunoe 💧';
+    else rank = 'Mizunoto 🌙';
   }
 
-  // Update Slayer Rank based on level
-  // Mizunoto (Level 1-2), Mizunoe (Level 3-4), Kanoto (Level 5-6), Kanoe (Level 7-8), Hinoto (Level 9-10), Hashira (Level 11+)
-  if (user.level >= 11) {
-    user.rank = 'Hashira ⚔️';
-  } else if (user.level >= 9) {
-    user.rank = 'Hinoto ☀️';
-  } else if (user.level >= 7) {
-    user.rank = 'Kanoe 🌫️';
-  } else if (user.level >= 5) {
-    user.rank = 'Kanoto ⚡';
-  } else if (user.level >= 3) {
-    user.rank = 'Mizunoe 💧';
-  } else {
-    user.rank = 'Mizunoto 🌙';
-  }
+  const streak = (user.streak || 0) + 1;
 
-  // Update Streak
-  const today = new Date().toDateString();
-  const lastActive = user.createdAt ? new Date(user.createdAt).toDateString() : null; // Temp check fallback
-  // Normally we would check a lastSubmissionDate, let's keep it simple: increment streak if active today
-  user.streak = (user.streak || 0) + 1;
-
-  await user.save();
-
-  // Update Leaderboard cache
-  await Leaderboard.findOneAndUpdate(
-    { userId: user._id },
-    {
-      xp: user.xp,
-      streak: user.streak,
-      $inc: { problemsSolved: 1 },
-      lastUpdated: Date.now()
-    },
-    { upsert: true, new: true }
-  );
+  await supabase
+    .from('users')
+    .update({
+      xp: currentXp,
+      practice_score: currentPracticeScore,
+      completed_challenges: completedChallenges,
+      level: newLevel,
+      rank,
+      streak
+    })
+    .eq('id', userId);
 
   // Send Notification
   let notificationMsg = `⚔️ Problem Solved! You earned +${points} XP and became stronger.`;
   if (leveledUp) {
-    notificationMsg += ` 🎉 LEVEL UP! You reached Level ${user.level} (${user.rank})!`;
+    notificationMsg += ` 🎉 LEVEL UP! You reached Level ${newLevel} (${rank})!`;
   }
-  
-  const notification = new Notification({
-    userId: user._id,
-    message: notificationMsg,
-    type: 'milestone'
-  });
-  await notification.save();
 
-  return { user, leveledUp, pointsEarned: points };
+  await supabase
+    .from('notifications')
+    .insert({
+      user_id: userId,
+      title: 'Milestone Reached',
+      message: notificationMsg,
+      type: 'milestone'
+    });
+
+  return { user: { ...user, xp: currentXp, level: newLevel, rank, streak }, leveledUp, pointsEarned: points };
 };
 
 // Run custom input execution or sample test cases
 const runCode = async (req, res) => {
   try {
+    const supabase = getSupabase();
     const { problemId, language, code, stdin = '', useSampleCases = false } = req.body;
 
     if (!language || !code) {
@@ -107,14 +90,25 @@ const runCode = async (req, res) => {
       return res.status(400).json({ message: 'Problem ID is required to run sample cases' });
     }
 
-    const testCases = await TestCase.find({ problemId, isSample: true });
-    if (testCases.length === 0) {
+    const { data: testCases, error } = await supabase
+      .from('test_cases')
+      .select('*')
+      .eq('problem_id', problemId)
+      .eq('is_sample', true);
+
+    if (error || !testCases || testCases.length === 0) {
       return res.status(400).json({ message: 'No sample test cases found for this problem' });
     }
 
-    const judgeResult = await judgeService.judge(language, code, testCases);
+    const formattedCases = testCases.map(tc => ({
+      input: tc.input,
+      expectedOutput: tc.expected_output
+    }));
+
+    const judgeResult = await judgeService.judge(language, code, formattedCases);
     res.json(judgeResult);
   } catch (error) {
+    console.error('Run code error:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -122,6 +116,7 @@ const runCode = async (req, res) => {
 // Submit code execution (Evaluated against all visible + hidden test cases)
 const submitCode = async (req, res) => {
   try {
+    const supabase = getSupabase();
     const { problemId, language, code } = req.body;
     const userId = req.user.id;
 
@@ -129,15 +124,26 @@ const submitCode = async (req, res) => {
       return res.status(400).json({ message: 'Problem ID, language, and code are required' });
     }
 
-    const problem = await Problem.findById(problemId);
-    if (!problem) {
+    const { data: problem, error: problemError } = await supabase
+      .from('problems')
+      .select('*')
+      .eq('id', problemId)
+      .maybeSingle();
+
+    if (problemError || !problem) {
       return res.status(404).json({ message: 'Problem not found' });
     }
 
-    // 1. Gather all test cases (sample + hidden)
-    const sampleCases = await TestCase.find({ problemId }).lean();
-    const hiddenCases = await HiddenTestCase.find({ problemId }).lean();
-    const allTestCases = [...sampleCases, ...hiddenCases];
+    // 1. Gather all test cases
+    const { data: testCasesData } = await supabase
+      .from('test_cases')
+      .select('*')
+      .eq('problem_id', problemId);
+
+    const allTestCases = (testCasesData || []).map(tc => ({
+      input: tc.input,
+      expectedOutput: tc.expected_output
+    }));
 
     if (allTestCases.length === 0) {
       return res.status(400).json({ message: 'No test cases configured for this problem' });
@@ -147,95 +153,59 @@ const submitCode = async (req, res) => {
     const judgeResult = await judgeService.judge(language, code, allTestCases);
 
     // 3. Save Submission Record
-    const submission = new Submission({
-      userId,
-      problemId,
-      code,
-      language,
-      status: judgeResult.status,
-      runtime: judgeResult.runtime || 0,
-      memory: judgeResult.memory || 0,
-      errorOutput: judgeResult.errorOutput || ''
-    });
-    await submission.save();
+    const { data: submission, error: subError } = await supabase
+      .from('submissions')
+      .insert({
+        user_id: userId,
+        problem_id: problemId,
+        code,
+        language,
+        status: judgeResult.status,
+        runtime: judgeResult.runtime || 0,
+        memory: judgeResult.memory || 0,
+        error_output: judgeResult.errorOutput || ''
+      })
+      .select()
+      .single();
+
+    if (subError) throw subError;
 
     // 4. Update Problem Stats
-    problem.totalSubmissions += 1;
-    if (judgeResult.status === 'Accepted') {
-      problem.successCount += 1;
-    }
-    problem.acceptanceRate = Math.round((problem.successCount / problem.totalSubmissions) * 100);
-    await problem.save();
+    const totalSubmissions = (problem.total_submissions || 0) + 1;
+    const successCount = (problem.success_count || 0) + (judgeResult.status === 'Accepted' ? 1 : 0);
+    const acceptanceRate = Math.round((successCount / totalSubmissions) * 100);
 
-    // 5. If Accepted, process gamification rewards and checks
+    await supabase
+      .from('problems')
+      .update({
+        total_submissions: totalSubmissions,
+        success_count: successCount,
+        acceptance_rate: acceptanceRate
+      })
+      .eq('id', problemId);
+
+    // 5. If Accepted, process gamification rewards
     let rewardResult = null;
     if (judgeResult.status === 'Accepted') {
-      // Check if user has already solved this problem to prevent duplicate reward farming
-      const solvedBefore = await Submission.findOne({
-        userId,
-        problemId,
-        status: 'Accepted',
-        _id: { $ne: submission._id }
-      });
+      // Check if user solved before
+      const { data: priorAccepted } = await supabase
+        .from('submissions')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('problem_id', problemId)
+        .eq('status', 'Accepted')
+        .neq('id', submission.id)
+        .limit(1);
 
-      const pointsToAward = problem.points || 10;
-      if (!solvedBefore) {
+      if (!priorAccepted || priorAccepted.length === 0) {
+        const pointsToAward = problem.points || 10;
         rewardResult = await awardUserRewards(userId, pointsToAward, 5, 'practice');
-
-        // Check if it's the Daily Challenge
-        const todayStr = new Date().toISOString().split('T')[0];
-        const dailyChallenge = await DailyChallenge.findOne({ problemId, date: todayStr });
-        if (dailyChallenge && !dailyChallenge.claimedUsers.includes(userId)) {
-          dailyChallenge.claimedUsers.push(userId);
-          await dailyChallenge.save();
-          
-          // Extra reward for daily challenge
-          await awardUserRewards(userId, dailyChallenge.pointsReward, 10, 'daily');
-          
-          const dailyNotif = new Notification({
-            userId,
-            message: `🌅 Daily Challenge Completed! Bonus +${dailyChallenge.pointsReward} XP claimed!`,
-            type: 'success'
-          });
-          await dailyNotif.save();
-        }
-
-        // Check Weekly Challenge
-        const weeklyChallenges = await WeeklyChallenge.find({
-          problems: problemId,
-          startDate: { $lte: new Date() },
-          endDate: { $gte: new Date() }
-        });
-        
-        for (const weekly of weeklyChallenges) {
-          if (!weekly.claimedUsers.includes(userId)) {
-            // Check if user solved all problems in this weekly challenge
-            const solvedProblemsCount = await Submission.countDocuments({
-              userId,
-              problemId: { $in: weekly.problems },
-              status: 'Accepted'
-            });
-
-            if (solvedProblemsCount >= weekly.problems.length) {
-              weekly.claimedUsers.push(userId);
-              await weekly.save();
-
-              await awardUserRewards(userId, weekly.pointsReward, 25, 'weekly');
-              
-              const weeklyNotif = new Notification({
-                userId,
-                message: `🏆 Weekly Challenge Completed! Bonus +${weekly.pointsReward} XP claimed!`,
-                type: 'success'
-              });
-              await weeklyNotif.save();
-            }
-          }
-        }
       }
     }
 
     res.json({
-      submissionId: submission._id,
+      submissionId: submission.id,
+      _id: submission.id,
       status: judgeResult.status,
       runtime: judgeResult.runtime,
       memory: judgeResult.memory,
@@ -244,6 +214,7 @@ const submitCode = async (req, res) => {
       reward: rewardResult
     });
   } catch (error) {
+    console.error('Submit code error:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -251,15 +222,36 @@ const submitCode = async (req, res) => {
 // Fetch submission history for a specific problem
 const getSubmissionsHistory = async (req, res) => {
   try {
+    const supabase = getSupabase();
     const { problemId } = req.params;
     const userId = req.user.id;
 
-    const history = await Submission.find({ userId, problemId })
-      .sort({ submittedAt: -1 })
-      .lean();
+    const { data: history, error } = await supabase
+      .from('submissions')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('problem_id', problemId)
+      .order('submitted_at', { ascending: false });
 
-    res.json(history);
+    if (error) throw error;
+
+    const formattedHistory = (history || []).map(h => ({
+      _id: h.id,
+      id: h.id,
+      userId: h.user_id,
+      problemId: h.problem_id,
+      code: h.code,
+      language: h.language,
+      status: h.status,
+      runtime: h.runtime,
+      memory: h.memory,
+      errorOutput: h.error_output,
+      submittedAt: h.submitted_at
+    }));
+
+    res.json(formattedHistory);
   } catch (error) {
+    console.error('Get submission history error:', error);
     res.status(500).json({ error: error.message });
   }
 };

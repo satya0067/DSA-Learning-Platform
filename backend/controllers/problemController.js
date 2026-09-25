@@ -1,12 +1,30 @@
-const Problem = require('../models/Problem');
-const TestCase = require('../models/TestCase');
-const Submission = require('../models/Submission');
-const Bookmark = require('../models/Bookmark');
-const Note = require('../models/Note');
+const { getSupabase } = require('../config/supabase');
+
+const formatProblem = (p) => ({
+  _id: p.id,
+  id: p.id,
+  title: p.title,
+  description: p.description,
+  difficulty: p.difficulty,
+  topic: p.topic,
+  inputFormat: p.input_format,
+  outputFormat: p.output_format,
+  constraints: p.constraints,
+  examples: p.examples || [],
+  starterCode: p.starter_code || [],
+  hints: p.hints || [],
+  companyTags: p.company_tags || [],
+  acceptanceRate: p.acceptance_rate || 0,
+  totalSubmissions: p.total_submissions || 0,
+  successCount: p.success_count || 0,
+  points: p.points || 10,
+  createdAt: p.created_at
+});
 
 // Get all problems with filtering, search, sorting, and pagination
 const getProblems = async (req, res) => {
   try {
+    const supabase = getSupabase();
     const {
       difficulty,
       topic,
@@ -18,48 +36,48 @@ const getProblems = async (req, res) => {
       limit = 50
     } = req.query;
 
-    const query = {};
+    let query = supabase.from('problems').select('*');
 
-    // 1. Core Filters
-    if (difficulty) query.difficulty = difficulty;
-    if (topic) query.topic = topic;
+    if (difficulty) query = query.eq('difficulty', difficulty);
+    if (topic) query = query.eq('topic', topic);
 
-    // 2. Search
     if (search) {
-      const searchRegex = new RegExp(search, 'i');
-      query.$or = [
-        { title: searchRegex },
-        { topic: searchRegex }
-      ];
-      // If it looks like an ObjectId or ID search
-      if (search.match(/^[0-9a-fA-F]{24}$/)) {
-        query.$or.push({ _id: search });
-      }
+      query = query.or(`title.ilike.%${search}%,topic.ilike.%${search}%`);
     }
 
-    // Fetch initial matching problems
-    let problems = await Problem.find(query).lean();
+    const { data: rawProblems, error } = await query;
+    if (error) throw error;
+
+    let problems = (rawProblems || []).map(formatProblem);
 
     // 3. User-Specific Annotations (if logged in)
     if (req.user && req.user.id) {
       const userId = req.user.id;
 
       // Fetch user's submissions
-      const submissions = await Submission.find({ userId }).lean();
+      const { data: submissions } = await supabase
+        .from('submissions')
+        .select('problem_id, status')
+        .eq('user_id', userId);
+
       const solvedProblemIds = new Set(
-        submissions.filter(s => s.status === 'Accepted').map(s => s.problemId.toString())
+        (submissions || []).filter(s => s.status === 'Accepted').map(s => s.problem_id)
       );
       const attemptedProblemIds = new Set(
-        submissions.map(s => s.problemId.toString())
+        (submissions || []).map(s => s.problem_id)
       );
 
       // Fetch user's bookmarks
-      const bookmarks = await Bookmark.find({ userId }).lean();
-      const bookmarkedProblemIds = new Set(bookmarks.map(b => b.problemId.toString()));
+      const { data: bookmarks } = await supabase
+        .from('bookmarks')
+        .select('problem_id')
+        .eq('user_id', userId);
+
+      const bookmarkedProblemIds = new Set((bookmarks || []).map(b => b.problem_id));
 
       // Annotate problems
       problems = problems.map(prob => {
-        const idStr = prob._id.toString();
+        const idStr = prob.id;
         let probStatus = 'Unsolved';
         if (solvedProblemIds.has(idStr)) {
           probStatus = 'Solved';
@@ -89,7 +107,6 @@ const getProblems = async (req, res) => {
         isBookmarked: false
       }));
 
-      // If filters requested for logged-in only, return empty or filter out
       if (status && status !== 'Unsolved') {
         problems = [];
       }
@@ -103,7 +120,7 @@ const getProblems = async (req, res) => {
       switch (sortBy) {
         case 'difficulty':
           const diffWeight = { 'Easy': 1, 'Medium': 2, 'Hard': 3 };
-          problems.sort((a, b) => diffWeight[a.difficulty] - diffWeight[b.difficulty]);
+          problems.sort((a, b) => (diffWeight[a.difficulty] || 0) - (diffWeight[b.difficulty] || 0));
           break;
         case 'acceptanceRate':
           problems.sort((a, b) => b.acceptanceRate - a.acceptanceRate);
@@ -133,6 +150,7 @@ const getProblems = async (req, res) => {
       pages: Math.ceil(problems.length / limit)
     });
   } catch (error) {
+    console.error('Get problems error:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -140,13 +158,37 @@ const getProblems = async (req, res) => {
 // Get single problem by ID (includes sample test cases, bookmarks and user notes)
 const getProblemById = async (req, res) => {
   try {
-    const problem = await Problem.findById(req.params.id).lean();
-    if (!problem) {
+    const supabase = getSupabase();
+    const problemId = req.params.id;
+
+    const { data: rawProblem, error: problemError } = await supabase
+      .from('problems')
+      .select('*')
+      .eq('id', problemId)
+      .maybeSingle();
+
+    if (problemError) throw problemError;
+    if (!rawProblem) {
       return res.status(404).json({ message: 'Problem not found' });
     }
 
+    const problem = formatProblem(rawProblem);
+
     // Fetch sample test cases (visible)
-    const testCases = await TestCase.find({ problemId: problem._id, isSample: true }).lean();
+    const { data: testCasesData } = await supabase
+      .from('test_cases')
+      .select('*')
+      .eq('problem_id', problemId)
+      .eq('is_sample', true);
+
+    const testCases = (testCasesData || []).map(tc => ({
+      _id: tc.id,
+      id: tc.id,
+      problemId: tc.problem_id,
+      input: tc.input,
+      expectedOutput: tc.expected_output,
+      isSample: tc.is_sample
+    }));
 
     let isBookmarked = false;
     let userNote = null;
@@ -154,12 +196,31 @@ const getProblemById = async (req, res) => {
 
     if (req.user && req.user.id) {
       const userId = req.user.id;
-      const bookmark = await Bookmark.findOne({ userId, problemId: problem._id });
+
+      const { data: bookmark } = await supabase
+        .from('bookmarks')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('problem_id', problemId)
+        .maybeSingle();
       isBookmarked = !!bookmark;
 
-      userNote = await Note.findOne({ userId, problemId: problem._id }).lean();
+      const { data: note } = await supabase
+        .from('notes')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('problem_id', problemId)
+        .maybeSingle();
+      userNote = note ? { _id: note.id, content: note.content } : null;
 
-      const solvedSubmission = await Submission.findOne({ userId, problemId: problem._id, status: 'Accepted' });
+      const { data: solvedSubmission } = await supabase
+        .from('submissions')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('problem_id', problemId)
+        .eq('status', 'Accepted')
+        .limit(1)
+        .maybeSingle();
       hasSolved = !!solvedSubmission;
     }
 
@@ -171,6 +232,7 @@ const getProblemById = async (req, res) => {
       hasSolved
     });
   } catch (error) {
+    console.error('Get problem by id error:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -178,56 +240,89 @@ const getProblemById = async (req, res) => {
 // Admin CRUD Operations
 const createProblem = async (req, res) => {
   try {
+    const supabase = getSupabase();
     const { title, description, difficulty, topic, inputFormat, outputFormat, constraints, examples, starterCode, hints, companyTags, points } = req.body;
     
     if (!title || !description || !difficulty || !topic) {
       return res.status(400).json({ message: 'Title, description, difficulty, and topic are required' });
     }
 
-    const problem = new Problem({
-      title,
-      description,
-      difficulty,
-      topic,
-      inputFormat,
-      outputFormat,
-      constraints,
-      examples,
-      starterCode,
-      hints,
-      companyTags,
-      points
-    });
+    const { data: newProblem, error } = await supabase
+      .from('problems')
+      .insert({
+        title,
+        description,
+        difficulty,
+        topic,
+        input_format: inputFormat || '',
+        output_format: outputFormat || '',
+        constraints: constraints || '',
+        examples: examples || [],
+        starter_code: starterCode || [],
+        hints: hints || [],
+        company_tags: companyTags || [],
+        points: Number(points) || 10
+      })
+      .select()
+      .single();
 
-    await problem.save();
-    res.status(201).json(problem);
+    if (error) throw error;
+    res.status(201).json(formatProblem(newProblem));
   } catch (error) {
+    console.error('Create problem error:', error);
     res.status(500).json({ error: error.message });
   }
 };
 
 const updateProblem = async (req, res) => {
   try {
-    const problem = await Problem.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!problem) {
+    const supabase = getSupabase();
+    const { title, description, difficulty, topic, inputFormat, outputFormat, constraints, examples, starterCode, hints, companyTags, points } = req.body;
+
+    const updates = {};
+    if (title !== undefined) updates.title = title;
+    if (description !== undefined) updates.description = description;
+    if (difficulty !== undefined) updates.difficulty = difficulty;
+    if (topic !== undefined) updates.topic = topic;
+    if (inputFormat !== undefined) updates.input_format = inputFormat;
+    if (outputFormat !== undefined) updates.output_format = outputFormat;
+    if (constraints !== undefined) updates.constraints = constraints;
+    if (examples !== undefined) updates.examples = examples;
+    if (starterCode !== undefined) updates.starter_code = starterCode;
+    if (hints !== undefined) updates.hints = hints;
+    if (companyTags !== undefined) updates.company_tags = companyTags;
+    if (points !== undefined) updates.points = Number(points);
+
+    const { data: updatedProblem, error } = await supabase
+      .from('problems')
+      .update(updates)
+      .eq('id', req.params.id)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!updatedProblem) {
       return res.status(404).json({ message: 'Problem not found' });
     }
-    res.json(problem);
+    res.json(formatProblem(updatedProblem));
   } catch (error) {
+    console.error('Update problem error:', error);
     res.status(500).json({ error: error.message });
   }
 };
 
 const deleteProblem = async (req, res) => {
   try {
-    const problem = await Problem.findByIdAndDelete(req.params.id);
-    if (!problem) {
-      return res.status(404).json({ message: 'Problem not found' });
-    }
-    // Delete linked testcases
-    await TestCase.deleteMany({ problemId: req.params.id });
+    const supabase = getSupabase();
+    const { error } = await supabase
+      .from('problems')
+      .delete()
+      .eq('id', req.params.id);
+
+    if (error) throw error;
     res.json({ message: 'Problem and associated test cases deleted successfully' });
   } catch (error) {
+    console.error('Delete problem error:', error);
     res.status(500).json({ error: error.message });
   }
 };
