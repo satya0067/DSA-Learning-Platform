@@ -43,14 +43,14 @@ app.get('/api/ping', (req, res) => {
 // Diagnostic database status route
 app.get('/api/db-status', async (req, res) => {
   const mongoose = require('mongoose');
-  const uri = process.env.MONGODB_URI || '';
+  const uri = process.env.MONGODB_URI || process.env.MONGO_URI || process.env.MONGODB_URL || process.env.DATABASE_URL || '';
   const maskedUri = uri ? uri.replace(/:([^:@]+)@/, ':****@') : 'NOT SET';
 
-  const readyStateMap = {
-    0: 'disconnected',
-    1: 'connected',
-    2: 'connecting',
-    3: 'disconnecting'
+  const envInfo = {
+    MONGODB_URI_configured: Boolean(process.env.MONGODB_URI),
+    MONGO_URI_configured: Boolean(process.env.MONGO_URI),
+    JWT_SECRET_configured: Boolean(process.env.JWT_SECRET),
+    isVercel: Boolean(process.env.VERCEL)
   };
 
   try {
@@ -59,25 +59,25 @@ app.get('/api/db-status', async (req, res) => {
     res.json({
       status: 'success',
       database: 'connected',
-      connectionState: readyStateMap[mongoose.connection.readyState] || mongoose.connection.readyState,
+      connectionState: mongoose.connection.readyState === 1 ? 'connected' : mongoose.connection.readyState,
       databaseHost: mongoose.connection.host || 'unknown',
       databaseName: mongoose.connection.name || 'unknown',
-      maskedUri: maskedUri,
-      jwtSecretConfigured: Boolean(process.env.JWT_SECRET)
+      detectedUri: maskedUri,
+      environment: envInfo
     });
   } catch (err) {
     res.status(500).json({
       status: 'error',
       database: 'disconnected',
       errorMessage: err.message,
-      maskedUri: maskedUri,
-      jwtSecretConfigured: Boolean(process.env.JWT_SECRET),
-      troubleshooting: {
-        step1: 'Ensure MONGODB_URI is added in Vercel -> Settings -> Environment Variables.',
-        step2: 'Ensure MongoDB Atlas -> Network Access has 0.0.0.0/0 (Allow Access from Anywhere) enabled.',
-        step3: 'Ensure your MongoDB Atlas Database User password in the connection string has no < > brackets.',
-        step4: 'Make sure to REDEPLOY your project in Vercel after updating Environment Variables.'
-      }
+      detectedUri: maskedUri,
+      environment: envInfo,
+      troubleshooting: [
+        !uri ? 'CRITICAL: No MongoDB URI found in environment variables. Add MONGODB_URI in Vercel Settings -> Environment Variables.' : 'URI detected: ' + maskedUri,
+        'Ensure MongoDB Atlas -> Network Access has 0.0.0.0/0 (Allow Access from Anywhere) enabled.',
+        'Ensure your Database User password in MongoDB Atlas has no < > brackets and matches your connection string.',
+        'IMPORTANT: In Vercel, after updating Environment Variables, go to Deployments -> ... -> Redeploy.'
+      ]
     });
   }
 });
@@ -86,21 +86,34 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
+// Middleware to guard database routes if connection failed
+const requireDB = (req, res, next) => {
+  if (req.dbError) {
+    return res.status(500).json({
+      error: 'Database Connection Error',
+      message: 'Failed to connect to MongoDB database.',
+      details: req.dbError,
+      suggestion: 'Visit /api/db-status for full diagnostic information.'
+    });
+  }
+  next();
+};
+
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/progress', progressRoutes);
-app.use('/api/quiz', quizRoutes);
-app.use('/api/code', codeRoutes);
-app.use('/api/problems', problemRoutes);
-app.use('/api/submissions', submissionRoutes);
-app.use('/api/bookmarks', bookmarkRoutes);
-app.use('/api/notes', noteRoutes);
-app.use('/api/discussions', discussionRoutes);
-app.use('/api/leaderboard', leaderboardRoutes);
-app.use('/api/contests', contestRoutes);
-app.use('/api/challenges', challengeRoutes);
-app.use('/api/notifications', notificationRoutes);
+app.use('/api/auth', requireDB, authRoutes);
+app.use('/api/admin', requireDB, adminRoutes);
+app.use('/api/progress', requireDB, progressRoutes);
+app.use('/api/quiz', requireDB, quizRoutes);
+app.use('/api/code', requireDB, codeRoutes);
+app.use('/api/problems', requireDB, problemRoutes);
+app.use('/api/submissions', requireDB, submissionRoutes);
+app.use('/api/bookmarks', requireDB, bookmarkRoutes);
+app.use('/api/notes', requireDB, noteRoutes);
+app.use('/api/discussions', requireDB, discussionRoutes);
+app.use('/api/leaderboard', requireDB, leaderboardRoutes);
+app.use('/api/contests', requireDB, contestRoutes);
+app.use('/api/challenges', requireDB, challengeRoutes);
+app.use('/api/notifications', requireDB, notificationRoutes);
 
 // Serve standalone React-based code editor app under /code-editor
 const codeEditorDist = path.join(__dirname, '..', 'code editor', 'dist');

@@ -6,11 +6,22 @@ const connectDB = async () => {
     return mongoose.connection;
   }
 
-  const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/structlearn';
+  const MONGODB_URI = 
+    process.env.MONGODB_URI || 
+    process.env.MONGO_URI || 
+    process.env.MONGODB_URL || 
+    process.env.DATABASE_URL || 
+    (process.env.VERCEL ? null : 'mongodb://127.0.0.1:27017/structlearn');
+
+  if (!MONGODB_URI) {
+    const errorMsg = 'MONGODB_URI environment variable is missing on Vercel. Please add MONGODB_URI in Vercel Dashboard -> Settings -> Environment Variables, and click Redeploy.';
+    console.error('❌ ' + errorMsg);
+    throw new Error(errorMsg);
+  }
 
   try {
     const conn = await mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 8000,
     });
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     return conn;
