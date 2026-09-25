@@ -40,6 +40,48 @@ app.get('/api/ping', (req, res) => {
   res.send('API is running');
 });
 
+// Diagnostic database status route
+app.get('/api/db-status', async (req, res) => {
+  const mongoose = require('mongoose');
+  const uri = process.env.MONGODB_URI || '';
+  const maskedUri = uri ? uri.replace(/:([^:@]+)@/, ':****@') : 'NOT SET';
+
+  const readyStateMap = {
+    0: 'disconnected',
+    1: 'connected',
+    2: 'connecting',
+    3: 'disconnecting'
+  };
+
+  try {
+    const connectDB = require('./config/db');
+    await connectDB();
+    res.json({
+      status: 'success',
+      database: 'connected',
+      connectionState: readyStateMap[mongoose.connection.readyState] || mongoose.connection.readyState,
+      databaseHost: mongoose.connection.host || 'unknown',
+      databaseName: mongoose.connection.name || 'unknown',
+      maskedUri: maskedUri,
+      jwtSecretConfigured: Boolean(process.env.JWT_SECRET)
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 'error',
+      database: 'disconnected',
+      errorMessage: err.message,
+      maskedUri: maskedUri,
+      jwtSecretConfigured: Boolean(process.env.JWT_SECRET),
+      troubleshooting: {
+        step1: 'Ensure MONGODB_URI is added in Vercel -> Settings -> Environment Variables.',
+        step2: 'Ensure MongoDB Atlas -> Network Access has 0.0.0.0/0 (Allow Access from Anywhere) enabled.',
+        step3: 'Ensure your MongoDB Atlas Database User password in the connection string has no < > brackets.',
+        step4: 'Make sure to REDEPLOY your project in Vercel after updating Environment Variables.'
+      }
+    });
+  }
+});
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
