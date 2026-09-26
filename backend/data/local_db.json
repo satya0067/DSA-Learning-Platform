@@ -1,0 +1,231 @@
+{
+  "users": [],
+  "problems": [
+    {
+      "id": "1844cd2b-f9a5-4210-8a1d-81486709d0db",
+      "title": "Two Sum",
+      "description": "Given an array of integers `nums` and an integer `target`, return indices of the two numbers such that they add up to `target`.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.",
+      "difficulty": "Easy",
+      "topic": "Arrays",
+      "input_format": "First line contains space-separated integers `nums`.\nSecond line contains integer `target`.",
+      "output_format": "Print the two indices separated by a space.",
+      "constraints": "2 <= nums.length <= 10^4\n-10^9 <= nums[i] <= 10^9",
+      "examples": [
+        {
+          "input": "2 7 11 15\n9",
+          "output": "0 1",
+          "explanation": "Because nums[0] + nums[1] == 9, we return 0 1."
+        }
+      ],
+      "starter_code": [
+        {
+          "language": "javascript",
+          "code": "const fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8').trim().split('\\n');\nif (input.length >= 2) {\n  const nums = input[0].split(' ').map(Number);\n  const target = Number(input[1]);\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      console.log(`${map.get(complement)} ${i}`);\n      break;\n    }\n    map.set(nums[i], i);\n  }\n}"
+        },
+        {
+          "language": "python",
+          "code": "import sys\nlines = sys.stdin.read().splitlines()\nif len(lines) >= 2:\n    nums = list(map(int, lines[0].split()))\n    target = int(lines[1])\n    seen = {}\n    for i, num in enumerate(nums):\n        diff = target - num\n        if diff in seen:\n            print(f\"{seen[diff]} {i}\")\n            break\n        seen[num] = i"
+        }
+      ],
+      "hints": [
+        "Use a hash map to look up the complement in O(1) time."
+      ],
+      "company_tags": [
+        "Google",
+        "Amazon",
+        "Meta"
+      ],
+      "acceptance_rate": 85,
+      "points": 10,
+      "created_at": "2026-09-26T05:55:08.697Z"
+    },
+    {
+      "id": "39df163d-21ad-43ed-9638-3a80ff219d72",
+      "title": "Valid Parentheses",
+      "description": "Given a string `s` containing just the characters `(`, `)`, `{`, `}`, `[` and `]`, determine if the input string is valid.\n\nAn input string is valid if brackets are closed in the correct order.",
+      "difficulty": "Easy",
+      "topic": "Stack",
+      "input_format": "A single string `s`.",
+      "output_format": "Print `true` if valid, otherwise `false`.",
+      "constraints": "1 <= s.length <= 10^4",
+      "examples": [
+        {
+          "input": "()[]{}",
+          "output": "true",
+          "explanation": "All brackets match."
+        }
+      ],
+      "starter_code": [
+        {
+          "language": "javascript",
+          "code": "const fs = require('fs');\nconst s = fs.readFileSync(0, 'utf-8').trim();\nconst stack = [];\nconst map = { ')': '(', '}': '{', ']': '[' };\nlet valid = true;\nfor (const char of s) {\n  if (['(', '{', '['].includes(char)) {\n    stack.push(char);\n  } else if (map[char]) {\n    if (stack.pop() !== map[char]) {\n      valid = false;\n      break;\n    }\n  }\n}\nif (stack.length !== 0) valid = false;\nconsole.log(valid ? 'true' : 'false');"
+        }
+      ],
+      "hints": [
+        "Push opening brackets onto a stack. When a closing bracket arrives, pop and verify."
+      ],
+      "company_tags": [
+        "Microsoft",
+        "Amazon",
+        "Apple"
+      ],
+      "acceptance_rate": 78,
+      "points": 10,
+      "created_at": "2026-09-26T05:55:08.699Z"
+    },
+    {
+      "id": "5bb6de33-58d2-4083-b8aa-09cb073320cb",
+      "title": "Maximum Subarray",
+      "description": "Given an integer array `nums`, find the contiguous subarray with the largest sum, and return its sum (Kadane's Algorithm).",
+      "difficulty": "Medium",
+      "topic": "Arrays",
+      "input_format": "Space-separated integers `nums`.",
+      "output_format": "Print the maximum subarray sum.",
+      "constraints": "1 <= nums.length <= 10^5",
+      "examples": [
+        {
+          "input": "-2 1 -3 4 -1 2 1 -5 4",
+          "output": "6",
+          "explanation": "The subarray [4,-1,2,1] has the largest sum 6."
+        }
+      ],
+      "starter_code": [
+        {
+          "language": "python",
+          "code": "import sys\nnums = list(map(int, sys.stdin.read().split()))\nmax_so_far = nums[0]\ncurr_max = nums[0]\nfor num in nums[1:]:\n    curr_max = max(num, curr_max + num)\n    max_so_far = max(max_so_far, curr_max)\nprint(max_so_far)"
+        }
+      ],
+      "hints": [
+        "Keep track of running sum and reset if it drops below zero."
+      ],
+      "company_tags": [
+        "Amazon",
+        "Google"
+      ],
+      "acceptance_rate": 62,
+      "points": 20,
+      "created_at": "2026-09-26T05:55:08.699Z"
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "d24d9503-2cee-4869-818c-b2d65357b5fd",
+      "problem_id": "1844cd2b-f9a5-4210-8a1d-81486709d0db",
+      "input": "2 7 11 15\n9",
+      "expected_output": "0 1",
+      "is_sample": true
+    },
+    {
+      "id": "5053e554-0cb8-4171-b9da-480d72631e9c",
+      "problem_id": "1844cd2b-f9a5-4210-8a1d-81486709d0db",
+      "input": "3 2 4\n6",
+      "expected_output": "1 2",
+      "is_sample": true
+    },
+    {
+      "id": "a67a6015-a045-4560-ba3e-7e49de01b8dc",
+      "problem_id": "1844cd2b-f9a5-4210-8a1d-81486709d0db",
+      "input": "3 3\n6",
+      "expected_output": "0 1",
+      "is_sample": false
+    },
+    {
+      "id": "5dcbb812-1d49-4717-809f-cb2d4a5415d1",
+      "problem_id": "39df163d-21ad-43ed-9638-3a80ff219d72",
+      "input": "()[]{}",
+      "expected_output": "true",
+      "is_sample": true
+    },
+    {
+      "id": "904fd83e-0043-4bf5-be91-1d7c9d5efa7b",
+      "problem_id": "39df163d-21ad-43ed-9638-3a80ff219d72",
+      "input": "(]",
+      "expected_output": "false",
+      "is_sample": true
+    },
+    {
+      "id": "d67d93e4-78c4-4780-92d4-889919934432",
+      "problem_id": "39df163d-21ad-43ed-9638-3a80ff219d72",
+      "input": "{[]}",
+      "expected_output": "true",
+      "is_sample": false
+    },
+    {
+      "id": "84c26ffa-81a3-4163-9f18-4bcef67e3918",
+      "problem_id": "5bb6de33-58d2-4083-b8aa-09cb073320cb",
+      "input": "-2 1 -3 4 -1 2 1 -5 4",
+      "expected_output": "6",
+      "is_sample": true
+    },
+    {
+      "id": "783c6a61-a0cf-41c0-bf92-beb0b0e8ef47",
+      "problem_id": "5bb6de33-58d2-4083-b8aa-09cb073320cb",
+      "input": "1",
+      "expected_output": "1",
+      "is_sample": true
+    },
+    {
+      "id": "b28cf2a8-f56a-4b70-b0ee-560c27638478",
+      "problem_id": "5bb6de33-58d2-4083-b8aa-09cb073320cb",
+      "input": "5 4 -1 7 8",
+      "expected_output": "23",
+      "is_sample": false
+    }
+  ],
+  "submissions": [],
+  "quizzes": [
+    {
+      "id": "344a3fbc-4d8f-4412-aaec-776a148b326d",
+      "title": "DSA Fundamentals Quiz",
+      "topic": "general",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "id": "q1",
+          "question": "What is the average time complexity of searching in a Hash Table?",
+          "options": [
+            "O(1)",
+            "O(n)",
+            "O(log n)",
+            "O(n^2)"
+          ],
+          "correctAnswer": 0,
+          "explanation": "Hash table average case lookup is O(1)."
+        },
+        {
+          "id": "q2",
+          "question": "Which traversal of a Binary Search Tree (BST) visits nodes in ascending sorted order?",
+          "options": [
+            "Preorder",
+            "Inorder",
+            "Postorder",
+            "Level-order"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Inorder traversal of a BST visits keys in strictly increasing order."
+        },
+        {
+          "id": "q3",
+          "question": "Which data structure is primarily used in Breadth-First Search (BFS)?",
+          "options": [
+            "Stack",
+            "Queue",
+            "Priority Queue",
+            "Trie"
+          ],
+          "correctAnswer": 1,
+          "explanation": "BFS explores vertices level-by-level using a FIFO Queue."
+        }
+      ],
+      "created_at": "2026-09-26T05:55:08.699Z"
+    }
+  ],
+  "progress": [],
+  "bookmarks": [],
+  "notes": [],
+  "discussions": [],
+  "comments": [],
+  "contests": [],
+  "challenges": [],
+  "notifications": []
+}

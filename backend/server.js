@@ -66,16 +66,19 @@ app.get('/api/db-status', async (req, res) => {
       .from('problems')
       .select('*', { count: 'exact', head: true });
 
+    const isLocalMode = process.env.USE_LOCAL_DB === 'true' || !url || !key;
+
     res.json({
       status: 'success',
-      database: 'connected',
-      provider: 'Supabase (PostgreSQL)',
+      database: isLocalMode ? 'connected (Local Development Mode)' : 'connected',
+      provider: isLocalMode ? 'Local JSON Storage (backend/data/local_db.json)' : 'Supabase (PostgreSQL)',
       supabaseUrl: maskedUrl,
       tableCounts: {
         users: usersCount || 0,
         problems: problemsCount || 0
       },
-      environment: envInfo
+      environment: envInfo,
+      ...(isLocalMode ? { note: 'Running locally without cloud credentials. To connect to Supabase, add SUPABASE_URL and SUPABASE_ANON_KEY to .env.' } : {})
     });
   } catch (err) {
     res.status(500).json({

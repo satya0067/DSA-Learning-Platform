@@ -15,14 +15,20 @@ const getKey = () =>
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 
   process.env.VITE_SUPABASE_ANON_KEY;
 
+const { getLocalDb } = require('./localDb');
+
 let supabase = null;
 
 function getSupabase() {
+  if (process.env.USE_LOCAL_DB === 'true') {
+    return getLocalDb();
+  }
+
   const currentUrl = getUrl();
   const currentKey = getKey();
 
   if (!currentUrl || !currentKey) {
-    throw new Error('Supabase environment variables (SUPABASE_URL and SUPABASE_ANON_KEY) are missing in Vercel Settings -> Environment Variables. Please add them and Redeploy.');
+    return getLocalDb();
   }
 
   if (!supabase) {
