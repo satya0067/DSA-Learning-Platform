@@ -37,8 +37,12 @@ async function apiCall(endpoint, method = 'GET', data = null) {
         return await response.json();
     } catch (error) {
         if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-            console.error('API Connection Error:', `Cannot connect to ${API_BASE_URL}${endpoint}`);
-            console.error('Make sure the backend server is running on port 3000');
+            const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+            const hint = isLocal 
+                ? 'Make sure backend server is running on port 3000' 
+                : 'Unable to reach backend API. Please check your connection.';
+            console.error('API Connection Error:', `Cannot connect to ${API_BASE_URL}${endpoint}. ${hint}`);
+            throw new Error(`Unable to reach server. ${hint}`);
         } else {
             console.error('API Error:', error);
         }

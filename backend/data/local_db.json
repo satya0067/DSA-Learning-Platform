@@ -1,5 +1,24 @@
 {
-  "users": [],
+  "users": [
+    {
+      "id": "3684821a-5d6d-4d12-802d-6dbdceb42d4b",
+      "created_at": "2026-10-03T08:31:03.140Z",
+      "username": "monu",
+      "email": "monu9523630412@gmail.com",
+      "password": "$2a$10$w/p/kQ96QkGkUnAvNSpVEOjzdMiiKMs7Aj4FNwdjIHQG8CJ6Q2/Sa",
+      "role": "student",
+      "level": 1,
+      "xp": 33,
+      "rank": "Mizunoto 🌙",
+      "streak": 2,
+      "practice_score": 33,
+      "quizzes_passed": 0,
+      "total_hours": 0,
+      "completed_challenges": 0,
+      "breathing_style": "Flame",
+      "updated_at": "2026-10-03T08:32:16.322Z"
+    }
+  ],
   "problems": [
     {
       "id": "1844cd2b-f9a5-4210-8a1d-81486709d0db",

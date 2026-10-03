@@ -4,6 +4,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const path = require('path');
 
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
 dotenv.config();
 
 const { getSupabase } = require('./config/supabase');
@@ -35,13 +36,13 @@ app.use(morgan('dev'));
 app.use(express.static(frontendPath));
 app.use('/frontend', express.static(frontendPath));
 
-// API health route
-app.get('/api/ping', (req, res) => {
+// API health route (supports both /api/ping and /ping)
+app.get(['/api/ping', '/ping'], (req, res) => {
   res.send('API is running (Supabase Edition)');
 });
 
-// Diagnostic database status route for Supabase
-app.get('/api/db-status', async (req, res) => {
+// Diagnostic database status route for Supabase (supports both /api/db-status and /db-status)
+app.get(['/api/db-status', '/db-status'], async (req, res) => {
   const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_KEY || '';
   const maskedUrl = url ? url.replace(/^(https?:\/\/[^.]+).*/, '$1.supabase.co') : 'NOT SET';
@@ -66,7 +67,7 @@ app.get('/api/db-status', async (req, res) => {
       .from('problems')
       .select('*', { count: 'exact', head: true });
 
-    const isLocalMode = process.env.USE_LOCAL_DB === 'true' || !url || !key;
+    const isLocalMode = process.env.USE_LOCAL_DB === 'true';
 
     res.json({
       status: 'success',
@@ -102,21 +103,27 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
+// Helper to mount routes supporting both /api/<prefix> and /<prefix> (essential for Vercel serverless rewrites)
+const mountRoute = (pathPrefix, router) => {
+  app.use(`/api${pathPrefix}`, router);
+  app.use(pathPrefix, router);
+};
+
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/progress', progressRoutes);
-app.use('/api/quiz', quizRoutes);
-app.use('/api/code', codeRoutes);
-app.use('/api/problems', problemRoutes);
-app.use('/api/submissions', submissionRoutes);
-app.use('/api/bookmarks', bookmarkRoutes);
-app.use('/api/notes', noteRoutes);
-app.use('/api/discussions', discussionRoutes);
-app.use('/api/leaderboard', leaderboardRoutes);
-app.use('/api/contests', contestRoutes);
-app.use('/api/challenges', challengeRoutes);
-app.use('/api/notifications', notificationRoutes);
+mountRoute('/auth', authRoutes);
+mountRoute('/admin', adminRoutes);
+mountRoute('/progress', progressRoutes);
+mountRoute('/quiz', quizRoutes);
+mountRoute('/code', codeRoutes);
+mountRoute('/problems', problemRoutes);
+mountRoute('/submissions', submissionRoutes);
+mountRoute('/bookmarks', bookmarkRoutes);
+mountRoute('/notes', noteRoutes);
+mountRoute('/discussions', discussionRoutes);
+mountRoute('/leaderboard', leaderboardRoutes);
+mountRoute('/contests', contestRoutes);
+mountRoute('/challenges', challengeRoutes);
+mountRoute('/notifications', notificationRoutes);
 
 // Serve standalone React-based code editor app under /code-editor
 const codeEditorDist = path.join(__dirname, '..', 'code editor', 'dist');

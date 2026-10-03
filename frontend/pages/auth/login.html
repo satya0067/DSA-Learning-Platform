@@ -936,7 +936,7 @@
     </div>
 </div>
 
-<script src="/assets/js/api.js"></script>
+<script src="../../assets/js/api.js"></script>
 <script>
     // ==================== HASHIRA DATA ====================
     const hashiraData = {
@@ -1237,7 +1237,7 @@
 
         try {
             if (typeof Auth === 'undefined') {
-                throw new Error('Auth service unavailable. Make sure the backend is running.');
+                throw new Error('Authentication client service is not loaded. Please refresh the page.');
             }
             const response = await Auth.login({ email, password });
             localStorage.setItem('token', response.token);
@@ -1298,7 +1298,7 @@
 
         try {
             if (typeof Auth === 'undefined') {
-                throw new Error('Auth service unavailable. Make sure the backend is running.');
+                throw new Error('Authentication client service is not loaded. Please refresh the page.');
             }
             const response = await Auth.register({ username, email, password, role });
             showMessage(registerMessage, response.message || '🎉 Registration successful! You can now login.', 'success');
