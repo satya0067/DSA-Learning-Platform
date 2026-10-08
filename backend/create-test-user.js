@@ -1,43 +1,71 @@
-const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const dotenv = require('dotenv');
 const path = require('path');
 
-dotenv.config({ path: path.join(__dirname, '.env') });
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
+dotenv.config();
 
-const connectDB = require('./config/db');
-const User = require('./models/User');
+const { getSupabase } = require('./config/supabase');
 
-const createAdmin = async () => {
+const createOrPromoteAdmin = async () => {
   try {
-    await connectDB();
-    console.log('📦 Connected to MongoDB...');
+    const supabase = getSupabase();
+    const targetEmail = process.argv[2] || 'admin@codecorps.com';
 
-    // Delete if existing
-    await User.deleteOne({ email: 'slayer@codecorps.com' });
+    console.log(`🔍 Checking user with email: ${targetEmail}...`);
 
-    const hashedPassword = await bcrypt.hash('password123', 10);
-    const user = new User({
-      username: 'slayer_admin',
-      email: 'slayer@codecorps.com',
-      password: hashedPassword,
-      role: 'admin',
-      bio: 'Flame Hashira of the Code Corps.',
-      level: 11,
-      xp: 1150,
-      rank: 'Hashira ⚔️',
-      streak: 5,
-      avatar: '',
-      breathingStyle: 'Flame'
-    });
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select('id, username, email, role')
+      .eq('email', targetEmail.toLowerCase().trim())
+      .maybeSingle();
 
-    await user.save();
-    console.log('✅ Admin user "slayer@codecorps.com" created successfully!');
+    if (existingUser) {
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ role: 'admin' })
+        .eq('id', existingUser.id);
+
+      if (updateError) throw updateError;
+
+      console.log(`✅ User "${existingUser.username}" (${existingUser.email}) has been successfully promoted to "admin"!`);
+      process.exit(0);
+    }
+
+    // Otherwise create default admin user
+    const defaultPassword = process.argv[3] || 'Admin@123456';
+    const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+
+    const { data: newAdmin, error: insertError } = await supabase
+      .from('users')
+      .insert({
+        username: 'HashiraAdmin',
+        email: targetEmail.toLowerCase().trim(),
+        password: hashedPassword,
+        role: 'admin',
+        bio: 'Supreme Hashira Administrator of the Code Corps.',
+        level: 10,
+        xp: 2500,
+        rank: 'Hashira ⚔️',
+        streak: 10,
+        avatar: '',
+        breathing_style: 'Sun'
+      })
+      .select()
+      .single();
+
+    if (insertError) throw insertError;
+
+    console.log('🎉 Admin account created successfully in Supabase!');
+    console.log(`📧 Email:    ${newAdmin.email}`);
+    console.log(`🔑 Password: ${defaultPassword}`);
+    console.log(`🛡️ Role:     ${newAdmin.role}`);
+    console.log(`\nYou can now log in at /pages/auth/login.html using these credentials.`);
     process.exit(0);
   } catch (error) {
-    console.error('❌ Failed to create admin user:', error.message);
+    console.error('❌ Failed to create/promote admin user:', error.message);
     process.exit(1);
   }
 };
 
-createAdmin();
+createOrPromoteAdmin();

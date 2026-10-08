@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -255,8 +256,15 @@
         }
 
         @keyframes fadeSlide {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .vis-area {
@@ -312,8 +320,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .node:hover {
@@ -357,8 +372,17 @@
         }
 
         @keyframes highlightPulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(52, 211, 153, 0.3); }
-            50% { transform: scale(1.08); box-shadow: 0 0 30px rgba(52, 211, 153, 0.6); }
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 10px rgba(52, 211, 153, 0.3);
+            }
+
+            50% {
+                transform: scale(1.08);
+                box-shadow: 0 0 30px rgba(52, 211, 153, 0.6);
+            }
         }
 
         .arrow {
@@ -444,9 +468,17 @@
             border-radius: 4px;
         }
 
-        .legend-head { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
-        .legend-tail { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
-        .legend-both { background: linear-gradient(135deg, #34d399, #10b981); }
+        .legend-head {
+            background: linear-gradient(135deg, #a78bfa, #7c3aed);
+        }
+
+        .legend-tail {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        }
+
+        .legend-both {
+            background: linear-gradient(135deg, #34d399, #10b981);
+        }
 
         .bidirectional-arrows {
             display: flex;
@@ -488,19 +520,53 @@
         }
 
         @media (max-width: 768px) {
-            body { padding: 1rem; }
-            .controls { flex-direction: column; align-items: stretch; }
-            .input-group { width: 100%; }
-            input { flex: 1; }
-            .btn { justify-content: center; }
-            .operation-tabs { flex-direction: column; border-radius: var(--border-radius); }
-            .tab-btn { text-align: center; }
-            .info-row { flex-direction: column; }
-            .legend { gap: 0.8rem; }
-            .bidirectional-arrows { flex-direction: column; align-items: center; gap: 0.5rem; }
+            body {
+                padding: 1rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .input-group {
+                width: 100%;
+            }
+
+            input {
+                flex: 1;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+
+            .operation-tabs {
+                flex-direction: column;
+                border-radius: var(--border-radius);
+            }
+
+            .tab-btn {
+                text-align: center;
+            }
+
+            .info-row {
+                flex-direction: column;
+            }
+
+            .legend {
+                gap: 0.8rem;
+            }
+
+            .bidirectional-arrows {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <a class="back" href="linked-list.html" onclick="if(document.referrer){ history.back(); return false; }">
@@ -509,14 +575,16 @@
 
         <header>
             <h1><i class="fas fa-link"></i> Doubly Linked List · Dojo Visualization</h1>
-            <p class="subtitle">Each node has both previous and next pointers, enabling bidirectional traversal. Master insertion, deletion, and both-direction traversal.</p>
+            <p class="subtitle">Each node has both previous and next pointers, enabling bidirectional traversal. Master
+                insertion, deletion, and both-direction traversal.</p>
         </header>
 
         <div class="card">
             <div class="operation-tabs">
                 <button class="tab-btn active" data-tab="basic"><i class="fas fa-play"></i> Basic Operations</button>
                 <button class="tab-btn" data-tab="advanced"><i class="fas fa-cog"></i> Advanced Operations</button>
-                <button class="tab-btn" data-tab="traversal"><i class="fas fa-arrows-left-right"></i> Bidirectional Traversal</button>
+                <button class="tab-btn" data-tab="traversal"><i class="fas fa-arrows-left-right"></i> Bidirectional
+                    Traversal</button>
             </div>
 
             <!-- Basic Operations Tab -->
@@ -524,11 +592,15 @@
                 <div class="controls">
                     <div class="input-group">
                         <input id="val" type="number" min="1" max="999" placeholder="Value (1-999)">
-                        <button id="insertHead" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Insert Head</button>
+                        <button id="insertHead" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Insert
+                            Head</button>
                     </div>
-                    <button id="insertTail" class="btn btn-primary">Insert Tail <i class="fas fa-plus-circle"></i></button>
-                    <button id="deleteHead" class="btn btn-warning" disabled><i class="fas fa-minus-circle"></i> Delete Head</button>
-                    <button id="deleteTail" class="btn btn-warning" disabled>Delete Tail <i class="fas fa-minus-circle"></i></button>
+                    <button id="insertTail" class="btn btn-primary">Insert Tail <i
+                            class="fas fa-plus-circle"></i></button>
+                    <button id="deleteHead" class="btn btn-warning" disabled><i class="fas fa-minus-circle"></i> Delete
+                        Head</button>
+                    <button id="deleteTail" class="btn btn-warning" disabled>Delete Tail <i
+                            class="fas fa-minus-circle"></i></button>
                     <button id="reset" class="btn btn-danger"><i class="fas fa-redo"></i> Reset</button>
                 </div>
             </div>
@@ -539,11 +611,13 @@
                     <div class="input-group">
                         <input id="val2" type="number" min="1" max="999" placeholder="Value">
                         <input id="position" type="number" min="0" placeholder="Position">
-                        <button id="insertAt" class="btn btn-success"><i class="fas fa-plus-circle"></i> Insert At Position</button>
+                        <button id="insertAt" class="btn btn-success"><i class="fas fa-plus-circle"></i> Insert At
+                            Position</button>
                     </div>
                     <div class="input-group">
                         <input id="deleteVal" type="number" min="1" max="999" placeholder="Value to delete">
-                        <button id="deleteByValue" class="btn btn-danger"><i class="fas fa-minus-circle"></i> Delete By Value</button>
+                        <button id="deleteByValue" class="btn btn-danger"><i class="fas fa-minus-circle"></i> Delete By
+                            Value</button>
                     </div>
                 </div>
             </div>
@@ -555,9 +629,12 @@
                         <input id="searchVal" type="number" min="1" max="999" placeholder="Value to search">
                         <button id="search" class="btn btn-secondary"><i class="fas fa-search"></i> Search</button>
                     </div>
-                    <button id="traverseForward" class="btn btn-secondary"><i class="fas fa-arrow-right"></i> Traverse Forward</button>
-                    <button id="traverseBackward" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Traverse Backward</button>
-                    <button id="reverse" class="btn btn-secondary"><i class="fas fa-exchange-alt"></i> Reverse List</button>
+                    <button id="traverseForward" class="btn btn-secondary"><i class="fas fa-arrow-right"></i> Traverse
+                        Forward</button>
+                    <button id="traverseBackward" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Traverse
+                        Backward</button>
+                    <button id="reverse" class="btn btn-secondary"><i class="fas fa-exchange-alt"></i> Reverse
+                        List</button>
                 </div>
             </div>
 
@@ -591,9 +668,15 @@
             </div>
 
             <div class="legend">
-                <div class="legend-item"><div class="legend-color legend-head"></div> Head Node</div>
-                <div class="legend-item"><div class="legend-color legend-tail"></div> Tail Node</div>
-                <div class="legend-item"><div class="legend-color legend-both"></div> Highlighted / Found</div>
+                <div class="legend-item">
+                    <div class="legend-color legend-head"></div> Head Node
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-tail"></div> Tail Node
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-both"></div> Highlighted / Found
+                </div>
             </div>
         </div>
 
@@ -605,7 +688,8 @@
         </div>
 
         <div class="card" style="text-align: center; margin-top: 1.5rem; display: flex; justify-content: center;">
-            <a href="../editor/editor.html" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; padding: 0.8rem 2rem; border-radius: var(--border-radius); background: linear-gradient(135deg, #a78bfa, #7c3aed); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(167, 139, 250, 0.3); transition: all 0.3s ease; justify-content: center;">
+            <a href="../editor/editor.html" class="btn btn-primary"
+                style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; padding: 0.8rem 2rem; border-radius: var(--border-radius); background: linear-gradient(135deg, #a78bfa, #7c3aed); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(167, 139, 250, 0.3); transition: all 0.3s ease; justify-content: center;">
                 ⚔️ Practice Code in Dojo
             </a>
         </div>
@@ -613,9 +697,9 @@
 
     <script>
         class DoublyLinkedList {
-            constructor(){
-                this.head = null; 
-                this.tail = null; 
+            constructor() {
+                this.head = null;
+                this.tail = null;
                 this.length = 0;
                 this.display = document.getElementById('display');
                 this.status = document.getElementById('status');
@@ -624,7 +708,7 @@
                 this.tailDisplay = document.getElementById('tailVal');
                 this.operationLog = document.getElementById('operationLog');
                 this.logs = [];
-                
+
                 this.setupTabs();
                 this.attachEvents();
                 this.render();
@@ -633,7 +717,7 @@
             setupTabs() {
                 const tabBtns = document.querySelectorAll('.tab-btn');
                 const tabContents = document.querySelectorAll('.tab-content');
-                
+
                 tabBtns.forEach(btn => {
                     btn.addEventListener('click', () => {
                         tabBtns.forEach(b => b.classList.remove('active'));
@@ -645,7 +729,7 @@
                 });
             }
 
-            attachEvents(){
+            attachEvents() {
                 document.getElementById('insertHead').addEventListener('click', () => this.insertHead());
                 document.getElementById('insertTail').addEventListener('click', () => this.insertTail());
                 document.getElementById('deleteHead').addEventListener('click', () => this.deleteHead());
@@ -657,11 +741,11 @@
                 document.getElementById('traverseForward').addEventListener('click', () => this.traverseForward());
                 document.getElementById('traverseBackward').addEventListener('click', () => this.traverseBackward());
                 document.getElementById('reverse').addEventListener('click', () => this.reverse());
-                
-                document.getElementById('val').addEventListener('keypress', e => { if(e.key === 'Enter') this.insertTail(); });
-                document.getElementById('val2').addEventListener('keypress', e => { if(e.key === 'Enter') this.insertAtPosition(); });
-                document.getElementById('deleteVal').addEventListener('keypress', e => { if(e.key === 'Enter') this.deleteByValue(); });
-                document.getElementById('searchVal').addEventListener('keypress', e => { if(e.key === 'Enter') this.search(); });
+
+                document.getElementById('val').addEventListener('keypress', e => { if (e.key === 'Enter') this.insertTail(); });
+                document.getElementById('val2').addEventListener('keypress', e => { if (e.key === 'Enter') this.insertAtPosition(); });
+                document.getElementById('deleteVal').addEventListener('keypress', e => { if (e.key === 'Enter') this.deleteByValue(); });
+                document.getElementById('searchVal').addEventListener('keypress', e => { if (e.key === 'Enter') this.search(); });
             }
 
             logOperation(message, color = "#a78bfa") {
@@ -671,13 +755,13 @@
                 this.operationLog.innerHTML = this.logs.join('<br>');
             }
 
-            insertHead(){
+            insertHead() {
                 const v = Number(document.getElementById('val').value);
-                if(!v){ this._setStatus('⚠️ Please enter a value', '#f87171'); return; }
-                const node = {val: v, prev: null, next: this.head};
-                if(this.head) this.head.prev = node;
+                if (!v) { this._setStatus('⚠️ Please enter a value', '#f87171'); return; }
+                const node = { val: v, prev: null, next: this.head };
+                if (this.head) this.head.prev = node;
                 this.head = node;
-                if(!this.tail) this.tail = node;
+                if (!this.tail) this.tail = node;
                 this.length++;
                 this._setStatus(`✅ Inserted ${v} at head`, '#34d399');
                 this.logOperation(`INSERT HEAD: ${v}`);
@@ -685,11 +769,11 @@
                 this.render('head');
             }
 
-            insertTail(){
+            insertTail() {
                 const v = Number(document.getElementById('val').value);
-                if(!v){ this._setStatus('⚠️ Please enter a value', '#f87171'); return; }
-                const node = {val: v, prev: this.tail, next: null};
-                if(!this.head){ this.head = node; this.tail = node; } 
+                if (!v) { this._setStatus('⚠️ Please enter a value', '#f87171'); return; }
+                const node = { val: v, prev: this.tail, next: null };
+                if (!this.head) { this.head = node; this.tail = node; }
                 else { this.tail.next = node; this.tail = node; }
                 this.length++;
                 this._setStatus(`✅ Inserted ${v} at tail`, '#34d399');
@@ -698,11 +782,11 @@
                 this.render('tail');
             }
 
-            deleteHead(){
-                if(!this.head){ this._setStatus('⚠️ List is empty', '#f87171'); return; }
+            deleteHead() {
+                if (!this.head) { this._setStatus('⚠️ List is empty', '#f87171'); return; }
                 const v = this.head.val;
                 this.head = this.head.next;
-                if(this.head) this.head.prev = null;
+                if (this.head) this.head.prev = null;
                 else this.tail = null;
                 this.length--;
                 this._setStatus(`🗑️ Deleted ${v} from head`, '#fbbf24');
@@ -710,11 +794,11 @@
                 this.render();
             }
 
-            deleteTail(){
-                if(!this.head){ this._setStatus('⚠️ List is empty', '#f87171'); return; }
+            deleteTail() {
+                if (!this.head) { this._setStatus('⚠️ List is empty', '#f87171'); return; }
                 const v = this.tail.val;
                 this.tail = this.tail.prev;
-                if(this.tail) this.tail.next = null;
+                if (this.tail) this.tail.next = null;
                 else this.head = null;
                 this.length--;
                 this._setStatus(`🗑️ Deleted ${v} from tail`, '#fbbf24');
@@ -725,23 +809,23 @@
             insertAtPosition() {
                 const v = Number(document.getElementById('val2').value);
                 const pos = Number(document.getElementById('position').value);
-                
-                if(!v){ this._setStatus('⚠️ Please enter a value', '#f87171'); return; }
-                if(pos < 0 || pos > this.length) {
+
+                if (!v) { this._setStatus('⚠️ Please enter a value', '#f87171'); return; }
+                if (pos < 0 || pos > this.length) {
                     this._setStatus(`⚠️ Invalid position. Must be between 0 and ${this.length}`, '#f87171');
                     return;
                 }
-                if(pos === 0) { this.insertHead(); return; }
-                if(pos === this.length) { this.insertTail(); return; }
-                
+                if (pos === 0) { this.insertHead(); return; }
+                if (pos === this.length) { this.insertTail(); return; }
+
                 let cur = this.head;
-                for(let i = 0; i < pos - 1; i++) cur = cur.next;
-                
-                const node = {val: v, prev: cur, next: cur.next};
+                for (let i = 0; i < pos - 1; i++) cur = cur.next;
+
+                const node = { val: v, prev: cur, next: cur.next };
                 cur.next.prev = node;
                 cur.next = node;
                 this.length++;
-                
+
                 this._setStatus(`✅ Inserted ${v} at position ${pos}`, '#34d399');
                 this.logOperation(`INSERT AT POS ${pos}: ${v}`);
                 document.getElementById('val2').value = '';
@@ -751,23 +835,23 @@
 
             deleteByValue() {
                 const v = Number(document.getElementById('deleteVal').value);
-                if(!v){ this._setStatus('⚠️ Please enter a value to delete', '#f87171'); return; }
-                if(!this.head) { this._setStatus('⚠️ List is empty', '#f87171'); return; }
-                if(this.head.val === v) { this.deleteHead(); return; }
-                if(this.tail.val === v) { this.deleteTail(); return; }
-                
+                if (!v) { this._setStatus('⚠️ Please enter a value to delete', '#f87171'); return; }
+                if (!this.head) { this._setStatus('⚠️ List is empty', '#f87171'); return; }
+                if (this.head.val === v) { this.deleteHead(); return; }
+                if (this.tail.val === v) { this.deleteTail(); return; }
+
                 let cur = this.head;
-                while(cur && cur.val !== v) cur = cur.next;
-                if(!cur) {
+                while (cur && cur.val !== v) cur = cur.next;
+                if (!cur) {
                     this._setStatus(`❌ Value ${v} not found`, '#f87171');
                     this.logOperation(`DELETE FAILED: ${v} not found`, '#f87171');
                     return;
                 }
-                
+
                 cur.prev.next = cur.next;
                 cur.next.prev = cur.prev;
                 this.length--;
-                
+
                 this._setStatus(`🗑️ Deleted value ${v}`, '#fbbf24');
                 this.logOperation(`DELETE BY VALUE: ${v}`);
                 document.getElementById('deleteVal').value = '';
@@ -776,14 +860,14 @@
 
             search() {
                 const v = Number(document.getElementById('searchVal').value);
-                if(!v){ this._setStatus('⚠️ Please enter a value to search', '#f87171'); return; }
-                if(!this.head) { this._setStatus('⚠️ List is empty', '#f87171'); return; }
-                
+                if (!v) { this._setStatus('⚠️ Please enter a value to search', '#f87171'); return; }
+                if (!this.head) { this._setStatus('⚠️ List is empty', '#f87171'); return; }
+
                 let cur = this.head;
                 let pos = 0;
-                while(cur && cur.val !== v) { cur = cur.next; pos++; }
-                
-                if(cur) {
+                while (cur && cur.val !== v) { cur = cur.next; pos++; }
+
+                if (cur) {
                     this._setStatus(`✅ Value ${v} found at position ${pos}`, '#34d399');
                     this.logOperation(`SEARCH: Found ${v} at position ${pos}`);
                     this.highlightNode(pos);
@@ -795,41 +879,41 @@
             }
 
             traverseForward() {
-                if(!this.head) { this._setStatus('⚠️ List is empty', '#f87171'); return; }
+                if (!this.head) { this._setStatus('⚠️ List is empty', '#f87171'); return; }
                 let values = [];
                 let cur = this.head;
-                while(cur) { values.push(cur.val); cur = cur.next; }
+                while (cur) { values.push(cur.val); cur = cur.next; }
                 this._setStatus(`➡️ Forward: ${values.join(' ⇄ ')}`, '#60a5fa');
                 this.logOperation(`FORWARD: ${values.join(' ⇄ ')}`);
             }
 
             traverseBackward() {
-                if(!this.head) { this._setStatus('⚠️ List is empty', '#f87171'); return; }
+                if (!this.head) { this._setStatus('⚠️ List is empty', '#f87171'); return; }
                 let values = [];
                 let cur = this.tail;
-                while(cur) { values.push(cur.val); cur = cur.prev; }
+                while (cur) { values.push(cur.val); cur = cur.prev; }
                 this._setStatus(`⬅️ Backward: ${values.join(' ⇄ ')}`, '#60a5fa');
                 this.logOperation(`BACKWARD: ${values.join(' ⇄ ')}`);
             }
 
             reverse() {
-                if(!this.head || !this.head.next) {
+                if (!this.head || !this.head.next) {
                     this._setStatus('⚠️ List has less than 2 nodes', '#f87171');
                     return;
                 }
-                
+
                 let cur = this.head;
                 let temp = null;
                 this.tail = this.head;
-                
-                while(cur) {
+
+                while (cur) {
                     temp = cur.prev;
                     cur.prev = cur.next;
                     cur.next = temp;
                     cur = cur.prev;
                 }
-                if(temp) this.head = temp.prev;
-                
+                if (temp) this.head = temp.prev;
+
                 this._setStatus('🔄 List has been reversed', '#34d399');
                 this.logOperation('REVERSE: List reversed');
                 this.render();
@@ -845,28 +929,28 @@
                 }
             }
 
-            reset(){ 
-                this.head = null; 
-                this.tail = null; 
-                this.length = 0; 
-                this._setStatus('⚔️ List reset. Ready for training.', '#64748b'); 
+            reset() {
+                this.head = null;
+                this.tail = null;
+                this.length = 0;
+                this._setStatus('⚔️ List reset. Ready for training.', '#64748b');
                 this.logs = [];
                 this.operationLog.innerHTML = '⚔️ No operations yet. Begin your training!';
-                this.render(); 
+                this.render();
             }
 
-            _setStatus(msg, color){ 
-                this.status.textContent = msg; 
+            _setStatus(msg, color) {
+                this.status.textContent = msg;
                 this.status.style.color = color;
-                this.status.style.backgroundColor = color === '#f87171' ? 'rgba(248, 113, 113, 0.1)' : 
-                                                  color === '#34d399' ? 'rgba(52, 211, 153, 0.1)' :
-                                                  color === '#fbbf24' ? 'rgba(251, 191, 36, 0.1)' :
-                                                  color === '#60a5fa' ? 'rgba(96, 165, 250, 0.1)' : 'rgba(255,255,255,0.05)';
+                this.status.style.backgroundColor = color === '#f87171' ? 'rgba(248, 113, 113, 0.1)' :
+                    color === '#34d399' ? 'rgba(52, 211, 153, 0.1)' :
+                        color === '#fbbf24' ? 'rgba(251, 191, 36, 0.1)' :
+                            color === '#60a5fa' ? 'rgba(96, 165, 250, 0.1)' : 'rgba(255,255,255,0.05)';
             }
 
-            render(highlight = null){
+            render(highlight = null) {
                 this.display.innerHTML = '';
-                
+
                 if (!this.head) {
                     const e = document.createElement('div');
                     e.className = 'null';
@@ -875,49 +959,50 @@
                 } else {
                     let cur = this.head;
                     let index = 0;
-                    
-                    while(cur){
+
+                    while (cur) {
                         const n = document.createElement('div');
                         n.className = 'node';
                         if (cur === this.head) n.classList.add('head');
                         if (cur === this.tail) n.classList.add('tail');
                         if (highlight === 'head' && cur === this.head) n.classList.add('highlight');
                         if (highlight === 'tail' && cur === this.tail) n.classList.add('highlight');
-                        
+
                         n.textContent = cur.val;
                         n.style.animationDelay = `${index * 100}ms`;
                         this.display.appendChild(n);
-                        
-                        if(cur.next){
+
+                        if (cur.next) {
                             const a = document.createElement('div');
                             a.className = 'arrow';
                             a.textContent = '⇄';
                             this.display.appendChild(a);
                         }
-                        
+
                         cur = cur.next;
                         index++;
                     }
-                    
+
                     const n = document.createElement('div');
                     n.className = 'null';
                     n.textContent = '⇄ null';
                     this.display.appendChild(n);
                 }
-                
+
                 this.lenDisplay.textContent = this.length;
                 this.headDisplay.textContent = this.head ? this.head.val : '—';
                 this.tailDisplay.textContent = this.tail ? this.tail.val : '—';
-                
+
                 document.getElementById('deleteHead').disabled = !this.head;
                 document.getElementById('deleteTail').disabled = !this.head;
                 document.getElementById('reverse').disabled = !this.head || this.length < 2;
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             new DoublyLinkedList();
         });
     </script>
 </body>
+
 </html>

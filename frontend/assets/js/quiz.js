@@ -6,6 +6,7 @@ let quizSubmitted = false;
 let correctAnswers = [];
 let questionExplanations = [];
 let questionHints = [];
+let evaluationResults = [];
 
 // Game state variables
 let timerInterval = null;
@@ -23,14 +24,6 @@ function shuffleArray(items) {
     return array;
 }
 
-function prepareQuizForDisplay(quiz, shuffleQuestions = false) {
-    if (!quiz || !Array.isArray(quiz.questions)) return quiz;
-    return {
-        ...quiz,
-        questions: shuffleQuestions ? shuffleArray(quiz.questions) : quiz.questions
-    };
-}
-
 function loadQuizzes() {
     Quiz.getQuizzes()
         .then(quizzes => {
@@ -46,7 +39,7 @@ function loadQuizzes() {
                     errorMsg += '<br>Could not connect to server.';
                     errorMsg += '<br><strong>Make sure:</strong>';
                     errorMsg += '<br>1. Backend server is running: npm start';
-                    errorMsg += '<br>2. MongoDB is running';
+                    errorMsg += '<br>2. Supabase connection is active';
                 } else if (error.message.includes('HTTP')) {
                     errorMsg += '<br>' + error.message;
                     errorMsg += '<br><strong>Fix:</strong> Make sure backend server is running on port 3000';
@@ -61,21 +54,27 @@ function displayQuizzes(quizzes) {
     const quizContainer = document.getElementById('quiz-container');
     if (!quizContainer) return;
 
-    // Filter out generated dynamic quizzes from the static list
-    // (Static quizzes won't have custom topic/difficulty markers or will be general)
-    const staticQuizzes = quizzes.filter(q => q.expiresAt === undefined || q.expiresAt === null);
-    
-    quizContainer.innerHTML = '';
-    
-    if (staticQuizzes.length === 0) {
+    if (!Array.isArray(quizzes) || quizzes.length === 0) {
         return;
     }
+
+    // Filter standard trials (exclude dynamically generated temporary trials)
+    const standardQuizzes = quizzes.filter(q => 
+        (q.title && (q.title.includes('Trial') || q.title.includes('Mastery') || q.title.includes('Fundamentals') || q.title.includes('Quiz'))) &&
+        !q.title.includes('Concentration Trial')
+    );
+
+    if (standardQuizzes.length === 0) {
+        return;
+    }
+
+    quizContainer.innerHTML = '';
 
     const header = document.createElement('h3');
     header.style.color = '#fff';
     header.style.marginBottom = '1.2rem';
     header.style.marginTop = '2rem';
-    header.innerHTML = '<i class="fas fa-scroll"></i> Standard Trials Available';
+    header.innerHTML = '<i class="fas fa-scroll"></i> Standard Breathing Trials';
     quizContainer.appendChild(header);
 
     const grid = document.createElement('div');
@@ -83,14 +82,38 @@ function displayQuizzes(quizzes) {
     grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(280px, 1fr))';
     grid.style.gap = '1.5rem';
 
-    staticQuizzes.forEach(quiz => {
+    const topicIcons = {
+        'arrays': 'fas fa-layer-group',
+        'linked-lists': 'fas fa-link',
+        'stacks-queues': 'fas fa-exchange-alt',
+        'trees': 'fas fa-tree',
+        'graphs': 'fas fa-project-diagram',
+        'sorting': 'fas fa-sort-amount-down',
+        'general': 'fas fa-scroll'
+    };
+
+    standardQuizzes.forEach(quiz => {
         const quizElement = document.createElement('div');
         quizElement.className = 'quiz-card';
         quizElement.style.margin = '0';
+        quizElement.style.display = 'flex';
+        quizElement.style.flexDirection = 'column';
+        quizElement.style.justifyContent = 'space-between';
+
+        const icon = topicIcons[quiz.topic] || 'fas fa-khanda';
+        const qCount = Array.isArray(quiz.questions) ? quiz.questions.length : 0;
+        const quizId = quiz.id || quiz._id;
+
         quizElement.innerHTML = `
-            <h3 style="color:#fff; margin-bottom: 0.5rem;">${quiz.title}</h3>
-            <p style="color: var(--muted); margin-bottom: 1.2rem;">📚 ${quiz.questions.length} Questions</p>
-            <button onclick="startQuiz('${quiz._id}')" class="btn-primary" style="padding: 0.6rem 1.2rem; font-size:0.9rem;">Start Quiz</button>
+            <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
+                    <span style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--accent); font-weight:700;"><i class="${icon}"></i> ${quiz.topic || 'DSA'}</span>
+                    <span class="question-difficulty" style="font-size:0.7rem; padding:0.2rem 0.6rem;">${(quiz.difficulty || 'medium').toUpperCase()}</span>
+                </div>
+                <h3 style="color:#fff; font-size:1.15rem; margin-bottom: 0.5rem; line-height:1.4;">${quiz.title}</h3>
+                <p style="color: var(--muted); font-size:0.9rem; margin-bottom: 1.2rem;">📚 ${qCount} Questions</p>
+            </div>
+            <button onclick="startQuiz('${quizId}')" class="btn-primary" style="padding: 0.7rem 1.2rem; font-size:0.9rem; width:100%;"><i class="fas fa-play"></i> Start Trial</button>
         `;
         grid.appendChild(quizElement);
     });
@@ -115,6 +138,7 @@ function getDSAQuiz() {
     correctAnswers = [];
     questionExplanations = [];
     questionHints = [];
+    evaluationResults = [];
 
     // Show loading spinner
     const quizContainer = document.getElementById('quiz-container');
@@ -137,7 +161,7 @@ function getDSAQuiz() {
     Quiz.getRandomQuiz({ topic, difficulty, limit })
         .then(quiz => {
             if (quiz && quiz.questions && quiz.questions.length > 0) {
-                currentQuizData = quiz; // Backend already shuffled it!
+                currentQuizData = quiz;
                 currentQuestionIndex = 0;
                 userAnswers = new Array(currentQuizData.questions.length).fill(-1);
                 displayQuestion();
@@ -160,8 +184,8 @@ function getDSAQuiz() {
 function startQuiz(quizOrId) {
     // Reset state
     lifelineUsedThisQuiz = false;
-    timerEnabledGlobal = false; // Disable timers for static standard quizzes
-    lifelineEnabledGlobal = false; // Disable lifelines for static standard quizzes
+    timerEnabledGlobal = false; // Disable timers for static standard trials
+    lifelineEnabledGlobal = true; // Allow lifelines
     currentQuizData = null;
     currentQuestionIndex = 0;
     userAnswers = [];
@@ -169,6 +193,7 @@ function startQuiz(quizOrId) {
     correctAnswers = [];
     questionExplanations = [];
     questionHints = [];
+    evaluationResults = [];
 
     const loadAction = (typeof quizOrId === 'object' && quizOrId !== null)
         ? Promise.resolve(quizOrId)
@@ -180,7 +205,7 @@ function startQuiz(quizOrId) {
 
     loadAction
         .then(quiz => {
-            currentQuizData = prepareQuizForDisplay(quiz, true); // Shuffle questions
+            currentQuizData = quiz;
             currentQuestionIndex = 0;
             userAnswers = new Array(currentQuizData.questions.length).fill(-1);
             displayQuestion();
@@ -219,10 +244,10 @@ function updateTimerUI() {
         const percent = (timeLeft / 30) * 100;
         timerFill.style.width = percent + '%';
         if (timeLeft <= 8) {
-            timerFill.style.background = '#ff4d2e'; // Glowing red
+            timerFill.style.background = '#ff4d2e';
             timerFill.style.boxShadow = '0 0 10px rgba(255, 77, 46, 0.8)';
         } else {
-            timerFill.style.background = ''; // Follows CSS theme
+            timerFill.style.background = '';
             timerFill.style.boxShadow = '';
         }
     }
@@ -250,7 +275,7 @@ function useLifeline() {
     if (question && question.hint) {
         lifelineUsedThisQuiz = true;
         
-        // Show in a beautiful visual toast/dialog
+        // Show in a visual alert/dialog
         alert(`💡 HASHIRA CONCEPTUAL HINT:\n\n"${question.hint}"`);
         
         // Disable the lifeline button
@@ -263,11 +288,13 @@ function useLifeline() {
         if (window.showToast) {
             showToast("🔮 Hashira assistance activated!");
         }
+    } else {
+        alert("💡 No specific hint recorded for this question. Focus on your fundamental breath forms!");
     }
 }
 
 function displayQuestion() {
-    if (!currentQuizData) return;
+    if (!currentQuizData || !currentQuizData.questions || currentQuizData.questions.length === 0) return;
 
     const startScreen = document.getElementById('start-screen');
     const quizProgress = document.getElementById('quiz-progress');
@@ -281,10 +308,15 @@ function displayQuestion() {
     const progressPercent = Math.round(((currentQuestionIndex + 1) / totalQuestions) * 100);
 
     // Update progress bar
-    document.getElementById('current-q').textContent = currentQuestionIndex + 1;
-    document.getElementById('total-q').textContent = totalQuestions;
-    document.getElementById('remaining').textContent = progressPercent + '% Done';
-    document.getElementById('progress-fill').style.width = progressPercent + '%';
+    const curQEl = document.getElementById('current-q');
+    const totQEl = document.getElementById('total-q');
+    const remEl = document.getElementById('remaining');
+    const progFillEl = document.getElementById('progress-fill');
+
+    if (curQEl) curQEl.textContent = currentQuestionIndex + 1;
+    if (totQEl) totQEl.textContent = totalQuestions;
+    if (remEl) remEl.textContent = progressPercent + '% Done';
+    if (progFillEl) progFillEl.style.width = progressPercent + '%';
 
     // Clear container
     quizContainer.innerHTML = '';
@@ -325,10 +357,11 @@ function displayQuestion() {
         `;
     }
 
+    const diffBadge = currentQuizData.difficulty ? currentQuizData.difficulty.toUpperCase() : 'DSA';
     questionHeader.innerHTML = `
         <div style="display:flex; align-items:center; gap: 0.8rem;">
             <span class="question-number">Question ${currentQuestionIndex + 1}</span>
-            <span class="question-difficulty">${currentQuizData.difficulty ? currentQuizData.difficulty.toUpperCase() : 'DSA'}</span>
+            <span class="question-difficulty">${diffBadge}</span>
         </div>
         <div style="display:flex; align-items:center; gap: 0.8rem;">
             ${lifelineHTML}
@@ -360,7 +393,7 @@ function displayQuestion() {
         `;
 
         label.addEventListener('change', (e) => {
-            userAnswers[currentQuestionIndex] = parseInt(e.target.value);
+            userAnswers[currentQuestionIndex] = parseInt(e.target.value, 10);
             document.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
             label.classList.add('selected');
         });
@@ -435,8 +468,9 @@ function submitQuizAnswers() {
         }
     }
 
+    const quizId = currentQuizData.id || currentQuizData._id;
     const answersToSubmit = currentQuizData.questions.map((question, index) => ({
-        questionId: question._id,
+        questionId: question.id || question._id || index,
         answer: userAnswers[index]
     }));
 
@@ -452,21 +486,25 @@ function submitQuizAnswers() {
         `;
     }
 
-    Quiz.submitQuiz(currentQuizData._id, answersToSubmit)
+    Quiz.submitQuiz(quizId, answersToSubmit)
         .then(result => {
             correctAnswers = result.correctAnswers || [];
             questionExplanations = result.explanations || [];
             questionHints = result.hints || [];
+            evaluationResults = result.results || [];
             
-            return Progress.updateProgress({
-                topic: currentQuizData.title || 'DSA Quiz',
-                completed: true,
-                score: result.percentage
-            })
-            .catch(error => {
-                console.warn('Progress API update skipped or failed:', error);
-            })
-            .then(() => result);
+            if (window.Progress && Progress.updateProgress) {
+                return Progress.updateProgress({
+                    topic: currentQuizData.title || 'DSA Quiz',
+                    completed: true,
+                    score: result.percentage
+                })
+                .catch(error => {
+                    console.warn('Progress API update skipped or failed:', error);
+                })
+                .then(() => result);
+            }
+            return result;
         })
         .then(result => {
             quizSubmitted = true;
@@ -533,19 +571,29 @@ function showQuizResults(result) {
 
     // Build review section showing correct/incorrect answers + details + explanations
     let reviewHTML = '';
-    if (correctAnswers && correctAnswers.length > 0 && currentQuizData && currentQuizData.questions) {
+    if (currentQuizData && currentQuizData.questions) {
         reviewHTML = '<div style="margin-top: 2.5rem; border-top: 2px solid rgba(255,255,255,0.1); padding-top: 2rem; text-align: left;">';
         reviewHTML += '<h3 style="font-size: 1.4rem; margin-bottom: 1.5rem; color: var(--accent); text-align: center;"><i class="fas fa-magnifying-glass"></i> Trial Analysis & Review</h3>';
         
+        // Build evaluation lookup map from results array
+        const evalMap = new Map();
+        if (Array.isArray(result.results)) {
+            result.results.forEach(item => {
+                evalMap.set(String(item.questionId), item);
+            });
+        }
+
         currentQuizData.questions.forEach((question, index) => {
+            const qKey = String(question.id || question._id || index);
+            const evalItem = evalMap.get(qKey);
             const userAnswer = userAnswers[index];
-            const correctAnswer = correctAnswers[index];
-            const isCorrect = userAnswer === correctAnswer;
+            const correctAnswer = evalItem ? evalItem.correctAnswer : (correctAnswers[index] !== undefined ? correctAnswers[index] : -1);
+            const isCorrect = evalItem ? evalItem.isCorrect : (userAnswer === correctAnswer);
+            const explanationText = (evalItem && evalItem.explanation) || questionExplanations[index] || question.explanation || 'No explanation available.';
             
             const borderColor = isCorrect ? '#10b981' : '#e74c3c';
             const bgColor = isCorrect ? 'rgba(16, 185, 129, 0.08)' : 'rgba(231, 76, 60, 0.08)';
             const icon = isCorrect ? '✓' : '✗';
-            const explanationText = questionExplanations[index] || 'No explanation available.';
             
             reviewHTML += `
                 <div style="background: ${bgColor}; border-left: 4px solid ${borderColor}; padding: 1.5rem; border-radius: 18px; margin-bottom: 1.5rem;">
@@ -554,8 +602,8 @@ function showQuizResults(result) {
                         <span style="color: #fff; font-weight: 700;">Q${index + 1}: ${question.question}</span>
                     </div>
                     <div style="margin-left: 2.2rem; color: var(--muted); font-size: 0.95rem; display: flex; flex-direction: column; gap: 0.4rem;">
-                        <div><strong>Your Selection:</strong> <span style="${isCorrect ? 'color:#10b981; font-weight:600;' : 'color:#e74c3c; font-weight:600;'}">${question.options[userAnswer] || 'Not answered'}</span></div>
-                        ${!isCorrect ? `<div><strong style="color:#10b981;">Correct Form:</strong> <span style="color:#10b981; font-weight:600;">${question.options[correctAnswer]}</span></div>` : ''}
+                        <div><strong>Your Selection:</strong> <span style="${isCorrect ? 'color:#10b981; font-weight:600;' : 'color:#e74c3c; font-weight:600;'}">${userAnswer >= 0 && question.options[userAnswer] ? question.options[userAnswer] : 'Not answered'}</span></div>
+                        ${!isCorrect && correctAnswer >= 0 ? `<div><strong style="color:#10b981;">Correct Form:</strong> <span style="color:#10b981; font-weight:600;">${question.options[correctAnswer] || ''}</span></div>` : ''}
                         
                         <div style="margin-top: 0.8rem; padding: 0.8rem 1.2rem; background: rgba(0, 0, 0, 0.25); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.04);">
                             <strong style="color: var(--accent); display: block; margin-bottom: 0.25rem;"><i class="fas fa-book-open"></i> Form Explanation:</strong>
@@ -617,7 +665,9 @@ function initConfigUI() {
             
             if (window.updatePageTheme) {
                 window.updatePageTheme(theme);
-                showToast(`⚔️ Dojo aligned to ${topic.toUpperCase().replace('-', ' ')} forms!`);
+                if (window.showToast) {
+                    showToast(`⚔️ Dojo aligned to ${topic.toUpperCase().replace('-', ' ')} forms!`);
+                }
             }
         });
     });

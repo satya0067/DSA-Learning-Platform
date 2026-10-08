@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Queues - Struct-Learn</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/theme.css">
@@ -40,7 +43,7 @@
             border: 1px solid rgba(16, 185, 129, 0.5) !important;
             border-radius: 32px;
             margin: 1.5rem 1.8rem 0rem 1.8rem !important;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 0 12px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 12px rgba(16, 185, 129, 0.3);
             padding: 1rem 1.8rem !important;
         }
 
@@ -145,7 +148,8 @@
             font-weight: 600;
         }
 
-        aside ul li a:hover, aside ul li a.active {
+        aside ul li a:hover,
+        aside ul li a.active {
             background: #10b981 !important;
             color: black !important;
             border-left-color: #a7f3d0;
@@ -218,7 +222,7 @@
             border: 1px solid rgba(16, 185, 129, 0.4) !important;
             border-radius: 24px;
             padding: 2rem !important;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
             margin-top: 2rem;
             margin-bottom: 2rem;
         }
@@ -270,7 +274,7 @@
             cursor: pointer;
             transition: all 0.2s ease !important;
             font-size: 0.9rem !important;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
             width: auto !important;
             min-height: unset !important;
         }
@@ -296,7 +300,7 @@
             background: rgba(10, 30, 20, 0.4);
             border-radius: 20px;
             padding: 2.2rem 1.5rem;
-            box-shadow: inset 0 0 15px rgba(16,185,129,0.1);
+            box-shadow: inset 0 0 15px rgba(16, 185, 129, 0.1);
             overflow-x: auto;
             gap: 14px;
             position: relative;
@@ -314,7 +318,7 @@
             justify-content: center;
             font-family: 'Fira Code', monospace;
             font-weight: 700;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
             animation: slideInLeft 0.3s ease;
             position: relative;
         }
@@ -324,6 +328,7 @@
                 transform: translateX(30px);
                 opacity: 0;
             }
+
             to {
                 transform: translateX(0);
                 opacity: 1;
@@ -364,7 +369,7 @@
             border-radius: 18px !important;
             padding: 1rem 1.5rem !important;
             font-weight: 500;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 
         .queue-links-grid {
@@ -425,17 +430,19 @@
             .main-layout {
                 grid-template-columns: 1fr;
             }
+
             aside {
                 margin: 1.5rem 1.8rem 0rem 1.8rem;
                 width: auto;
                 height: auto !important;
                 min-height: unset;
             }
+
             main.container {
                 margin: 1.5rem 1.8rem !important;
             }
         }
-    
+
         /* Dynamic premium back button */
         .back {
             display: inline-flex;
@@ -453,6 +460,7 @@
             width: fit-content;
             cursor: pointer;
         }
+
         .back:hover {
             background: rgba(255, 255, 255, 0.16);
             color: #fff;
@@ -460,10 +468,11 @@
         }
     </style>
 </head>
+
 <body>
     <div class="demon-slayer-bg"></div>
     <navbar id="navbar"></navbar>
-    
+
     <div class="main-layout">
         <aside id="sidebar">
             <h3>🌪️ Queue Topics</h3>
@@ -477,14 +486,17 @@
             </ul>
         </aside>
         <main class="container">
-        <a class="back" href="../dashboard/dashboard.html" onclick="if(document.referrer){ history.back(); return false; }">
-            <i class="fas fa-arrow-left"></i> Back
-        </a>
+            <a class="back" href="../dashboard/dashboard.html"
+                onclick="if(document.referrer){ history.back(); return false; }">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
 
             <h1>Queues · Wind Breathing First Form</h1>
             <section id="queue-topic" class="topic-section">
-                <p>A queue is a linear data structure that follows the <strong>FIFO (First-In-First-Out)</strong> principle. Similar to air currents flowing sequentially through a cave, the first wind current to enter (Front) is the first to emerge/exit.</p>
-                
+                <p>A queue is a linear data structure that follows the <strong>FIFO (First-In-First-Out)</strong>
+                    principle. Similar to air currents flowing sequentially through a cave, the first wind current to
+                    enter (Front) is the first to emerge/exit.</p>
+
                 <h2>Breathing Technique Mechanics</h2>
                 <ul>
                     <li>Enqueue: Align a new form slice at the <strong>Rear</strong> of the queue pipeline.</li>
@@ -512,4 +524,5 @@
     <script src="../../config/config.js"></script>
     <script src="../../assets/js/main.js"></script>
 </body>
+
 </html>

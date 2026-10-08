@@ -137,36 +137,8 @@ print(max_so_far)`
   }
 ];
 
-const initialQuizzes = [
-  {
-    title: 'DSA Fundamentals Quiz',
-    topic: 'general',
-    difficulty: 'easy',
-    questions: [
-      {
-        id: 'q1',
-        question: 'What is the average time complexity of searching in a Hash Table?',
-        options: ['O(1)', 'O(n)', 'O(log n)', 'O(n^2)'],
-        correctAnswer: 0,
-        explanation: 'Hash table average case lookup is O(1).'
-      },
-      {
-        id: 'q2',
-        question: 'Which traversal of a Binary Search Tree (BST) visits nodes in ascending sorted order?',
-        options: ['Preorder', 'Inorder', 'Postorder', 'Level-order'],
-        correctAnswer: 1,
-        explanation: 'Inorder traversal (Left, Root, Right) of a BST produces elements in strictly ascending order.'
-      },
-      {
-        id: 'q3',
-        question: 'Which data structure is primarily used in Breadth-First Search (BFS)?',
-        options: ['Stack', 'Queue', 'Priority Queue', 'Trie'],
-        correctAnswer: 1,
-        explanation: 'BFS explores neighbor vertices level-by-level using a FIFO Queue.'
-      }
-    ]
-  }
-];
+const { standardQuizzes } = require('./data/standardQuizzes');
+const initialQuizzes = standardQuizzes;
 
 async function seed() {
   console.log('🌱 Starting Supabase Seeder...');

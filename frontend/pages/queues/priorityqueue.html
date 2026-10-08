@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -237,8 +238,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .item::before {
@@ -502,24 +510,67 @@
             transform: translateY(-1px);
         }
 
-        .legend-high { background: linear-gradient(135deg, #dc2626, #b91c1c); }
-        .legend-medium { background: linear-gradient(135deg, #ea580c, #c2410c); }
-        .legend-low { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .legend-high {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+        }
+
+        .legend-medium {
+            background: linear-gradient(135deg, #ea580c, #c2410c);
+        }
+
+        .legend-low {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
 
         @media (max-width: 768px) {
-            body { padding: 1rem; }
-            .controls { flex-direction: column; align-items: stretch; }
-            .input-group { width: 100%; }
-            input { flex: 1; width: auto; }
-            .btn { justify-content: center; }
-            .info-panel { grid-template-columns: 1fr; }
-            .item { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
-            .item-position { align-self: flex-end; }
-            h1 { font-size: 1.8rem; }
-            #val, #prio { width: 100%; }
+            body {
+                padding: 1rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .input-group {
+                width: 100%;
+            }
+
+            input {
+                flex: 1;
+                width: auto;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+
+            .info-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .item-position {
+                align-self: flex-end;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            #val,
+            #prio {
+                width: 100%;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <a class="back" href="queue-operations.html" onclick="if(document.referrer){ history.back(); return false; }">
@@ -537,7 +588,8 @@
 
         <header>
             <h1><i class="fas fa-sort-amount-down"></i> Priority Queue · Dojo Visualization</h1>
-            <p class="subtitle">Elements are processed based on priority (lower number = higher priority). Higher priority items are dequeued first.</p>
+            <p class="subtitle">Elements are processed based on priority (lower number = higher priority). Higher
+                priority items are dequeued first.</p>
         </header>
 
         <div class="card">
@@ -570,8 +622,10 @@
             </div>
 
             <div class="priority-explanation">
-                <i class="fas fa-info-circle"></i> <strong>Priority Note:</strong> Lower numbers indicate higher priority.
-                Priority <span style="color:#dc2626; font-weight:700;">0</span> is the highest, priority <span style="color:#f59e0b; font-weight:700;">100</span> is the lowest.
+                <i class="fas fa-info-circle"></i> <strong>Priority Note:</strong> Lower numbers indicate higher
+                priority.
+                Priority <span style="color:#dc2626; font-weight:700;">0</span> is the highest, priority <span
+                    style="color:#f59e0b; font-weight:700;">100</span> is the lowest.
             </div>
 
             <div class="legend">
@@ -624,8 +678,10 @@
             </div>
         </div>
 
-        <div style="text-align: center; margin-top: 2rem; display: flex; justify-content: center; margin-bottom: 2rem; width: 100%;">
-            <a href="../editor/editor.html" class="btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; padding: 0.8rem 2rem; border-radius: 40px; background: linear-gradient(135deg, #a78bfa, #7c3aed); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(167, 139, 250, 0.3); transition: all 0.3s ease; justify-content: center;">
+        <div
+            style="text-align: center; margin-top: 2rem; display: flex; justify-content: center; margin-bottom: 2rem; width: 100%;">
+            <a href="../editor/editor.html" class="btn-primary"
+                style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; padding: 0.8rem 2rem; border-radius: 40px; background: linear-gradient(135deg, #a78bfa, #7c3aed); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(167, 139, 250, 0.3); transition: all 0.3s ease; justify-content: center;">
                 ⚔️ Practice Code in Dojo
             </a>
         </div>
@@ -726,9 +782,9 @@
                 this.status.style.color = color;
                 this.status.style.backgroundColor = color === '#f87171' ? 'rgba(248, 113, 113, 0.1)' :
                     color === '#34d399' ? 'rgba(52, 211, 153, 0.1)' :
-                    color === '#fbbf24' ? 'rgba(251, 191, 36, 0.1)' :
-                    color === '#dc2626' ? 'rgba(220, 38, 38, 0.1)' :
-                    color === '#94a3b8' ? 'rgba(148, 163, 184, 0.1)' : 'rgba(255,255,255,0.05)';
+                        color === '#fbbf24' ? 'rgba(251, 191, 36, 0.1)' :
+                            color === '#dc2626' ? 'rgba(220, 38, 38, 0.1)' :
+                                color === '#94a3b8' ? 'rgba(148, 163, 184, 0.1)' : 'rgba(255,255,255,0.05)';
             }
 
             getPriorityClass(p) {
@@ -764,7 +820,7 @@
                             </div>
                             <div class="item-position">
                                 <i class="fas fa-sort-numeric-down"></i>
-                                <span>Position: ${i+1}</span>
+                                <span>Position: ${i + 1}</span>
                             </div>
                         `;
                         this.list.appendChild(el);
@@ -785,4 +841,5 @@
         new PriorityQueue();
     </script>
 </body>
+
 </html>

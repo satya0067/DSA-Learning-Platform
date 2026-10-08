@@ -3,6 +3,13 @@
     window.__pageNavigationInitialized = true;
 
     function getHomeUrl() {
+        if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
+            const fullPath = window.location.pathname;
+            const idx = fullPath.indexOf('/frontend/');
+            if (idx !== -1) {
+                return fullPath.substring(0, idx + '/frontend/'.length) + 'index.html';
+            }
+        }
         return '/index.html';
     }
 

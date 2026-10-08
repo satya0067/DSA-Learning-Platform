@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Linked Lists - Struct-Learn | Demon Slayer Dojo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -40,10 +43,23 @@
         }
 
         @keyframes floatParticle {
-            0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            10% { opacity: 0.6; }
-            90% { opacity: 0.3; }
-            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.6;
+            }
+
+            90% {
+                opacity: 0.3;
+            }
+
+            100% {
+                transform: translateY(-10vh) scale(1);
+                opacity: 0;
+            }
         }
 
         .bg-orb {
@@ -54,8 +70,17 @@
         }
 
         @keyframes orbPulse {
-            0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.3; }
-            50% { transform: scale(1.2) translate(50px, -30px); opacity: 0.6; }
+
+            0%,
+            100% {
+                transform: scale(1) translate(0, 0);
+                opacity: 0.3;
+            }
+
+            50% {
+                transform: scale(1.2) translate(50px, -30px);
+                opacity: 0.6;
+            }
         }
 
         /* ===== NAVIGATION ===== */
@@ -292,14 +317,29 @@
         }
 
         /* Card specific styles */
-        .card-singly .card-icon { color: #60a5fa; }
-        .card-singly:hover { border-color: rgba(96, 165, 250, 0.4); }
+        .card-singly .card-icon {
+            color: #60a5fa;
+        }
 
-        .card-doubly .card-icon { color: #34d399; }
-        .card-doubly:hover { border-color: rgba(52, 211, 153, 0.4); }
+        .card-singly:hover {
+            border-color: rgba(96, 165, 250, 0.4);
+        }
 
-        .card-circular .card-icon { color: #f472b6; }
-        .card-circular:hover { border-color: rgba(244, 114, 182, 0.4); }
+        .card-doubly .card-icon {
+            color: #34d399;
+        }
+
+        .card-doubly:hover {
+            border-color: rgba(52, 211, 153, 0.4);
+        }
+
+        .card-circular .card-icon {
+            color: #f472b6;
+        }
+
+        .card-circular:hover {
+            border-color: rgba(244, 114, 182, 0.4);
+        }
 
         /* ===== OPERATIONS SECTION ===== */
         .operations-section {
@@ -396,7 +436,7 @@
                 padding: 1.4rem;
             }
         }
-    
+
         /* Dynamic premium back button */
         .back {
             display: inline-flex;
@@ -414,6 +454,7 @@
             width: fit-content;
             cursor: pointer;
         }
+
         .back:hover {
             background: rgba(255, 255, 255, 0.16);
             color: #fff;
@@ -421,135 +462,143 @@
         }
     </style>
 </head>
+
 <body>
 
-<!-- ===== ANIMATED BACKGROUND ===== -->
-<div class="bg-animation" id="bgAnimation"></div>
+    <!-- ===== ANIMATED BACKGROUND ===== -->
+    <div class="bg-animation" id="bgAnimation"></div>
 
-<!-- ===== NAVIGATION ===== -->
-<nav class="top-nav">
-    <div class="logo">
-        <i class="fas fa-link"></i>
-        <span>STRUCT-LEARN</span>
-    </div>
-    <div class="nav-links">
-        <a href="#"><i class="fas fa-home"></i> Dashboard</a>
-        <a href="#"><i class="fas fa-code"></i> Topics</a>
-        <a href="#"><i class="fas fa-trophy"></i> Achievements</a>
-        <div class="nav-avatar">U</div>
-    </div>
-</nav>
+    <!-- ===== NAVIGATION ===== -->
+    <nav class="top-nav">
+        <div class="logo">
+            <i class="fas fa-link"></i>
+            <span>STRUCT-LEARN</span>
+        </div>
+        <div class="nav-links">
+            <a href="#"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="#"><i class="fas fa-code"></i> Topics</a>
+            <a href="#"><i class="fas fa-trophy"></i> Achievements</a>
+            <div class="nav-avatar">U</div>
+        </div>
+    </nav>
 
-<!-- ===== MAIN CONTENT ===== -->
-<div class="main-container">
-        <a class="back" href="../dashboard/dashboard.html" onclick="if(document.referrer){ history.back(); return false; }">
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main-container">
+        <a class="back" href="../dashboard/dashboard.html"
+            onclick="if(document.referrer){ history.back(); return false; }">
             <i class="fas fa-arrow-left"></i> Back
         </a>
 
-    <div class="hero-section">
-        <div class="hero-content">
-            <div class="hero-badge"><i class="fas fa-link"></i> Data Structures</div>
-            <h1><i class="fas fa-sitemap"></i> Linked Lists Dojo</h1>
-            <p>Choose your linked list style — Singly, Doubly, or Circular — and master insertions, deletions, traversal, and search operations with live visualizations.</p>
-            <a class="back-link" href="../../index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        <div class="hero-section">
+            <div class="hero-content">
+                <div class="hero-badge"><i class="fas fa-link"></i> Data Structures</div>
+                <h1><i class="fas fa-sitemap"></i> Linked Lists Dojo</h1>
+                <p>Choose your linked list style — Singly, Doubly, or Circular — and master insertions, deletions,
+                    traversal, and search operations with live visualizations.</p>
+                <a class="back-link" href="../../index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
+            </div>
+        </div>
+
+        <!-- Cards Grid -->
+        <div class="cards-grid">
+            <a class="card-link card-singly" href="singly.html">
+                <div>
+                    <div class="card-icon"><i class="fas fa-arrow-right"></i></div>
+                    <h3>Singly Linked List</h3>
+                    <p>One-way pointers. Practice insert head/tail, delete, search, traverse, and reverse operations.
+                    </p>
+                </div>
+                <div class="card-footer">
+                    Open Singly List <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a class="card-link card-doubly" href="doubly.html">
+                <div>
+                    <div class="card-icon"><i class="fas fa-arrows-left-right"></i></div>
+                    <h3>Doubly Linked List</h3>
+                    <p>Forward and backward traversal with previous & next pointers. Master bidirectional operations.
+                    </p>
+                </div>
+                <div class="card-footer">
+                    Open Doubly List <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a class="card-link card-circular" href="circular.html">
+                <div>
+                    <div class="card-icon"><i class="fas fa-sync-alt"></i></div>
+                    <h3>Circular Linked List</h3>
+                    <p>Tail connects back to head, forming a continuous loop. Perfect for cyclic traversal practice.</p>
+                </div>
+                <div class="card-footer">
+                    Open Circular List <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+
+        <!-- Operations Section -->
+        <div class="operations-section">
+            <h2><i class="fas fa-cogs"></i> Core Linked List Operations</h2>
+            <div class="operations-grid">
+                <div class="operation-item"><i class="fas fa-plus-circle"></i> Insert Head / Tail</div>
+                <div class="operation-item"><i class="fas fa-minus-circle"></i> Delete Head / Tail</div>
+                <div class="operation-item"><i class="fas fa-search"></i> Search by Value</div>
+                <div class="operation-item"><i class="fas fa-sitemap"></i> Traverse / Step Through</div>
+                <div class="operation-item"><i class="fas fa-random"></i> Reverse List</div>
+                <div class="operation-item"><i class="fas fa-bullseye"></i> Insert at Position / Delete by Value</div>
+                <div class="operation-item"><i class="fas fa-arrows-left-right"></i> Bidirectional Traversal</div>
+                <div class="operation-item"><i class="fas fa-sync-alt"></i> Circular Traversal</div>
+                <div class="operation-item"><i class="fas fa-undo-alt"></i> Reset / Clear List</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="../editor/editor.html" class="btn btn-primary"
+                style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; padding: 0.8rem 2rem; border-radius: 40px; background: linear-gradient(135deg, #a78bfa, #7c3aed); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(167, 139, 250, 0.3); transition: all 0.3s ease;">
+                ⚔️ Practice Code in Dojo
+            </a>
+        </div>
+
+        <div class="page-footer">
+            <p>All linked list variations are connected here. Use this page as your central hub before diving into each
+                visualization.</p>
         </div>
     </div>
 
-    <!-- Cards Grid -->
-    <div class="cards-grid">
-        <a class="card-link card-singly" href="singly.html">
-            <div>
-                <div class="card-icon"><i class="fas fa-arrow-right"></i></div>
-                <h3>Singly Linked List</h3>
-                <p>One-way pointers. Practice insert head/tail, delete, search, traverse, and reverse operations.</p>
-            </div>
-            <div class="card-footer">
-                Open Singly List <i class="fas fa-arrow-right"></i>
-            </div>
-        </a>
+    <script>
+        // ==================== BACKGROUND ANIMATION ====================
+        const bg = document.getElementById('bgAnimation');
 
-        <a class="card-link card-doubly" href="doubly.html">
-            <div>
-                <div class="card-icon"><i class="fas fa-arrows-left-right"></i></div>
-                <h3>Doubly Linked List</h3>
-                <p>Forward and backward traversal with previous & next pointers. Master bidirectional operations.</p>
-            </div>
-            <div class="card-footer">
-                Open Doubly List <i class="fas fa-arrow-right"></i>
-            </div>
-        </a>
+        // Floating particles
+        for (let i = 0; i < 35; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'bg-particle';
+            const size = Math.random() * 8 + 3;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (Math.random() * 12 + 8) + 's';
+            particle.style.animationDelay = (Math.random() * 6) + 's';
+            bg.appendChild(particle);
+        }
 
-        <a class="card-link card-circular" href="circular.html">
-            <div>
-                <div class="card-icon"><i class="fas fa-sync-alt"></i></div>
-                <h3>Circular Linked List</h3>
-                <p>Tail connects back to head, forming a continuous loop. Perfect for cyclic traversal practice.</p>
-            </div>
-            <div class="card-footer">
-                Open Circular List <i class="fas fa-arrow-right"></i>
-            </div>
-        </a>
-    </div>
+        // Orbs
+        const orbColors = ['#a78bfa', '#60a5fa', '#34d399'];
+        orbColors.forEach((color, i) => {
+            const orb = document.createElement('div');
+            orb.className = 'bg-orb';
+            orb.style.width = (200 + Math.random() * 150) + 'px';
+            orb.style.height = orb.style.width;
+            orb.style.background = color;
+            orb.style.left = (10 + i * 30) + '%';
+            orb.style.top = (10 + i * 20) + '%';
+            orb.style.animationDelay = (i * 1.5) + 's';
+            bg.appendChild(orb);
+        });
 
-    <!-- Operations Section -->
-    <div class="operations-section">
-        <h2><i class="fas fa-cogs"></i> Core Linked List Operations</h2>
-        <div class="operations-grid">
-            <div class="operation-item"><i class="fas fa-plus-circle"></i> Insert Head / Tail</div>
-            <div class="operation-item"><i class="fas fa-minus-circle"></i> Delete Head / Tail</div>
-            <div class="operation-item"><i class="fas fa-search"></i> Search by Value</div>
-            <div class="operation-item"><i class="fas fa-sitemap"></i> Traverse / Step Through</div>
-            <div class="operation-item"><i class="fas fa-random"></i> Reverse List</div>
-            <div class="operation-item"><i class="fas fa-bullseye"></i> Insert at Position / Delete by Value</div>
-            <div class="operation-item"><i class="fas fa-arrows-left-right"></i> Bidirectional Traversal</div>
-            <div class="operation-item"><i class="fas fa-sync-alt"></i> Circular Traversal</div>
-            <div class="operation-item"><i class="fas fa-undo-alt"></i> Reset / Clear List</div>
-        </div>
-    </div>
-
-    <div style="text-align: center; margin-top: 2rem;">
-        <a href="../editor/editor.html" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; padding: 0.8rem 2rem; border-radius: 40px; background: linear-gradient(135deg, #a78bfa, #7c3aed); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(167, 139, 250, 0.3); transition: all 0.3s ease;">
-            ⚔️ Practice Code in Dojo
-        </a>
-    </div>
-
-    <div class="page-footer">
-        <p>All linked list variations are connected here. Use this page as your central hub before diving into each visualization.</p>
-    </div>
-</div>
-
-<script>
-    // ==================== BACKGROUND ANIMATION ====================
-    const bg = document.getElementById('bgAnimation');
-
-    // Floating particles
-    for (let i = 0; i < 35; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'bg-particle';
-        const size = Math.random() * 8 + 3;
-        particle.style.width = size + 'px';
-        particle.style.height = size + 'px';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDuration = (Math.random() * 12 + 8) + 's';
-        particle.style.animationDelay = (Math.random() * 6) + 's';
-        bg.appendChild(particle);
-    }
-
-    // Orbs
-    const orbColors = ['#a78bfa', '#60a5fa', '#34d399'];
-    orbColors.forEach((color, i) => {
-        const orb = document.createElement('div');
-        orb.className = 'bg-orb';
-        orb.style.width = (200 + Math.random() * 150) + 'px';
-        orb.style.height = orb.style.width;
-        orb.style.background = color;
-        orb.style.left = (10 + i * 30) + '%';
-        orb.style.top = (10 + i * 20) + '%';
-        orb.style.animationDelay = (i * 1.5) + 's';
-        bg.appendChild(orb);
-    });
-
-    console.log('%c🔗 LINKED LISTS DOJO 🔗\nMaster Singly, Doubly, and Circular Linked Lists with live visualizations!', 'color: #a78bfa; font-size: 14px; font-weight: bold;');
-</script>
+        console.log('%c🔗 LINKED LISTS DOJO 🔗\nMaster Singly, Doubly, and Circular Linked Lists with live visualizations!', 'color: #a78bfa; font-size: 14px; font-weight: bold;');
+    </script>
 </body>
+
 </html>

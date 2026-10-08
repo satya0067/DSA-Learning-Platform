@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Stacks - Struct-Learn | Demon Slayer Dojo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -52,10 +55,23 @@
         }
 
         @keyframes floatParticle {
-            0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            10% { opacity: 0.6; }
-            90% { opacity: 0.3; }
-            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.6;
+            }
+
+            90% {
+                opacity: 0.3;
+            }
+
+            100% {
+                transform: translateY(-10vh) scale(1);
+                opacity: 0;
+            }
         }
 
         .bg-orb {
@@ -66,8 +82,17 @@
         }
 
         @keyframes orbPulse {
-            0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.3; }
-            50% { transform: scale(1.2) translate(50px, -30px); opacity: 0.6; }
+
+            0%,
+            100% {
+                transform: scale(1) translate(0, 0);
+                opacity: 0.3;
+            }
+
+            50% {
+                transform: scale(1.2) translate(50px, -30px);
+                opacity: 0.6;
+            }
         }
 
         /* ===== NAVIGATION ===== */
@@ -273,8 +298,15 @@
         }
 
         @keyframes fadeSlide {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* ===== VISUALIZATION ===== */
@@ -318,8 +350,15 @@
         }
 
         @keyframes slideIn {
-            from { transform: translateY(-20px) scale(0.9); opacity: 0; }
-            to { transform: translateY(0) scale(1); opacity: 1; }
+            from {
+                transform: translateY(-20px) scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
         }
 
         .stack-element.pop-out {
@@ -327,8 +366,15 @@
         }
 
         @keyframes popOut {
-            from { transform: scale(1); opacity: 1; }
-            to { transform: scale(1.1) translateY(-20px); opacity: 0; }
+            from {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            to {
+                transform: scale(1.1) translateY(-20px);
+                opacity: 0;
+            }
         }
 
         .stack-base {
@@ -517,11 +563,25 @@
             line-height: 1.6;
         }
 
-        .editor-content .keyword { color: #f472b6; }
-        .editor-content .string { color: #34d399; }
-        .editor-content .comment { color: #64748b; }
-        .editor-content .function { color: #60a5fa; }
-        .editor-content .number { color: #fbbf24; }
+        .editor-content .keyword {
+            color: #f472b6;
+        }
+
+        .editor-content .string {
+            color: #34d399;
+        }
+
+        .editor-content .comment {
+            color: #64748b;
+        }
+
+        .editor-content .function {
+            color: #60a5fa;
+        }
+
+        .editor-content .number {
+            color: #fbbf24;
+        }
 
         /* ===== VIDEO SECTION ===== */
         .video-grid {
@@ -603,24 +663,29 @@
             .hero-section h1 {
                 font-size: 2rem;
             }
+
             .hero-section {
                 padding: 1.5rem;
             }
+
             .operation-tabs {
                 border-radius: var(--border-radius);
                 flex-direction: column;
             }
+
             .tab-btn {
                 text-align: center;
             }
+
             .stack-controls {
                 justify-content: center;
             }
+
             .input-value {
                 width: 100%;
             }
         }
-    
+
         /* Dynamic premium back button */
         .back {
             display: inline-flex;
@@ -638,6 +703,7 @@
             width: fit-content;
             cursor: pointer;
         }
+
         .back:hover {
             background: rgba(255, 255, 255, 0.16);
             color: #fff;
@@ -645,73 +711,82 @@
         }
     </style>
 </head>
+
 <body>
 
-<!-- ===== ANIMATED BACKGROUND ===== -->
-<div class="bg-animation" id="bgAnimation"></div>
+    <!-- ===== ANIMATED BACKGROUND ===== -->
+    <div class="bg-animation" id="bgAnimation"></div>
 
-<!-- ===== NAVIGATION ===== -->
-<nav class="top-nav">
-    <div class="logo">
-        <i class="fas fa-layer-group"></i>
-        <span>STRUCT-LEARN</span>
-    </div>
-    <div class="nav-links">
-        <a href="#"><i class="fas fa-home"></i> Dashboard</a>
-        <a href="#"><i class="fas fa-code"></i> Topics</a>
-        <a href="#"><i class="fas fa-trophy"></i> Achievements</a>
-        <div class="nav-avatar">U</div>
-    </div>
-</nav>
+    <!-- ===== NAVIGATION ===== -->
+    <nav class="top-nav">
+        <div class="logo">
+            <i class="fas fa-layer-group"></i>
+            <span>STRUCT-LEARN</span>
+        </div>
+        <div class="nav-links">
+            <a href="#"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="#"><i class="fas fa-code"></i> Topics</a>
+            <a href="#"><i class="fas fa-trophy"></i> Achievements</a>
+            <div class="nav-avatar">U</div>
+        </div>
+    </nav>
 
-<!-- ===== MAIN CONTENT ===== -->
-<div class="main-container">
-        <a class="back" href="../dashboard/dashboard.html" onclick="if(document.referrer){ history.back(); return false; }">
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main-container">
+        <a class="back" href="../dashboard/dashboard.html"
+            onclick="if(document.referrer){ history.back(); return false; }">
             <i class="fas fa-arrow-left"></i> Back
         </a>
 
-    <a class="back-link" href="index.html">
-        <i class="fas fa-arrow-left"></i> Back to Home
-    </a>
+        <a class="back-link" href="../../index.html">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
 
-    <!-- Hero Section -->
-    <div class="hero-section">
-        <div class="hero-content">
-            <div class="hero-badge"><i class="fas fa-layer-group"></i> LIFO Data Structure</div>
-            <h1><i class="fas fa-layer-group"></i> Stacks Dojo</h1>
-            <p>Last In First Out (LIFO) — Learn stack concepts here, then continue to the dedicated stack operations practice page.</p>
-        </div>
-    </div>
-    <div class="operation-tabs">
-        <button class="tab-btn active" data-tab="operations"><i class="fas fa-play"></i> Stack Operations</button>
-        <button class="tab-btn" data-tab="implementation"><i class="fas fa-code"></i> Implementation</button>
-        <button class="tab-btn" data-tab="videos"><i class="fas fa-video"></i> Videos</button>
-        <button class="tab-btn" data-tab="applications"><i class="fas fa-briefcase"></i> Applications</button>
-    </div>
-
-    <!-- ===== TAB 1: OPERATIONS ===== -->
-    <div id="operations" class="tab-content active">
-        <h2 style="color: #fbbf24; margin-bottom: 0.5rem;"><i class="fas fa-play"></i> Stack Operations</h2>
-        <p style="color: #94a3b8; margin-bottom: 1rem;">Explore stack push, pop, and peek in the dedicated operations page.</p>
-
-        <div class="algorithm-section" style="padding: 2rem; border-radius: 28px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);">
-            <h3 style="margin-bottom: 1rem;"><i class="fas fa-arrow-right"></i> Open the Stack Operations Dojo</h3>
-            <p style="color: #cbd5e1; margin-bottom: 1.5rem;">The interactive stack practice has been moved to a separate page so you can focus on learning stack concepts here first.</p>
-            <a href="stack-operations.html" style="display:inline-flex; align-items:center; gap:0.75rem; padding:0.95rem 1.4rem; border-radius:999px; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1a0a2e; text-decoration:none; font-weight:700; box-shadow: 0 12px 30px rgba(251, 146, 60, 0.18);">Go to Stack Operations Page <i class="fas fa-external-link-alt"></i></a>
-        </div>
-    </div>
-
-    <!-- ===== TAB 2: IMPLEMENTATION ===== -->
-    <div id="implementation" class="tab-content">
-        <h2 style="color: #fbbf24; margin-bottom: 0.5rem;"><i class="fas fa-code"></i> Stack Implementation</h2>
-        <p style="color: #94a3b8; margin-bottom: 1rem;">Full JavaScript implementation with all stack operations.</p>
-
-        <div class="code-editor">
-            <div class="editor-header">
-                <span><i class="fas fa-code"></i> Stack.js</span>
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="hero-content">
+                <div class="hero-badge"><i class="fas fa-layer-group"></i> LIFO Data Structure</div>
+                <h1><i class="fas fa-layer-group"></i> Stacks Dojo</h1>
+                <p>Last In First Out (LIFO) — Learn stack concepts here, then continue to the dedicated stack operations
+                    practice page.</p>
             </div>
-            <div class="editor-content">
-                <pre><code><span class="keyword">class</span> <span class="function">Stack</span> {
+        </div>
+        <div class="operation-tabs">
+            <button class="tab-btn active" data-tab="operations"><i class="fas fa-play"></i> Stack Operations</button>
+            <button class="tab-btn" data-tab="implementation"><i class="fas fa-code"></i> Implementation</button>
+            <button class="tab-btn" data-tab="videos"><i class="fas fa-video"></i> Videos</button>
+            <button class="tab-btn" data-tab="applications"><i class="fas fa-briefcase"></i> Applications</button>
+        </div>
+
+        <!-- ===== TAB 1: OPERATIONS ===== -->
+        <div id="operations" class="tab-content active">
+            <h2 style="color: #fbbf24; margin-bottom: 0.5rem;"><i class="fas fa-play"></i> Stack Operations</h2>
+            <p style="color: #94a3b8; margin-bottom: 1rem;">Explore stack push, pop, and peek in the dedicated
+                operations page.</p>
+
+            <div class="algorithm-section"
+                style="padding: 2rem; border-radius: 28px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);">
+                <h3 style="margin-bottom: 1rem;"><i class="fas fa-arrow-right"></i> Open the Stack Operations Dojo</h3>
+                <p style="color: #cbd5e1; margin-bottom: 1.5rem;">The interactive stack practice has been moved to a
+                    separate page so you can focus on learning stack concepts here first.</p>
+                <a href="stack-operations.html"
+                    style="display:inline-flex; align-items:center; gap:0.75rem; padding:0.95rem 1.4rem; border-radius:999px; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1a0a2e; text-decoration:none; font-weight:700; box-shadow: 0 12px 30px rgba(251, 146, 60, 0.18);">Go
+                    to Stack Operations Page <i class="fas fa-external-link-alt"></i></a>
+            </div>
+        </div>
+
+        <!-- ===== TAB 2: IMPLEMENTATION ===== -->
+        <div id="implementation" class="tab-content">
+            <h2 style="color: #fbbf24; margin-bottom: 0.5rem;"><i class="fas fa-code"></i> Stack Implementation</h2>
+            <p style="color: #94a3b8; margin-bottom: 1rem;">Full JavaScript implementation with all stack operations.
+            </p>
+
+            <div class="code-editor">
+                <div class="editor-header">
+                    <span><i class="fas fa-code"></i> Stack.js</span>
+                </div>
+                <div class="editor-content">
+                    <pre><code><span class="keyword">class</span> <span class="function">Stack</span> {
     <span class="function">constructor</span>() {
         <span class="keyword">this</span>.items = [];
         <span class="keyword">this</span>.top = -<span class="number">1</span>;
@@ -750,115 +825,119 @@
     <span class="function">isFull</span>() { <span class="keyword">return</span> <span class="keyword">this</span>.top === <span class="keyword">this</span>.maxSize - <span class="number">1</span>; }
     <span class="function">size</span>() { <span class="keyword">return</span> <span class="keyword">this</span>.top + <span class="number">1</span>; }
 }</code></pre>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== TAB 3: VIDEOS ===== -->
-    <div id="videos" class="tab-content">
-        <h2 style="color: #fbbf24; margin-bottom: 0.5rem;"><i class="fas fa-video"></i> Stack Videos & Tutorials</h2>
-        <p style="color: #94a3b8; margin-bottom: 1rem;">Learn stacks through these comprehensive video tutorials.</p>
-
-        <div class="video-grid">
-            <div class="video-card">
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/wjI1WNcIntg" allowfullscreen loading="lazy"></iframe>
-                </div>
-                <div class="video-info">
-                    <h4>Stack Data Structure Basics</h4>
-                    <p>Introduction to stack, LIFO principle, and basic operations like push and pop.</p>
-                </div>
-            </div>
-            <div class="video-card">
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/XcADJHN6Vuw" allowfullscreen loading="lazy"></iframe>
-                </div>
-                <div class="video-info">
-                    <h4>Stack Implementation in JavaScript</h4>
-                    <p>Learn how to implement a stack from scratch using JavaScript arrays.</p>
-                </div>
-            </div>
-            <div class="video-card">
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/sFmXwbIjwwI" allowfullscreen loading="lazy"></iframe>
-                </div>
-                <div class="video-info">
-                    <h4>Stack Time & Space Complexity</h4>
-                    <p>Understand Big O complexity analysis for stack operations.</p>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- ===== TAB 4: APPLICATIONS ===== -->
-    <div id="applications" class="tab-content">
-        <h2 style="color: #fbbf24; margin-bottom: 0.5rem;"><i class="fas fa-briefcase"></i> Stack Applications</h2>
-        <p style="color: #94a3b8; margin-bottom: 1rem;">Real-world applications of the stack data structure.</p>
+        <!-- ===== TAB 3: VIDEOS ===== -->
+        <div id="videos" class="tab-content">
+            <h2 style="color: #fbbf24; margin-bottom: 0.5rem;"><i class="fas fa-video"></i> Stack Videos & Tutorials
+            </h2>
+            <p style="color: #94a3b8; margin-bottom: 1rem;">Learn stacks through these comprehensive video tutorials.
+            </p>
 
-        <div class="algorithm-section">
-            <div class="app-list">
-                <div class="app-item"><i class="fas fa-code"></i> Function Call Management (Call Stack)</div>
-                <div class="app-item"><i class="fas fa-calculator"></i> Expression Evaluation</div>
-                <div class="app-item"><i class="fas fa-undo-alt"></i> Undo/Redo Operations</div>
-                <div class="app-item"><i class="fas fa-history"></i> Browser History (Back/Forward)</div>
-                <div class="app-item"><i class="fas fa-sitemap"></i> Depth-First Search (DFS)</div>
-                <div class="app-item"><i class="fas fa-check-double"></i> Syntax Parsing & Compilers</div>
-                <div class="app-item"><i class="fas fa-memory"></i> Stack Memory Allocation</div>
-                <div class="app-item"><i class="fas fa-brackets-curly"></i> Balanced Parentheses Checking</div>
+            <div class="video-grid">
+                <div class="video-card">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/wjI1WNcIntg" allowfullscreen loading="lazy"></iframe>
+                    </div>
+                    <div class="video-info">
+                        <h4>Stack Data Structure Basics</h4>
+                        <p>Introduction to stack, LIFO principle, and basic operations like push and pop.</p>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/XcADJHN6Vuw" allowfullscreen loading="lazy"></iframe>
+                    </div>
+                    <div class="video-info">
+                        <h4>Stack Implementation in JavaScript</h4>
+                        <p>Learn how to implement a stack from scratch using JavaScript arrays.</p>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/sFmXwbIjwwI" allowfullscreen loading="lazy"></iframe>
+                    </div>
+                    <div class="video-info">
+                        <h4>Stack Time & Space Complexity</h4>
+                        <p>Understand Big O complexity analysis for stack operations.</p>
+                    </div>
+                </div>
             </div>
+        </div>
+
+        <!-- ===== TAB 4: APPLICATIONS ===== -->
+        <div id="applications" class="tab-content">
+            <h2 style="color: #fbbf24; margin-bottom: 0.5rem;"><i class="fas fa-briefcase"></i> Stack Applications</h2>
+            <p style="color: #94a3b8; margin-bottom: 1rem;">Real-world applications of the stack data structure.</p>
+
+            <div class="algorithm-section">
+                <div class="app-list">
+                    <div class="app-item"><i class="fas fa-code"></i> Function Call Management (Call Stack)</div>
+                    <div class="app-item"><i class="fas fa-calculator"></i> Expression Evaluation</div>
+                    <div class="app-item"><i class="fas fa-undo-alt"></i> Undo/Redo Operations</div>
+                    <div class="app-item"><i class="fas fa-history"></i> Browser History (Back/Forward)</div>
+                    <div class="app-item"><i class="fas fa-sitemap"></i> Depth-First Search (DFS)</div>
+                    <div class="app-item"><i class="fas fa-check-double"></i> Syntax Parsing & Compilers</div>
+                    <div class="app-item"><i class="fas fa-memory"></i> Stack Memory Allocation</div>
+                    <div class="app-item"><i class="fas fa-brackets-curly"></i> Balanced Parentheses Checking</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem; display: flex; justify-content: center; margin-bottom: 2rem;">
+            <a href="../editor/editor.html" class="btn-primary"
+                style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; padding: 0.8rem 2rem; border-radius: 40px; background: linear-gradient(135deg, #fbbf24, #ea580c); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); transition: all 0.3s ease; justify-content: center;">
+                ⚔️ Practice Code in Dojo
+            </a>
         </div>
     </div>
 
-    <div style="text-align: center; margin-top: 2rem; display: flex; justify-content: center; margin-bottom: 2rem;">
-        <a href="../editor/editor.html" class="btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; padding: 0.8rem 2rem; border-radius: 40px; background: linear-gradient(135deg, #fbbf24, #ea580c); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); transition: all 0.3s ease; justify-content: center;">
-            ⚔️ Practice Code in Dojo
-        </a>
-    </div>
-</div>
+    <script>
+        // ==================== BACKGROUND ANIMATION ====================
+        const bg = document.getElementById('bgAnimation');
 
-<script>
-    // ==================== BACKGROUND ANIMATION ====================
-    const bg = document.getElementById('bgAnimation');
+        for (let i = 0; i < 35; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'bg-particle';
+            const size = Math.random() * 8 + 3;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (Math.random() * 12 + 8) + 's';
+            particle.style.animationDelay = (Math.random() * 6) + 's';
+            bg.appendChild(particle);
+        }
 
-    for (let i = 0; i < 35; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'bg-particle';
-        const size = Math.random() * 8 + 3;
-        particle.style.width = size + 'px';
-        particle.style.height = size + 'px';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDuration = (Math.random() * 12 + 8) + 's';
-        particle.style.animationDelay = (Math.random() * 6) + 's';
-        bg.appendChild(particle);
-    }
-
-    const orbColors = ['#f59e0b', '#fbbf24', '#d97706'];
-    orbColors.forEach((color, i) => {
-        const orb = document.createElement('div');
-        orb.className = 'bg-orb';
-        orb.style.width = (200 + Math.random() * 150) + 'px';
-        orb.style.height = orb.style.width;
-        orb.style.background = color;
-        orb.style.left = (10 + i * 30) + '%';
-        orb.style.top = (10 + i * 20) + '%';
-        orb.style.animationDelay = (i * 1.5) + 's';
-        bg.appendChild(orb);
-    });
-
-    // ==================== TAB FUNCTIONALITY ====================
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.getElementById(this.getAttribute('data-tab')).classList.add('active');
+        const orbColors = ['#f59e0b', '#fbbf24', '#d97706'];
+        orbColors.forEach((color, i) => {
+            const orb = document.createElement('div');
+            orb.className = 'bg-orb';
+            orb.style.width = (200 + Math.random() * 150) + 'px';
+            orb.style.height = orb.style.width;
+            orb.style.background = color;
+            orb.style.left = (10 + i * 30) + '%';
+            orb.style.top = (10 + i * 20) + '%';
+            orb.style.animationDelay = (i * 1.5) + 's';
+            bg.appendChild(orb);
         });
-    });
 
-    // ==================== STACK OPERATIONS REDIRECT ====================
-    // The interactive stack visualization was moved to stack-operations.html.
+        // ==================== TAB FUNCTIONALITY ====================
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(this.getAttribute('data-tab')).classList.add('active');
+            });
+        });
 
-    console.log('%c📚 STACKS DOJO 📚\nStack operations are now available on a separate page.', 'color: #f59e0b; font-size: 14px; font-weight: bold;');
-</script>
+        // ==================== STACK OPERATIONS REDIRECT ====================
+        // The interactive stack visualization was moved to stack-operations.html.
+
+        console.log('%c📚 STACKS DOJO 📚\nStack operations are now available on a separate page.', 'color: #f59e0b; font-size: 14px; font-weight: bold;');
+    </script>
 </body>
+
 </html>

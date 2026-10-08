@@ -1,48 +1,52 @@
 const { getSupabase } = require('../config/supabase');
+const { quizQuestionsPool } = require('../data/quizQuestionsPool');
+const { standardQuizzes } = require('../data/standardQuizzes');
 
-const defaultQuizData = {
-  title: 'DSA Fundamentals Quiz',
-  topic: 'general',
-  difficulty: 'easy',
-  questions: [
-    {
-      id: 'q1',
-      question: 'What is the time complexity of binary search?',
-      options: ['O(n)', 'O(log n)', 'O(1)', 'O(n log n)'],
-      correctAnswer: 1,
-      explanation: 'Binary search divides the search space in half at each step, yielding O(log n) complexity.'
-    },
-    {
-      id: 'q2',
-      question: 'Which data structure uses FIFO?',
-      options: ['Stack', 'Queue', 'Tree', 'Graph'],
-      correctAnswer: 1,
-      explanation: 'Queue follows First-In, First-Out (FIFO) ordering.'
-    },
-    {
-      id: 'q3',
-      question: 'Which data structure uses LIFO?',
-      options: ['Queue', 'Stack', 'Array', 'Tree'],
-      correctAnswer: 1,
-      explanation: 'Stack follows Last-In, First-Out (LIFO) ordering.'
-    },
-    {
-      id: 'q4',
-      question: 'What is the time complexity of merge sort?',
-      options: ['O(n^2)', 'O(n log n)', 'O(n)', 'O(log n)'],
-      correctAnswer: 1,
-      explanation: 'Merge sort always splits the list in halves and merges in linear time, guaranteeing O(n log n).'
-    },
-    {
-      id: 'q5',
-      question: 'Which algorithm uses a stack?',
-      options: ['BFS', 'DFS', 'Dijkstra', 'Prim'],
-      correctAnswer: 1,
-      explanation: 'Depth-First Search (DFS) uses a recursion stack or an explicit stack data structure.'
-    }
-  ]
+// Helper to shuffle an array
+const shuffle = (array) => {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
 };
 
+// Ensure all standard topic trials exist in the database
+const ensureStandardQuizzesExist = async () => {
+  const supabase = getSupabase();
+  const { data: existingQuizzes, error } = await supabase
+    .from('quizzes')
+    .select('id, title, topic');
+
+  if (error) {
+    console.error('Error checking existing quizzes:', error);
+  }
+
+  const existingTitles = new Set((existingQuizzes || []).map(q => q.title.toLowerCase()));
+
+  for (const sq of standardQuizzes) {
+    if (!existingTitles.has(sq.title.toLowerCase())) {
+      try {
+        await supabase
+          .from('quizzes')
+          .insert({
+            title: sq.title,
+            topic: sq.topic,
+            difficulty: sq.difficulty,
+            questions: sq.questions
+          });
+      } catch (insertErr) {
+        console.warn(`Could not seed quiz "${sq.title}":`, insertErr.message);
+      }
+    }
+  }
+
+  const { data: allQuizzes } = await supabase.from('quizzes').select('*');
+  return allQuizzes || standardQuizzes;
+};
+
+// Ensure fallback default quiz exists
 const ensureDefaultQuizExists = async () => {
   const supabase = getSupabase();
   const { data: existing } = await supabase
@@ -52,17 +56,18 @@ const ensureDefaultQuizExists = async () => {
     .maybeSingle();
 
   if (!existing) {
+    const fallback = standardQuizzes[0];
     const { data: created } = await supabase
       .from('quizzes')
       .insert({
-        title: defaultQuizData.title,
-        topic: defaultQuizData.topic,
-        difficulty: defaultQuizData.difficulty,
-        questions: defaultQuizData.questions
+        title: fallback.title,
+        topic: fallback.topic,
+        difficulty: fallback.difficulty,
+        questions: fallback.questions
       })
       .select()
       .single();
-    return created;
+    return created || fallback;
   }
   return existing;
 };
@@ -77,21 +82,20 @@ const getQuizzes = async (req, res) => {
 
     if (error) throw error;
 
-    if (!quizzes || quizzes.length === 0) {
-      const defaultQuiz = await ensureDefaultQuizExists();
-      quizzes = [defaultQuiz];
+    if (!quizzes || quizzes.length < standardQuizzes.length) {
+      quizzes = await ensureStandardQuizzesExist();
     }
 
     // Strip correctAnswer for client safety
-    const safeQuizzes = quizzes.map(q => ({
+    const safeQuizzes = (quizzes || []).map(q => ({
       _id: q.id,
       id: q.id,
       title: q.title,
       topic: q.topic,
       difficulty: q.difficulty,
-      questions: (q.questions || []).map(quest => ({
-        _id: quest.id || quest._id,
-        id: quest.id || quest._id,
+      questions: (q.questions || []).map((quest, idx) => ({
+        _id: quest.id || quest._id || `q_${q.id}_${idx}`,
+        id: quest.id || quest._id || `q_${q.id}_${idx}`,
         question: quest.question,
         options: quest.options,
         hint: quest.hint
@@ -105,7 +109,7 @@ const getQuizzes = async (req, res) => {
   }
 };
 
-// CREATE quiz
+// CREATE quiz (admin)
 const createQuiz = async (req, res) => {
   try {
     const supabase = getSupabase();
@@ -117,7 +121,10 @@ const createQuiz = async (req, res) => {
         title,
         topic: topic || 'general',
         difficulty: difficulty || 'all',
-        questions: questions || []
+        questions: (questions || []).map((q, idx) => ({
+          id: q.id || `custom_q_${Date.now()}_${idx}`,
+          ...q
+        }))
       })
       .select()
       .single();
@@ -151,9 +158,9 @@ const getQuizById = async (req, res) => {
       title: quiz.title,
       topic: quiz.topic,
       difficulty: quiz.difficulty,
-      questions: (quiz.questions || []).map(q => ({
-        _id: q.id || q._id,
-        id: q.id || q._id,
+      questions: (quiz.questions || []).map((q, idx) => ({
+        _id: q.id || q._id || `q_${quiz.id}_${idx}`,
+        id: q.id || q._id || `q_${quiz.id}_${idx}`,
         question: q.question,
         options: q.options,
         hint: q.hint
@@ -167,38 +174,102 @@ const getQuizById = async (req, res) => {
   }
 };
 
-// RANDOM QUIZ
+// RANDOM / DYNAMIC QUIZ (Generates custom quiz based on topic, difficulty, and limit)
 const getRandomQuiz = async (req, res) => {
   try {
     const supabase = getSupabase();
-    const { topic, difficulty, limit } = req.query;
+    let { topic, difficulty, limit } = req.query;
 
-    let query = supabase.from('quizzes').select('*');
-    if (topic && topic !== 'all' && topic !== 'general') {
-      query = query.ilike('topic', `%${topic}%`);
+    const reqLimit = Math.max(1, Math.min(parseInt(limit, 10) || 10, 20));
+    topic = (topic || 'all').toLowerCase().trim();
+    difficulty = (difficulty || 'all').toLowerCase().trim();
+
+    // Map any frontend topic aliases
+    if (topic === 'linked-list') topic = 'linked-lists';
+    if (topic === 'stack-queue' || topic === 'stacks' || topic === 'queues') topic = 'stacks-queues';
+
+    // Filter question pool
+    let candidatePool = quizQuestionsPool;
+    if (topic !== 'all' && topic !== 'general') {
+      const topicMatches = quizQuestionsPool.filter(q => q.topic === topic);
+      if (topicMatches.length > 0) {
+        candidatePool = topicMatches;
+      }
     }
 
-    const { data: quizzes } = await query;
-
-    let quiz = null;
-    if (quizzes && quizzes.length > 0) {
-      quiz = quizzes[Math.floor(Math.random() * quizzes.length)];
-    } else {
-      quiz = await ensureDefaultQuizExists();
+    let filteredByDiff = candidatePool;
+    if (difficulty !== 'all') {
+      const diffMatches = candidatePool.filter(q => q.difficulty === difficulty);
+      if (diffMatches.length > 0) {
+        // If diff matches are enough or available, use them first
+        filteredByDiff = diffMatches;
+        // If not enough to satisfy reqLimit, backfill with other difficulties from same pool
+        if (filteredByDiff.length < reqLimit && candidatePool.length > filteredByDiff.length) {
+          const remaining = candidatePool.filter(q => q.difficulty !== difficulty);
+          filteredByDiff = [...filteredByDiff, ...shuffle(remaining)];
+        }
+      }
     }
 
-    const clientQuestions = (quiz.questions || []).map(q => ({
-      _id: q.id || q._id,
-      id: q.id || q._id,
+    // Shuffle and pick exactly the requested limit
+    const shuffled = shuffle(filteredByDiff);
+    const selectedQuestions = shuffled.slice(0, Math.min(reqLimit, shuffled.length));
+
+    // Ensure all questions have consistent IDs
+    const finalQuestions = selectedQuestions.map((q, idx) => ({
+      id: q.id || `q_dyn_${Date.now()}_${idx}`,
+      _id: q.id || `q_dyn_${Date.now()}_${idx}`,
+      question: q.question,
+      options: q.options,
+      correctAnswer: q.correctAnswer,
+      topic: q.topic,
+      difficulty: q.difficulty,
+      hint: q.hint,
+      explanation: q.explanation
+    }));
+
+    const topicLabel = topic === 'all' ? 'Master DSA' : topic.replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const diffLabel = difficulty === 'all' ? 'All Ranks' : difficulty.toUpperCase();
+    const quizTitle = `${topicLabel} Concentration Trial (${diffLabel})`;
+
+    // Insert dynamic quiz into DB so submitQuiz can grade against exact questions
+    let createdQuiz = null;
+    try {
+      const { data, error } = await supabase
+        .from('quizzes')
+        .insert({
+          title: quizTitle,
+          topic: topic,
+          difficulty: difficulty,
+          questions: finalQuestions
+        })
+        .select()
+        .single();
+
+      if (!error && data) {
+        createdQuiz = data;
+      }
+    } catch (insertError) {
+      console.warn('Could not persist dynamic quiz to DB:', insertError.message);
+    }
+
+    const quizId = createdQuiz ? createdQuiz.id : `dyn_${Date.now()}`;
+
+    // Return client-safe questions
+    const clientQuestions = finalQuestions.map(q => ({
+      _id: q.id,
+      id: q.id,
       question: q.question,
       options: q.options,
       hint: q.hint
     }));
 
     res.json({
-      _id: quiz.id,
-      id: quiz.id,
-      title: quiz.title,
+      _id: quizId,
+      id: quizId,
+      title: quizTitle,
+      topic,
+      difficulty,
       questions: clientQuestions
     });
   } catch (error) {
@@ -229,28 +300,33 @@ const submitQuiz = async (req, res) => {
     let score = 0;
     const questions = quiz.questions || [];
 
-    if (answers.length > 0 && typeof answers[0] === 'object' && answers[0] !== null && 'questionId' in answers[0]) {
-      const answerMap = new Map();
-      answers.forEach(({ questionId, answer }) => {
-        if (questionId !== undefined && answer !== undefined) {
-          answerMap.set(String(questionId), answer);
+    // Map answers by questionId and fallback by index
+    const answerMap = new Map();
+    answers.forEach((ans, idx) => {
+      if (typeof ans === 'object' && ans !== null && 'questionId' in ans) {
+        if (ans.questionId !== undefined && ans.answer !== undefined) {
+          answerMap.set(String(ans.questionId), ans.answer);
         }
-      });
+      } else {
+        answerMap.set(String(idx), ans);
+      }
+    });
 
-      questions.forEach((q, index) => {
-        const key = String(q.id || q._id || index);
-        const submitted = answerMap.get(key);
-        if (submitted === q.correctAnswer) {
-          score++;
-        }
-      });
-    } else {
-      questions.forEach((q, i) => {
-        if (answers[i] === q.correctAnswer) {
-          score++;
-        }
-      });
-    }
+    const evaluatedQuestions = questions.map((q, index) => {
+      const qId = String(q.id || q._id || index);
+      const submitted = answerMap.has(qId) ? answerMap.get(qId) : answerMap.get(String(index));
+      const isCorrect = submitted !== undefined && submitted === q.correctAnswer;
+      if (isCorrect) score++;
+
+      return {
+        questionId: q.id || q._id || `q_${index}`,
+        userAnswer: submitted !== undefined ? submitted : -1,
+        correctAnswer: q.correctAnswer,
+        isCorrect,
+        explanation: q.explanation || '',
+        hint: q.hint || ''
+      };
+    });
 
     const percentage = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
     let userUpdates = null;
@@ -311,6 +387,7 @@ const submitQuiz = async (req, res) => {
       score,
       total: questions.length,
       percentage,
+      results: evaluatedQuestions,
       correctAnswers: questions.map(q => q.correctAnswer),
       explanations: questions.map(q => q.explanation || ''),
       hints: questions.map(q => q.hint || ''),
@@ -327,5 +404,6 @@ module.exports = {
   createQuiz,
   getQuizById,
   getRandomQuiz,
-  submitQuiz
+  submitQuiz,
+  ensureStandardQuizzesExist
 };

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useStore } from '../../store/useStore';
-import { ArrowLeft, ChevronLeft, ChevronRight, Star, Play, CheckCircle, Search, Hash, BookOpen } from 'lucide-react';
+import { ArrowLeft, Home, ChevronLeft, ChevronRight, Star, Play, CheckCircle, Search, Hash, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TopNav() {
@@ -38,6 +38,10 @@ export default function TopNav() {
       // Fallback destination if opened in a fresh tab or direct URL
       window.location.href = '/pages/practice/practice.html';
     }
+  };
+
+  const handleHome = () => {
+    window.location.href = '/index.html';
   };
 
   // Extract all unique categories/topics
@@ -81,14 +85,25 @@ export default function TopNav() {
           <span className="hidden sm:inline">Back</span>
         </button>
 
+        {/* Home Button */}
+        <button
+          onClick={handleHome}
+          className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#1a1a2e] hover:bg-[#202d4f] text-gray-300 hover:text-white border border-[#2e3b5e] hover:border-amber-500/50 transition-all text-xs sm:text-sm font-semibold shadow-sm group active:scale-95 cursor-pointer"
+          title="Go to Home page"
+          aria-label="Go to Home page"
+        >
+          <Home size={16} className="text-gray-400 group-hover:text-amber-400 transition-colors" />
+          <span className="hidden sm:inline">Home</span>
+        </button>
+
         {/* Vertical divider */}
         <div className="h-5 w-[1px] bg-[#2e3b5e] hidden sm:block"></div>
 
         {/* Logo / Platform Name */}
         <button
-          onClick={handleBack}
+          onClick={handleHome}
           className="flex items-center space-x-2 text-xl font-bold tracking-wider text-white hover:opacity-90 transition-opacity cursor-pointer text-left"
-          title="Return to previous page"
+          title="Go to Home page"
         >
           <span className="bg-gradient-to-r from-blue-500 to-indigo-600 px-2.5 py-1 rounded-xl text-sm font-black shadow-md border border-indigo-500/20">STRUCT</span>
           <span className="text-gray-400 font-medium text-sm">LEARN</span>

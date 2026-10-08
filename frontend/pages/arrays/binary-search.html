@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Binary Search Mastery | Struct-Learn - Impactful DSA Learning</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -256,13 +259,27 @@
         }
 
         @keyframes midPulse {
-            0%, 100% { transform: scale(1.12); box-shadow: 0 0 20px rgba(16, 185, 129, 0.6); }
-            50% { transform: scale(1.18); box-shadow: 0 0 35px rgba(16, 185, 129, 0.9); }
+
+            0%,
+            100% {
+                transform: scale(1.12);
+                box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+            }
+
+            50% {
+                transform: scale(1.18);
+                box-shadow: 0 0 35px rgba(16, 185, 129, 0.9);
+            }
         }
 
         @keyframes foundGlow {
-            0% { box-shadow: 0 0 0 0 #10b981; }
-            100% { box-shadow: 0 0 0 20px rgba(16, 185, 129, 0); }
+            0% {
+                box-shadow: 0 0 0 0 #10b981;
+            }
+
+            100% {
+                box-shadow: 0 0 0 20px rgba(16, 185, 129, 0);
+            }
         }
 
         /* Controls */
@@ -394,11 +411,12 @@
                 width: 60px;
                 height: 80px;
             }
+
             .array-element .value {
                 font-size: 1rem;
             }
         }
-    
+
         /* Dynamic premium back button */
         .back {
             display: inline-flex;
@@ -416,6 +434,7 @@
             width: fit-content;
             cursor: pointer;
         }
+
         .back:hover {
             background: rgba(255, 255, 255, 0.16);
             color: #fff;
@@ -423,105 +442,112 @@
         }
     </style>
 </head>
+
 <body>
 
-<nav class="top-nav">
-    <div class="logo">
-        <i class="fas fa-binary-code"></i>
-        <span>STRUCT-LEARN</span>
-    </div>
-    <div class="nav-links">
-        <a href="../dashboard/dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
-        <!-- <a href="array.html"><i class="fas fa-search"></i> Algorithms</a> -->
-        <a href="../editor/editor.html"><i class="fas fa-laptop-code"></i> Practice</a>
-    </div>
-</nav>
+    <nav class="top-nav">
+        <div class="logo">
+            <i class="fas fa-binary-code"></i>
+            <span>STRUCT-LEARN</span>
+        </div>
+        <div class="nav-links">
+            <a href="../dashboard/dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+            <!-- <a href="array.html"><i class="fas fa-search"></i> Algorithms</a> -->
+            <a href="../editor/editor.html"><i class="fas fa-laptop-code"></i> Practice</a>
+        </div>
+    </nav>
 
-<div class="main-layout">
-    <aside id="sidebar">
-        <h3>Array Topics</h3>
-        <ul>
-            <li><a href="array.html">Arrays Basics · First Form</a></li>
-            <li><a href="bubble-sort.html">Bubble Sort · Second Form</a></li>
-            <li><a href="insertion-sort.html">Insertion Sort · Third Form</a></li>
-            <li><a href="selection-sort.html">Selection Sort · Fourth Form</a></li>
-            <li><a href="merge-sort.html">Merge Sort · Fifth Form</a></li>
-            <li><a href="quick-sort.html">Quick Sort · Sixth Form</a></li>
-            <li><a href="heap-sort.html">Heap Sort · Seventh Form</a></li>
-            <li><a href="binary-search.html" class="active">Binary Search · Eighth Form</a></li>
-            <li><a href="linear-search.html">Linear Search · Ninth Form</a></li>
-        </ul>
-    </aside>
+    <div class="main-layout">
+        <aside id="sidebar">
+            <h3>Array Topics</h3>
+            <ul>
+                <li><a href="array.html">Arrays Basics · First Form</a></li>
+                <li><a href="bubble-sort.html">Bubble Sort · Second Form</a></li>
+                <li><a href="insertion-sort.html">Insertion Sort · Third Form</a></li>
+                <li><a href="selection-sort.html">Selection Sort · Fourth Form</a></li>
+                <li><a href="merge-sort.html">Merge Sort · Fifth Form</a></li>
+                <li><a href="quick-sort.html">Quick Sort · Sixth Form</a></li>
+                <li><a href="heap-sort.html">Heap Sort · Seventh Form</a></li>
+                <li><a href="binary-search.html" class="active">Binary Search · Eighth Form</a></li>
+                <li><a href="linear-search.html">Linear Search · Ninth Form</a></li>
+            </ul>
+        </aside>
 
-<div class="main-container">
-        <a class="back" href="array.html" onclick="if(document.referrer){ history.back(); return false; }">
-            <i class="fas fa-arrow-left"></i> Back
-        </a>
+        <div class="main-container">
+            <a class="back" href="array.html" onclick="if(document.referrer){ history.back(); return false; }">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
 
-    <div class="hero-section">
-        <h1><i class="fas fa-binary-code"></i> Binary Search · Divide & Conquer</h1>
-        <p>The most efficient searching algorithm for sorted arrays — O(log n) complexity</p>
-    </div>
-
-    <div class="complexity-grid">
-        <div class="complexity-card"><span class="big-o">O(log n)</span><br>Time Complexity</div>
-        <div class="complexity-card"><span class="big-o">O(1)</span><br>Space Complexity</div>
-        <div class="complexity-card"><span class="big-o">Sorted Array</span><br>Prerequisite</div>
-        <div class="complexity-card"><span class="big-o">Iterative/Recursive</span><br>Implementation</div>
-    </div>
-
-    <div class="viz-card">
-        <h2><i class="fas fa-eye"></i> Live Binary Search Visualizer</h2>
-        <p>Watch the algorithm narrow down the search space by half at each step!</p>
-
-        <!-- Array Visualization -->
-        <div id="arrayContainer" class="array-container"></div>
-
-        <!-- Input Controls -->
-        <div class="control-group">
-            <div class="input-wrapper">
-                <label><i class="fas fa-edit"></i> Sorted Array (comma separated)</label>
-                <input type="text" id="arrayInput" placeholder="e.g., 1,3,5,7,9,11,13,15,17,19">
+            <div class="hero-section">
+                <h1><i class="fas fa-binary-code"></i> Binary Search · Divide & Conquer</h1>
+                <p>The most efficient searching algorithm for sorted arrays — O(log n) complexity</p>
             </div>
-            <div class="input-wrapper">
-                <label><i class="fas fa-bullseye"></i> Target Value</label>
-                <input type="number" id="targetInput" placeholder="Enter number to find">
+
+            <div class="complexity-grid">
+                <div class="complexity-card"><span class="big-o">O(log n)</span><br>Time Complexity</div>
+                <div class="complexity-card"><span class="big-o">O(1)</span><br>Space Complexity</div>
+                <div class="complexity-card"><span class="big-o">Sorted Array</span><br>Prerequisite</div>
+                <div class="complexity-card"><span class="big-o">Iterative/Recursive</span><br>Implementation</div>
             </div>
-            <button id="updateArrayBtn" class="btn btn-secondary"><i class="fas fa-sync-alt"></i> Update Array</button>
-        </div>
 
-        <!-- Step Controls -->
-        <div class="step-buttons">
-            <button id="stepBtn" class="step-btn"><i class="fas fa-step-forward"></i> Step-by-Step</button>
-            <button id="autoBtn" class="step-btn"><i class="fas fa-play"></i> Auto Search</button>
-            <button id="resetBtn" class="step-btn"><i class="fas fa-undo-alt"></i> Reset</button>
-            <button id="stopBtn" class="step-btn"><i class="fas fa-stop"></i> Stop</button>
-        </div>
+            <div class="viz-card">
+                <h2><i class="fas fa-eye"></i> Live Binary Search Visualizer</h2>
+                <p>Watch the algorithm narrow down the search space by half at each step!</p>
 
-        <!-- Status Panel -->
-        <div id="statusPanel" class="status-panel">
-            <h3><i class="fas fa-chart-line"></i> Search Status</h3>
-            <div id="searchMessage">✅ Ready! Enter a target and click "Step-by-Step" to begin.</div>
-            <div id="stepDetails" style="margin-top: 0.5rem; font-size: 0.85rem; color: #94a3b8;"></div>
-        </div>
+                <!-- Array Visualization -->
+                <div id="arrayContainer" class="array-container"></div>
 
-        <!-- Algorithm Steps -->
-        <div class="algorithm-steps">
-            <strong><i class="fas fa-list-ol"></i> Binary Search Algorithm:</strong><br>
-            1. Set <span style="color:#3b82f6">L = 0</span> (left pointer) and <span style="color:#f59e0b">R = n-1</span> (right pointer)<br>
-            2. While L ≤ R:<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;• Calculate <span style="color:#10b981">mid = (L + R) / 2</span><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;• If <span style="color:#10b981">arr[mid] == target</span> → <span style="color:#10b981">FOUND!</span><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;• If <span style="color:#10b981">arr[mid] < target</span> → <span style="color:#3b82f6">L = mid + 1</span> (search right half)<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;• If <span style="color:#10b981">arr[mid] > target</span> → <span style="color:#f59e0b">R = mid - 1</span> (search left half)<br>
-            3. If loop ends → <span style="color:#ef4444">NOT FOUND</span>
-        </div>
-    </div>
+                <!-- Input Controls -->
+                <div class="control-group">
+                    <div class="input-wrapper">
+                        <label><i class="fas fa-edit"></i> Sorted Array (comma separated)</label>
+                        <input type="text" id="arrayInput" placeholder="e.g., 1,3,5,7,9,11,13,15,17,19">
+                    </div>
+                    <div class="input-wrapper">
+                        <label><i class="fas fa-bullseye"></i> Target Value</label>
+                        <input type="number" id="targetInput" placeholder="Enter number to find">
+                    </div>
+                    <button id="updateArrayBtn" class="btn btn-secondary"><i class="fas fa-sync-alt"></i> Update
+                        Array</button>
+                </div>
 
-    <!-- Code Example -->
-    <div class="viz-card" style="margin-top: 1rem;">
-        <h2><i class="fas fa-code"></i> Implementation</h2>
-        <pre style="background: #0a0a1a; padding: 1rem; border-radius: 16px; overflow-x: auto; font-size: 0.85rem; margin-top: 1rem;">
+                <!-- Step Controls -->
+                <div class="step-buttons">
+                    <button id="stepBtn" class="step-btn"><i class="fas fa-step-forward"></i> Step-by-Step</button>
+                    <button id="autoBtn" class="step-btn"><i class="fas fa-play"></i> Auto Search</button>
+                    <button id="resetBtn" class="step-btn"><i class="fas fa-undo-alt"></i> Reset</button>
+                    <button id="stopBtn" class="step-btn"><i class="fas fa-stop"></i> Stop</button>
+                </div>
+
+                <!-- Status Panel -->
+                <div id="statusPanel" class="status-panel">
+                    <h3><i class="fas fa-chart-line"></i> Search Status</h3>
+                    <div id="searchMessage">✅ Ready! Enter a target and click "Step-by-Step" to begin.</div>
+                    <div id="stepDetails" style="margin-top: 0.5rem; font-size: 0.85rem; color: #94a3b8;"></div>
+                </div>
+
+                <!-- Algorithm Steps -->
+                <div class="algorithm-steps">
+                    <strong><i class="fas fa-list-ol"></i> Binary Search Algorithm:</strong><br>
+                    1. Set <span style="color:#3b82f6">L = 0</span> (left pointer) and <span style="color:#f59e0b">R =
+                        n-1</span> (right pointer)<br>
+                    2. While L ≤ R:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;• Calculate <span style="color:#10b981">mid = (L + R) / 2</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;• If <span style="color:#10b981">arr[mid] == target</span> → <span
+                        style="color:#10b981">FOUND!</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;• If <span style="color:#10b981">arr[mid] < target</span> → <span
+                                style="color:#3b82f6">L = mid + 1</span> (search right half)<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;• If <span style="color:#10b981">arr[mid] > target</span> → <span
+                                style="color:#f59e0b">R = mid - 1</span> (search left half)<br>
+                            3. If loop ends → <span style="color:#ef4444">NOT FOUND</span>
+                </div>
+            </div>
+
+            <!-- Code Example -->
+            <div class="viz-card" style="margin-top: 1rem;">
+                <h2><i class="fas fa-code"></i> Implementation</h2>
+                <pre
+                    style="background: #0a0a1a; padding: 1rem; border-radius: 16px; overflow-x: auto; font-size: 0.85rem; margin-top: 1rem;">
 function binarySearch(arr, target) {
     let left = 0;
     let right = arr.length - 1;
@@ -539,299 +565,300 @@ function binarySearch(arr, target) {
     }
     return -1;  // Element not found
 }</pre>
+            </div>
+        </div>
     </div>
-</div>
-</div>
-</div>
+    </div>
 
-<footer class="footer">
-    <p><i class="fas fa-binary-code"></i> Binary Search — Divide and Conquer at its finest | O(log n) efficiency</p>
-</footer>
+    <footer class="footer">
+        <p><i class="fas fa-binary-code"></i> Binary Search — Divide and Conquer at its finest | O(log n) efficiency</p>
+    </footer>
 
-<script>
-    // ==================== BINARY SEARCH ENGINE ====================
-    let currentArray = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
-    let targetValue = null;
-    let searchActive = false;
-    let leftPtr = 0;
-    let rightPtr = currentArray.length - 1;
-    let foundIndex = -1;
-    let steps = 0;
-    let autoInterval = null;
+    <script>
+        // ==================== BINARY SEARCH ENGINE ====================
+        let currentArray = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
+        let targetValue = null;
+        let searchActive = false;
+        let leftPtr = 0;
+        let rightPtr = currentArray.length - 1;
+        let foundIndex = -1;
+        let steps = 0;
+        let autoInterval = null;
 
-    // DOM Elements
-    const arrayContainer = document.getElementById('arrayContainer');
-    const searchMessageDiv = document.getElementById('searchMessage');
-    const stepDetailsDiv = document.getElementById('stepDetails');
-    const arrayInput = document.getElementById('arrayInput');
-    const targetInput = document.getElementById('targetInput');
+        // DOM Elements
+        const arrayContainer = document.getElementById('arrayContainer');
+        const searchMessageDiv = document.getElementById('searchMessage');
+        const stepDetailsDiv = document.getElementById('stepDetails');
+        const arrayInput = document.getElementById('arrayInput');
+        const targetInput = document.getElementById('targetInput');
 
-    // Helper: Check if array is sorted
-    function isSorted(arr) {
-        for (let i = 1; i < arr.length; i++) {
-            if (arr[i] < arr[i - 1]) return false;
-        }
-        return true;
-    }
-
-    // Render array with current state
-    function renderArray() {
-        arrayContainer.innerHTML = '';
-        currentArray.forEach((value, idx) => {
-            const element = document.createElement('div');
-            element.className = 'array-element';
-            
-            if (foundIndex === idx) {
-                element.classList.add('found');
-            } else if (searchActive && idx === Math.floor((leftPtr + rightPtr) / 2)) {
-                element.classList.add('mid-point');
-            } else if (searchActive && idx === leftPtr) {
-                element.classList.add('left-bound');
-            } else if (searchActive && idx === rightPtr) {
-                element.classList.add('right-bound');
+        // Helper: Check if array is sorted
+        function isSorted(arr) {
+            for (let i = 1; i < arr.length; i++) {
+                if (arr[i] < arr[i - 1]) return false;
             }
-            
-            element.innerHTML = `
-                <div class="value">${value}</div>
-                <div class="index">[${idx}]</div>
-            `;
-            arrayContainer.appendChild(element);
-        });
-    }
-
-    // Update status display
-    function updateStatus(message, details = '') {
-        searchMessageDiv.innerHTML = message;
-        stepDetailsDiv.innerHTML = details;
-    }
-
-    // Reset search completely
-    function resetSearch() {
-        if (autoInterval) {
-            clearInterval(autoInterval);
-            autoInterval = null;
-        }
-        searchActive = false;
-        leftPtr = 0;
-        rightPtr = currentArray.length - 1;
-        foundIndex = -1;
-        steps = 0;
-        renderArray();
-        updateStatus(
-            `✅ Ready! Target: ${targetValue !== null ? targetValue : 'Not set'} | Array length: ${currentArray.length}`,
-            'Click "Step-by-Step" or "Auto Search" to begin binary search.'
-        );
-    }
-
-    // Perform one step of binary search
-    function performStep() {
-        // Validation
-        if (targetValue === null || targetValue === '') {
-            updateStatus('⚠️ Please enter a target value to search!', 'Enter a number in the target field above.');
-            return false;
-        }
-
-        const targetNum = parseInt(targetValue);
-        if (isNaN(targetNum)) {
-            updateStatus('⚠️ Invalid target! Please enter a valid number.', '');
-            return false;
-        }
-
-        // Check if already found
-        if (foundIndex !== -1) {
-            updateStatus(
-                `🎉 Target ${targetNum} already found at index ${foundIndex}! Click Reset to search again.`,
-                `Search completed in ${steps} step(s).`
-            );
             return true;
         }
 
-        // Initialize search if not active
-        if (!searchActive && leftPtr <= rightPtr && foundIndex === -1) {
-            searchActive = true;
-            leftPtr = 0;
-            rightPtr = currentArray.length - 1;
-            steps = 0;
-            updateStatus(
-                `🔍 Starting Binary Search for target: ${targetNum}`,
-                `Search range: [${leftPtr}...${rightPtr}]`
-            );
-            renderArray();
+        // Render array with current state
+        function renderArray() {
+            arrayContainer.innerHTML = '';
+            currentArray.forEach((value, idx) => {
+                const element = document.createElement('div');
+                element.className = 'array-element';
+
+                if (foundIndex === idx) {
+                    element.classList.add('found');
+                } else if (searchActive && idx === Math.floor((leftPtr + rightPtr) / 2)) {
+                    element.classList.add('mid-point');
+                } else if (searchActive && idx === leftPtr) {
+                    element.classList.add('left-bound');
+                } else if (searchActive && idx === rightPtr) {
+                    element.classList.add('right-bound');
+                }
+
+                element.innerHTML = `
+                <div class="value">${value}</div>
+                <div class="index">[${idx}]</div>
+            `;
+                arrayContainer.appendChild(element);
+            });
         }
 
-        // Check if search range is exhausted
-        if (leftPtr > rightPtr) {
-            searchActive = false;
-            renderArray();
-            updateStatus(
-                `❌ Target ${targetNum} NOT FOUND in the array!`,
-                `Search completed after ${steps} step(s). The element does not exist.`
-            );
-            return false;
+        // Update status display
+        function updateStatus(message, details = '') {
+            searchMessageDiv.innerHTML = message;
+            stepDetailsDiv.innerHTML = details;
         }
 
-        // Calculate mid
-        const mid = Math.floor((leftPtr + rightPtr) / 2);
-        const midValue = currentArray[mid];
-        steps++;
-
-        // Visual feedback - highlight mid
-        renderArray();
-
-        // Compare and update
-        if (midValue === targetNum) {
-            // FOUND!
-            foundIndex = mid;
-            searchActive = false;
-            renderArray();
-            updateStatus(
-                `🎉 SUCCESS! Found ${targetNum} at index ${mid}! 🎉`,
-                `Element found after ${steps} step(s). Binary search completed!`
-            );
+        // Reset search completely
+        function resetSearch() {
             if (autoInterval) {
                 clearInterval(autoInterval);
                 autoInterval = null;
             }
-            return true;
-        } else if (midValue < targetNum) {
-            // Search right half
-            leftPtr = mid + 1;
-            updateStatus(
-                `🔎 Step ${steps}: Checking index ${mid} (value = ${midValue})`,
-                `${midValue} < ${targetNum} → Moving RIGHT. New range: [${leftPtr}...${rightPtr}]`
-            );
+            searchActive = false;
+            leftPtr = 0;
+            rightPtr = currentArray.length - 1;
+            foundIndex = -1;
+            steps = 0;
             renderArray();
-            return false;
-        } else {
-            // Search left half
-            rightPtr = mid - 1;
             updateStatus(
-                `🔎 Step ${steps}: Checking index ${mid} (value = ${midValue})`,
-                `${midValue} > ${targetNum} → Moving LEFT. New range: [${leftPtr}...${rightPtr}]`
+                `✅ Ready! Target: ${targetValue !== null ? targetValue : 'Not set'} | Array length: ${currentArray.length}`,
+                'Click "Step-by-Step" or "Auto Search" to begin binary search.'
             );
+        }
+
+        // Perform one step of binary search
+        function performStep() {
+            // Validation
+            if (targetValue === null || targetValue === '') {
+                updateStatus('⚠️ Please enter a target value to search!', 'Enter a number in the target field above.');
+                return false;
+            }
+
+            const targetNum = parseInt(targetValue);
+            if (isNaN(targetNum)) {
+                updateStatus('⚠️ Invalid target! Please enter a valid number.', '');
+                return false;
+            }
+
+            // Check if already found
+            if (foundIndex !== -1) {
+                updateStatus(
+                    `🎉 Target ${targetNum} already found at index ${foundIndex}! Click Reset to search again.`,
+                    `Search completed in ${steps} step(s).`
+                );
+                return true;
+            }
+
+            // Initialize search if not active
+            if (!searchActive && leftPtr <= rightPtr && foundIndex === -1) {
+                searchActive = true;
+                leftPtr = 0;
+                rightPtr = currentArray.length - 1;
+                steps = 0;
+                updateStatus(
+                    `🔍 Starting Binary Search for target: ${targetNum}`,
+                    `Search range: [${leftPtr}...${rightPtr}]`
+                );
+                renderArray();
+            }
+
+            // Check if search range is exhausted
+            if (leftPtr > rightPtr) {
+                searchActive = false;
+                renderArray();
+                updateStatus(
+                    `❌ Target ${targetNum} NOT FOUND in the array!`,
+                    `Search completed after ${steps} step(s). The element does not exist.`
+                );
+                return false;
+            }
+
+            // Calculate mid
+            const mid = Math.floor((leftPtr + rightPtr) / 2);
+            const midValue = currentArray[mid];
+            steps++;
+
+            // Visual feedback - highlight mid
             renderArray();
-            return false;
-        }
-    }
 
-    // Auto search with interval
-    function startAutoSearch() {
-        if (targetValue === null || targetValue === '') {
-            updateStatus('⚠️ Please set a target value first!', 'Enter a number in the target field.');
-            return;
-        }
-
-        if (autoInterval) {
-            clearInterval(autoInterval);
-            autoInterval = null;
-        }
-
-        resetSearch();
-        searchActive = true;
-        
-        autoInterval = setInterval(() => {
-            const completed = performStep();
-            if (completed || foundIndex !== -1 || leftPtr > rightPtr) {
+            // Compare and update
+            if (midValue === targetNum) {
+                // FOUND!
+                foundIndex = mid;
+                searchActive = false;
+                renderArray();
+                updateStatus(
+                    `🎉 SUCCESS! Found ${targetNum} at index ${mid}! 🎉`,
+                    `Element found after ${steps} step(s). Binary search completed!`
+                );
                 if (autoInterval) {
                     clearInterval(autoInterval);
                     autoInterval = null;
                 }
-                searchActive = false;
+                return true;
+            } else if (midValue < targetNum) {
+                // Search right half
+                leftPtr = mid + 1;
+                updateStatus(
+                    `🔎 Step ${steps}: Checking index ${mid} (value = ${midValue})`,
+                    `${midValue} < ${targetNum} → Moving RIGHT. New range: [${leftPtr}...${rightPtr}]`
+                );
+                renderArray();
+                return false;
+            } else {
+                // Search left half
+                rightPtr = mid - 1;
+                updateStatus(
+                    `🔎 Step ${steps}: Checking index ${mid} (value = ${midValue})`,
+                    `${midValue} > ${targetNum} → Moving LEFT. New range: [${leftPtr}...${rightPtr}]`
+                );
+                renderArray();
+                return false;
             }
-        }, 900);
-    }
+        }
 
-    // Update array from user input
-    function updateArray() {
-        let inputVal = arrayInput.value.trim();
-        if (inputVal) {
-            let newArray = inputVal.split(',').map(item => {
-                const num = parseInt(item.trim());
-                return isNaN(num) ? null : num;
-            }).filter(item => item !== null);
-            
-            if (newArray.length > 0) {
-                if (!isSorted(newArray)) {
-                    updateStatus('⚠️ Warning: Array is not sorted! Sorting for Binary Search...', '');
-                    newArray.sort((a, b) => a - b);
-                    updateStatus(`✅ Array sorted: [${newArray.join(', ')}]`, 'Binary search requires sorted arrays.');
+        // Auto search with interval
+        function startAutoSearch() {
+            if (targetValue === null || targetValue === '') {
+                updateStatus('⚠️ Please set a target value first!', 'Enter a number in the target field.');
+                return;
+            }
+
+            if (autoInterval) {
+                clearInterval(autoInterval);
+                autoInterval = null;
+            }
+
+            resetSearch();
+            searchActive = true;
+
+            autoInterval = setInterval(() => {
+                const completed = performStep();
+                if (completed || foundIndex !== -1 || leftPtr > rightPtr) {
+                    if (autoInterval) {
+                        clearInterval(autoInterval);
+                        autoInterval = null;
+                    }
+                    searchActive = false;
                 }
-                currentArray = newArray;
+            }, 900);
+        }
+
+        // Update array from user input
+        function updateArray() {
+            let inputVal = arrayInput.value.trim();
+            if (inputVal) {
+                let newArray = inputVal.split(',').map(item => {
+                    const num = parseInt(item.trim());
+                    return isNaN(num) ? null : num;
+                }).filter(item => item !== null);
+
+                if (newArray.length > 0) {
+                    if (!isSorted(newArray)) {
+                        updateStatus('⚠️ Warning: Array is not sorted! Sorting for Binary Search...', '');
+                        newArray.sort((a, b) => a - b);
+                        updateStatus(`✅ Array sorted: [${newArray.join(', ')}]`, 'Binary search requires sorted arrays.');
+                    }
+                    currentArray = newArray;
+                } else {
+                    currentArray = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
+                }
             } else {
                 currentArray = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
             }
-        } else {
-            currentArray = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
-        }
-        
-        // Reset everything
-        if (autoInterval) {
-            clearInterval(autoInterval);
-            autoInterval = null;
-        }
-        searchActive = false;
-        leftPtr = 0;
-        rightPtr = currentArray.length - 1;
-        foundIndex = -1;
-        steps = 0;
-        renderArray();
-        updateStatus(
-            `✅ Array updated! [${currentArray.join(', ')}] | Length: ${currentArray.length}`,
-            'Enter a target and start searching.'
-        );
-        arrayInput.value = currentArray.join(', ');
-    }
 
-    // Set target value
-    function setTarget() {
-        const val = targetInput.value.trim();
-        if (val !== '') {
-            targetValue = parseInt(val);
-            if (isNaN(targetValue)) {
-                updateStatus('⚠️ Invalid target! Please enter a valid number.', '');
-                targetValue = null;
+            // Reset everything
+            if (autoInterval) {
+                clearInterval(autoInterval);
+                autoInterval = null;
+            }
+            searchActive = false;
+            leftPtr = 0;
+            rightPtr = currentArray.length - 1;
+            foundIndex = -1;
+            steps = 0;
+            renderArray();
+            updateStatus(
+                `✅ Array updated! [${currentArray.join(', ')}] | Length: ${currentArray.length}`,
+                'Enter a target and start searching.'
+            );
+            arrayInput.value = currentArray.join(', ');
+        }
+
+        // Set target value
+        function setTarget() {
+            const val = targetInput.value.trim();
+            if (val !== '') {
+                targetValue = parseInt(val);
+                if (isNaN(targetValue)) {
+                    updateStatus('⚠️ Invalid target! Please enter a valid number.', '');
+                    targetValue = null;
+                } else {
+                    updateStatus(
+                        `🎯 Target set to: ${targetValue}`,
+                        'Click "Step-by-Step" or "Auto Search" to begin.'
+                    );
+                    resetSearch();
+                }
             } else {
-                updateStatus(
-                    `🎯 Target set to: ${targetValue}`,
-                    'Click "Step-by-Step" or "Auto Search" to begin.'
-                );
+                targetValue = null;
+                updateStatus('ℹ️ No target set. Enter a value to search for.', '');
                 resetSearch();
             }
-        } else {
-            targetValue = null;
-            updateStatus('ℹ️ No target set. Enter a value to search for.', '');
-            resetSearch();
         }
-    }
 
-    // ==================== EVENT LISTENERS ====================
-    document.getElementById('stepBtn').addEventListener('click', () => {
-        if (autoInterval) {
-            clearInterval(autoInterval);
-            autoInterval = null;
+        // ==================== EVENT LISTENERS ====================
+        document.getElementById('stepBtn').addEventListener('click', () => {
+            if (autoInterval) {
+                clearInterval(autoInterval);
+                autoInterval = null;
+                searchActive = false;
+            }
+            performStep();
+        });
+
+        document.getElementById('autoBtn').addEventListener('click', startAutoSearch);
+        document.getElementById('resetBtn').addEventListener('click', resetSearch);
+        document.getElementById('stopBtn').addEventListener('click', () => {
+            if (autoInterval) {
+                clearInterval(autoInterval);
+                autoInterval = null;
+            }
             searchActive = false;
-        }
-        performStep();
-    });
-    
-    document.getElementById('autoBtn').addEventListener('click', startAutoSearch);
-    document.getElementById('resetBtn').addEventListener('click', resetSearch);
-    document.getElementById('stopBtn').addEventListener('click', () => {
-        if (autoInterval) {
-            clearInterval(autoInterval);
-            autoInterval = null;
-        }
-        searchActive = false;
-        updateStatus('⏹️ Search stopped by user.', 'Click "Reset" to start a new search.');
-    });
-    document.getElementById('updateArrayBtn').addEventListener('click', updateArray);
-    document.getElementById('targetInput').addEventListener('input', setTarget);
-    
-    // Initialize
-    arrayInput.value = currentArray.join(', ');
-    renderArray();
-    
-    console.log('%c🔍 BINARY SEARCH MASTERY PLATFORM 🔍\nPerfect step-by-step visualization with O(log n) efficiency!', 'color: #10b981; font-size: 14px; font-weight: bold;');
-</script>
+            updateStatus('⏹️ Search stopped by user.', 'Click "Reset" to start a new search.');
+        });
+        document.getElementById('updateArrayBtn').addEventListener('click', updateArray);
+        document.getElementById('targetInput').addEventListener('input', setTarget);
+
+        // Initialize
+        arrayInput.value = currentArray.join(', ');
+        renderArray();
+
+        console.log('%c🔍 BINARY SEARCH MASTERY PLATFORM 🔍\nPerfect step-by-step visualization with O(log n) efficiency!', 'color: #10b981; font-size: 14px; font-weight: bold;');
+    </script>
 </body>
+
 </html>

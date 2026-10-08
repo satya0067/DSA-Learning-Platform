@@ -23,13 +23,21 @@ export const useStore = create((set, get) => {
   const savedCodes = loadLocalStorage('leetcode_clone_codes', {});
   const savedHistory = loadLocalStorage('leetcode_clone_history', {});
 
-  // Load initial problem
-  const initialProblemId = 1;
+  // Load initial problem from URL params if present (e.g. ?id=2 or ?problemId=2)
+  let initialProblemId = 1;
+  if (typeof window !== 'undefined' && window.location) {
+    const params = new URLSearchParams(window.location.search);
+    const qId = params.get('id') || params.get('problemId');
+    if (qId && !isNaN(parseInt(qId, 10))) {
+      initialProblemId = parseInt(qId, 10);
+    }
+  }
   const initialProblem = getProblemById(initialProblemId);
+  const initialProblemIdx = problems.findIndex(p => p.id === initialProblem.id);
 
   return {
     problems,
-    currentProblemIndex: 0,
+    currentProblemIndex: initialProblemIdx !== -1 ? initialProblemIdx : 0,
     activeProblem: initialProblem,
     selectedLanguage: 'javascript',
     editorCodes: savedCodes,
@@ -60,6 +68,12 @@ export const useStore = create((set, get) => {
       if (idx === -1) return;
       const problem = getProblemById(problemId);
       
+      if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
+        const url = new URL(window.location);
+        url.searchParams.set('id', problemId);
+        window.history.replaceState({}, '', url);
+      }
+
       set({
         currentProblemIndex: idx,
         activeProblem: problem,

@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Stack Operations - Interactive | Struct-Learn Dojo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -40,10 +43,23 @@
         }
 
         @keyframes floatParticle {
-            0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            10% { opacity: 0.6; }
-            90% { opacity: 0.3; }
-            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.6;
+            }
+
+            90% {
+                opacity: 0.3;
+            }
+
+            100% {
+                transform: translateY(-10vh) scale(1);
+                opacity: 0;
+            }
         }
 
         .bg-orb {
@@ -54,8 +70,17 @@
         }
 
         @keyframes orbPulse {
-            0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.3; }
-            50% { transform: scale(1.2) translate(50px, -30px); opacity: 0.6; }
+
+            0%,
+            100% {
+                transform: scale(1) translate(0, 0);
+                opacity: 0.3;
+            }
+
+            50% {
+                transform: scale(1.2) translate(50px, -30px);
+                opacity: 0.6;
+            }
         }
 
         /* ===== NAVIGATION ===== */
@@ -295,13 +320,27 @@
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         @keyframes popOut {
-            from { transform: scale(1); opacity: 1; }
-            to { transform: scale(1.1) translateY(-20px); opacity: 0; }
+            from {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            to {
+                transform: scale(1.1) translateY(-20px);
+                opacity: 0;
+            }
         }
 
         .stack-base {
@@ -542,35 +581,54 @@
             color: #64748b;
         }
 
-        .log-entry .op-push { color: #34d399; }
-        .log-entry .op-pop { color: #f87171; }
-        .log-entry .op-peek { color: #fbbf24; }
-        .log-entry .op-size { color: #60a5fa; }
-        .log-entry .op-error { color: #f87171; }
+        .log-entry .op-push {
+            color: #34d399;
+        }
+
+        .log-entry .op-pop {
+            color: #f87171;
+        }
+
+        .log-entry .op-peek {
+            color: #fbbf24;
+        }
+
+        .log-entry .op-size {
+            color: #60a5fa;
+        }
+
+        .log-entry .op-error {
+            color: #f87171;
+        }
 
         @media (max-width: 600px) {
             .btn-grid {
                 grid-template-columns: 1fr;
             }
+
             .info-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
             .hero-section h1 {
                 font-size: 1.8rem;
             }
+
             .stack-element {
                 width: 120px;
                 height: 40px;
                 font-size: 0.85rem;
             }
+
             .stack-container {
                 width: 150px;
             }
+
             .stack-base {
                 width: 140px;
             }
         }
-    
+
         /* Dynamic premium back button */
         .back {
             display: inline-flex;
@@ -588,6 +646,7 @@
             width: fit-content;
             cursor: pointer;
         }
+
         .back:hover {
             background: rgba(255, 255, 255, 0.16);
             color: #fff;
@@ -595,302 +654,306 @@
         }
     </style>
 </head>
+
 <body>
 
-<!-- ===== ANIMATED BACKGROUND ===== -->
-<div class="bg-animation" id="bgAnimation"></div>
+    <!-- ===== ANIMATED BACKGROUND ===== -->
+    <div class="bg-animation" id="bgAnimation"></div>
 
-<!-- ===== NAVIGATION ===== -->
-<nav class="top-nav">
-    <div class="logo">
-        <i class="fas fa-layer-group"></i>
-        <span>STRUCT-LEARN</span>
-    </div>
-    <div class="nav-links">
-        <a href="#"><i class="fas fa-home"></i> Dashboard</a>
-        <a href="#"><i class="fas fa-code"></i> Topics</a>
-        <a href="#"><i class="fas fa-trophy"></i> Achievements</a>
-        <div class="nav-avatar">U</div>
-    </div>
-</nav>
+    <!-- ===== NAVIGATION ===== -->
+    <nav class="top-nav">
+        <div class="logo">
+            <i class="fas fa-layer-group"></i>
+            <span>STRUCT-LEARN</span>
+        </div>
+        <div class="nav-links">
+            <a href="#"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="#"><i class="fas fa-code"></i> Topics</a>
+            <a href="#"><i class="fas fa-trophy"></i> Achievements</a>
+            <div class="nav-avatar">U</div>
+        </div>
+    </nav>
 
-<!-- ===== MAIN CONTENT ===== -->
-<div class="main-container">
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main-container">
         <a class="back" href="stacks.html" onclick="if(document.referrer){ history.back(); return false; }">
             <i class="fas fa-arrow-left"></i> Back
         </a>
 
-    <a class="back-link" href="stacks.html">
-        <i class="fas fa-arrow-left"></i> Back to Stacks
-    </a>
-
-    <!-- Hero -->
-    <div class="hero-section">
-        <div class="hero-content">
-            <div class="hero-badge"><i class="fas fa-layer-group"></i> Interactive Practice</div>
-            <h1><i class="fas fa-hand-pointer"></i> Stack Operations Dojo</h1>
-            <p>Push, Pop, and Peek — practice stack operations with live visualization and instant feedback.</p>
-        </div>
-    </div>
-
-    <!-- Operations Grid -->
-    <div class="operations-grid">
-        <!-- Visualization Panel -->
-        <div class="vis-panel">
-            <h2><i class="fas fa-eye"></i> Live Visualization</h2>
-            <div class="stack-visual">
-                <div class="stack-container" id="stackContainer">
-                    <div class="empty-message">⚔️ Stack is empty. Push some elements!</div>
-                </div>
-                <div class="stack-base"></div>
-            </div>
-            <div class="status-panel">
-                <div class="status-message" id="statusMessage">⚔️ Stack is empty. Ready to push.</div>
-                <div class="status-details" id="statusDetails"></div>
-            </div>
-        </div>
-
-        <!-- Controls Panel -->
-        <div class="controls-panel">
-            <h2><i class="fas fa-gamepad"></i> Operations</h2>
-
-            <div class="input-group">
-                <input type="number" id="valueInput" placeholder="Enter value (1-100)" min="1" max="100">
-                <button class="btn btn-push" id="pushBtn"><i class="fas fa-plus-circle"></i> Push</button>
-            </div>
-
-            <div class="btn-grid">
-                <button class="btn btn-pop" id="popBtn" disabled><i class="fas fa-arrow-up"></i> Pop</button>
-                <button class="btn btn-peek" id="peekBtn" disabled><i class="fas fa-eye"></i> Peek</button>
-                <button class="btn btn-size" id="sizeBtn"><i class="fas fa-ruler"></i> Size</button>
-                <button class="btn btn-reset" id="resetBtn"><i class="fas fa-redo"></i> Reset</button>
-            </div>
-
-            <div class="info-section">
-                <h3>📊 Stack Information</h3>
-                <div class="info-grid">
-                    <div class="info-card">
-                        <h4>Size</h4>
-                        <p id="sizeDisplay">0</p>
-                    </div>
-                    <div class="info-card">
-                        <h4>Max Size</h4>
-                        <p id="maxSizeDisplay">10</p>
-                    </div>
-                    <div class="info-card">
-                        <h4>Empty?</h4>
-                        <p id="isEmptyDisplay">Yes</p>
-                    </div>
-                    <div class="info-card">
-                        <h4>Full?</h4>
-                        <p id="isFullDisplay">No</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="info-section">
-                <h3>📝 Operation Log</h3>
-                <div class="log-container" id="operationLog">
-                    <div class="log-entry">⚔️ No operations yet. Start pushing!</div>
-                </div>
-            </div>
-        </div>
-    <div style="text-align: center; margin-top: 2rem; display: flex; justify-content: center; margin-bottom: 2rem;">
-        <a href="../editor/editor.html" class="btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; padding: 0.8rem 2rem; border-radius: 40px; background: linear-gradient(135deg, #00d4ff, #006699); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3); transition: all 0.3s ease; justify-content: center;">
-            ⚔️ Practice Code in Dojo
+        <a class="back-link" href="stacks.html">
+            <i class="fas fa-arrow-left"></i> Back to Stacks
         </a>
-    </div>
-</div>
 
-<script>
-    // ==================== BACKGROUND ANIMATION ====================
-    const bg = document.getElementById('bgAnimation');
+        <!-- Hero -->
+        <div class="hero-section">
+            <div class="hero-content">
+                <div class="hero-badge"><i class="fas fa-layer-group"></i> Interactive Practice</div>
+                <h1><i class="fas fa-hand-pointer"></i> Stack Operations Dojo</h1>
+                <p>Push, Pop, and Peek — practice stack operations with live visualization and instant feedback.</p>
+            </div>
+        </div>
 
-    for (let i = 0; i < 35; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'bg-particle';
-        const size = Math.random() * 8 + 3;
-        particle.style.width = size + 'px';
-        particle.style.height = size + 'px';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDuration = (Math.random() * 12 + 8) + 's';
-        particle.style.animationDelay = (Math.random() * 6) + 's';
-        bg.appendChild(particle);
-    }
+        <!-- Operations Grid -->
+        <div class="operations-grid">
+            <!-- Visualization Panel -->
+            <div class="vis-panel">
+                <h2><i class="fas fa-eye"></i> Live Visualization</h2>
+                <div class="stack-visual">
+                    <div class="stack-container" id="stackContainer">
+                        <div class="empty-message">⚔️ Stack is empty. Push some elements!</div>
+                    </div>
+                    <div class="stack-base"></div>
+                </div>
+                <div class="status-panel">
+                    <div class="status-message" id="statusMessage">⚔️ Stack is empty. Ready to push.</div>
+                    <div class="status-details" id="statusDetails"></div>
+                </div>
+            </div>
 
-    const orbColors = ['#00d4ff', '#0099cc', '#006699'];
-    orbColors.forEach((color, i) => {
-        const orb = document.createElement('div');
-        orb.className = 'bg-orb';
-        orb.style.width = (200 + Math.random() * 150) + 'px';
-        orb.style.height = orb.style.width;
-        orb.style.background = color;
-        orb.style.left = (10 + i * 30) + '%';
-        orb.style.top = (10 + i * 20) + '%';
-        orb.style.animationDelay = (i * 1.5) + 's';
-        bg.appendChild(orb);
-    });
+            <!-- Controls Panel -->
+            <div class="controls-panel">
+                <h2><i class="fas fa-gamepad"></i> Operations</h2>
 
-    // ==================== STACK OPERATIONS ====================
-    class StackDojo {
-        constructor() {
-            this.stack = [];
-            this.maxSize = 10;
-            this.container = document.getElementById('stackContainer');
-            this.statusMessage = document.getElementById('statusMessage');
-            this.statusDetails = document.getElementById('statusDetails');
-            this.valueInput = document.getElementById('valueInput');
-            this.popBtn = document.getElementById('popBtn');
-            this.peekBtn = document.getElementById('peekBtn');
-            this.logContainer = document.getElementById('operationLog');
-            this.logs = [];
+                <div class="input-group">
+                    <input type="number" id="valueInput" placeholder="Enter value (1-100)" min="1" max="100">
+                    <button class="btn btn-push" id="pushBtn"><i class="fas fa-plus-circle"></i> Push</button>
+                </div>
 
-            this.updateUI();
-        }
+                <div class="btn-grid">
+                    <button class="btn btn-pop" id="popBtn" disabled><i class="fas fa-arrow-up"></i> Pop</button>
+                    <button class="btn btn-peek" id="peekBtn" disabled><i class="fas fa-eye"></i> Peek</button>
+                    <button class="btn btn-size" id="sizeBtn"><i class="fas fa-ruler"></i> Size</button>
+                    <button class="btn btn-reset" id="resetBtn"><i class="fas fa-redo"></i> Reset</button>
+                </div>
 
-        push() {
-            const value = parseInt(this.valueInput.value);
+                <div class="info-section">
+                    <h3>📊 Stack Information</h3>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <h4>Size</h4>
+                            <p id="sizeDisplay">0</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>Max Size</h4>
+                            <p id="maxSizeDisplay">10</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>Empty?</h4>
+                            <p id="isEmptyDisplay">Yes</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>Full?</h4>
+                            <p id="isFullDisplay">No</p>
+                        </div>
+                    </div>
+                </div>
 
-            if (isNaN(value) || value < 1 || value > 100) {
-                this.statusMessage.textContent = '⚠️ Invalid! Enter a number between 1-100';
-                this.statusMessage.style.color = '#f87171';
-                this.logOperation('error', `Invalid input: ${this.valueInput.value}`);
-                return;
+                <div class="info-section">
+                    <h3>📝 Operation Log</h3>
+                    <div class="log-container" id="operationLog">
+                        <div class="log-entry">⚔️ No operations yet. Start pushing!</div>
+                    </div>
+                </div>
+            </div>
+            <div
+                style="text-align: center; margin-top: 2rem; display: flex; justify-content: center; margin-bottom: 2rem;">
+                <a href="../editor/editor.html" class="btn-primary"
+                    style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; padding: 0.8rem 2rem; border-radius: 40px; background: linear-gradient(135deg, #00d4ff, #006699); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3); transition: all 0.3s ease; justify-content: center;">
+                    ⚔️ Practice Code in Dojo
+                </a>
+            </div>
+        </div>
+
+        <script>
+            // ==================== BACKGROUND ANIMATION ====================
+            const bg = document.getElementById('bgAnimation');
+
+            for (let i = 0; i < 35; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'bg-particle';
+                const size = Math.random() * 8 + 3;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 12 + 8) + 's';
+                particle.style.animationDelay = (Math.random() * 6) + 's';
+                bg.appendChild(particle);
             }
 
-            if (this.stack.length >= this.maxSize) {
-                this.statusMessage.textContent = '⚠️ Stack Overflow! Max capacity reached.';
-                this.statusMessage.style.color = '#f87171';
-                this.logOperation('error', 'Push failed - Stack overflow');
-                return;
-            }
-
-            this.stack.push(value);
-            this.valueInput.value = '';
-            this.statusMessage.textContent = `✅ Pushed: ${value}`;
-            this.statusMessage.style.color = '#34d399';
-            this.statusDetails.textContent = `Stack size: ${this.stack.length}`;
-            this.logOperation('push', `Pushed ${value} (size: ${this.stack.length})`);
-            this.updateUI();
-        }
-
-        pop() {
-            if (this.stack.length === 0) {
-                this.statusMessage.textContent = '⚠️ Stack Underflow! Nothing to pop.';
-                this.statusMessage.style.color = '#f87171';
-                this.logOperation('error', 'Pop failed - Stack is empty');
-                return;
-            }
-
-            const value = this.stack.pop();
-            this.statusMessage.textContent = `🗑️ Popped: ${value}`;
-            this.statusMessage.style.color = '#fbbf24';
-            this.statusDetails.textContent = `Stack size: ${this.stack.length}`;
-            this.logOperation('pop', `Popped ${value} (size: ${this.stack.length})`);
-            this.updateUI();
-        }
-
-        peek() {
-            if (this.stack.length === 0) {
-                this.statusMessage.textContent = '⚠️ Stack is empty! Nothing to peek.';
-                this.statusMessage.style.color = '#f87171';
-                this.logOperation('error', 'Peek failed - Stack is empty');
-                return;
-            }
-
-            const value = this.stack[this.stack.length - 1];
-            this.statusMessage.textContent = `👀 Top element: ${value}`;
-            this.statusMessage.style.color = '#ffd700';
-            this.statusDetails.textContent = `Position: ${this.stack.length}`;
-            this.logOperation('peek', `Peeked ${value} at top`);
-            this.updateUI(true);
-        }
-
-        getSize() {
-            const size = this.stack.length;
-            const isEmpty = size === 0 ? 'Yes' : 'No';
-            const isFull = size === this.maxSize ? 'Yes' : 'No';
-
-            this.statusMessage.textContent = `📏 Stack Size: ${size} / ${this.maxSize}`;
-            this.statusMessage.style.color = '#60a5fa';
-            this.statusDetails.textContent = `Empty: ${isEmpty} | Full: ${isFull}`;
-            this.logOperation('size', `Size check: ${size} elements`);
-        }
-
-        reset() {
-            this.stack = [];
-            this.valueInput.value = '';
-            this.statusMessage.textContent = '🔄 Stack reset. Ready to push.';
-            this.statusMessage.style.color = '#94a3b8';
-            this.statusDetails.textContent = '';
-            this.logs = [];
-            this.logContainer.innerHTML = '<div class="log-entry">⚔️ Stack reset. Ready for operations.</div>';
-            this.updateUI();
-        }
-
-        updateUI(isPeek = false) {
-            this.renderStack(isPeek);
-            this.updateInfoCards();
-            this.popBtn.disabled = this.stack.length === 0;
-            this.peekBtn.disabled = this.stack.length === 0;
-        }
-
-        renderStack(isPeek = false) {
-            this.container.innerHTML = '';
-
-            if (this.stack.length === 0) {
-                const empty = document.createElement('div');
-                empty.className = 'empty-message';
-                empty.textContent = '⚔️ Stack is empty. Push some elements!';
-                this.container.appendChild(empty);
-                return;
-            }
-
-            this.stack.forEach((value, index) => {
-                const element = document.createElement('div');
-                element.className = 'stack-element';
-                if (isPeek && index === this.stack.length - 1) {
-                    element.classList.add('peek');
-                }
-                element.textContent = value;
-                this.container.appendChild(element);
+            const orbColors = ['#00d4ff', '#0099cc', '#006699'];
+            orbColors.forEach((color, i) => {
+                const orb = document.createElement('div');
+                orb.className = 'bg-orb';
+                orb.style.width = (200 + Math.random() * 150) + 'px';
+                orb.style.height = orb.style.width;
+                orb.style.background = color;
+                orb.style.left = (10 + i * 30) + '%';
+                orb.style.top = (10 + i * 20) + '%';
+                orb.style.animationDelay = (i * 1.5) + 's';
+                bg.appendChild(orb);
             });
-        }
 
-        updateInfoCards() {
-            document.getElementById('sizeDisplay').textContent = this.stack.length;
-            document.getElementById('maxSizeDisplay').textContent = this.maxSize;
-            document.getElementById('isEmptyDisplay').textContent = this.stack.length === 0 ? 'Yes' : 'No';
-            document.getElementById('isFullDisplay').textContent = this.stack.length === this.maxSize ? 'Yes' : 'No';
-        }
+            // ==================== STACK OPERATIONS ====================
+            class StackDojo {
+                constructor() {
+                    this.stack = [];
+                    this.maxSize = 10;
+                    this.container = document.getElementById('stackContainer');
+                    this.statusMessage = document.getElementById('statusMessage');
+                    this.statusDetails = document.getElementById('statusDetails');
+                    this.valueInput = document.getElementById('valueInput');
+                    this.popBtn = document.getElementById('popBtn');
+                    this.peekBtn = document.getElementById('peekBtn');
+                    this.logContainer = document.getElementById('operationLog');
+                    this.logs = [];
 
-        logOperation(type, message) {
-            const timestamp = new Date().toLocaleTimeString();
-            const logClass = `op-${type}`;
-            this.logs.unshift(`<div class="log-entry"><span class="time">[${timestamp}]</span> <span class="${logClass}">${message}</span></div>`);
+                    this.updateUI();
+                }
 
-            if (this.logs.length > 15) {
-                this.logs.pop();
+                push() {
+                    const value = parseInt(this.valueInput.value);
+
+                    if (isNaN(value) || value < 1 || value > 100) {
+                        this.statusMessage.textContent = '⚠️ Invalid! Enter a number between 1-100';
+                        this.statusMessage.style.color = '#f87171';
+                        this.logOperation('error', `Invalid input: ${this.valueInput.value}`);
+                        return;
+                    }
+
+                    if (this.stack.length >= this.maxSize) {
+                        this.statusMessage.textContent = '⚠️ Stack Overflow! Max capacity reached.';
+                        this.statusMessage.style.color = '#f87171';
+                        this.logOperation('error', 'Push failed - Stack overflow');
+                        return;
+                    }
+
+                    this.stack.push(value);
+                    this.valueInput.value = '';
+                    this.statusMessage.textContent = `✅ Pushed: ${value}`;
+                    this.statusMessage.style.color = '#34d399';
+                    this.statusDetails.textContent = `Stack size: ${this.stack.length}`;
+                    this.logOperation('push', `Pushed ${value} (size: ${this.stack.length})`);
+                    this.updateUI();
+                }
+
+                pop() {
+                    if (this.stack.length === 0) {
+                        this.statusMessage.textContent = '⚠️ Stack Underflow! Nothing to pop.';
+                        this.statusMessage.style.color = '#f87171';
+                        this.logOperation('error', 'Pop failed - Stack is empty');
+                        return;
+                    }
+
+                    const value = this.stack.pop();
+                    this.statusMessage.textContent = `🗑️ Popped: ${value}`;
+                    this.statusMessage.style.color = '#fbbf24';
+                    this.statusDetails.textContent = `Stack size: ${this.stack.length}`;
+                    this.logOperation('pop', `Popped ${value} (size: ${this.stack.length})`);
+                    this.updateUI();
+                }
+
+                peek() {
+                    if (this.stack.length === 0) {
+                        this.statusMessage.textContent = '⚠️ Stack is empty! Nothing to peek.';
+                        this.statusMessage.style.color = '#f87171';
+                        this.logOperation('error', 'Peek failed - Stack is empty');
+                        return;
+                    }
+
+                    const value = this.stack[this.stack.length - 1];
+                    this.statusMessage.textContent = `👀 Top element: ${value}`;
+                    this.statusMessage.style.color = '#ffd700';
+                    this.statusDetails.textContent = `Position: ${this.stack.length}`;
+                    this.logOperation('peek', `Peeked ${value} at top`);
+                    this.updateUI(true);
+                }
+
+                getSize() {
+                    const size = this.stack.length;
+                    const isEmpty = size === 0 ? 'Yes' : 'No';
+                    const isFull = size === this.maxSize ? 'Yes' : 'No';
+
+                    this.statusMessage.textContent = `📏 Stack Size: ${size} / ${this.maxSize}`;
+                    this.statusMessage.style.color = '#60a5fa';
+                    this.statusDetails.textContent = `Empty: ${isEmpty} | Full: ${isFull}`;
+                    this.logOperation('size', `Size check: ${size} elements`);
+                }
+
+                reset() {
+                    this.stack = [];
+                    this.valueInput.value = '';
+                    this.statusMessage.textContent = '🔄 Stack reset. Ready to push.';
+                    this.statusMessage.style.color = '#94a3b8';
+                    this.statusDetails.textContent = '';
+                    this.logs = [];
+                    this.logContainer.innerHTML = '<div class="log-entry">⚔️ Stack reset. Ready for operations.</div>';
+                    this.updateUI();
+                }
+
+                updateUI(isPeek = false) {
+                    this.renderStack(isPeek);
+                    this.updateInfoCards();
+                    this.popBtn.disabled = this.stack.length === 0;
+                    this.peekBtn.disabled = this.stack.length === 0;
+                }
+
+                renderStack(isPeek = false) {
+                    this.container.innerHTML = '';
+
+                    if (this.stack.length === 0) {
+                        const empty = document.createElement('div');
+                        empty.className = 'empty-message';
+                        empty.textContent = '⚔️ Stack is empty. Push some elements!';
+                        this.container.appendChild(empty);
+                        return;
+                    }
+
+                    this.stack.forEach((value, index) => {
+                        const element = document.createElement('div');
+                        element.className = 'stack-element';
+                        if (isPeek && index === this.stack.length - 1) {
+                            element.classList.add('peek');
+                        }
+                        element.textContent = value;
+                        this.container.appendChild(element);
+                    });
+                }
+
+                updateInfoCards() {
+                    document.getElementById('sizeDisplay').textContent = this.stack.length;
+                    document.getElementById('maxSizeDisplay').textContent = this.maxSize;
+                    document.getElementById('isEmptyDisplay').textContent = this.stack.length === 0 ? 'Yes' : 'No';
+                    document.getElementById('isFullDisplay').textContent = this.stack.length === this.maxSize ? 'Yes' : 'No';
+                }
+
+                logOperation(type, message) {
+                    const timestamp = new Date().toLocaleTimeString();
+                    const logClass = `op-${type}`;
+                    this.logs.unshift(`<div class="log-entry"><span class="time">[${timestamp}]</span> <span class="${logClass}">${message}</span></div>`);
+
+                    if (this.logs.length > 15) {
+                        this.logs.pop();
+                    }
+
+                    this.logContainer.innerHTML = this.logs.join('');
+                }
             }
 
-            this.logContainer.innerHTML = this.logs.join('');
-        }
-    }
+            // ==================== INITIALIZE ====================
+            const stackDojo = new StackDojo();
 
-    // ==================== INITIALIZE ====================
-    const stackDojo = new StackDojo();
+            document.getElementById('pushBtn').addEventListener('click', () => stackDojo.push());
+            document.getElementById('popBtn').addEventListener('click', () => stackDojo.pop());
+            document.getElementById('peekBtn').addEventListener('click', () => stackDojo.peek());
+            document.getElementById('sizeBtn').addEventListener('click', () => stackDojo.getSize());
+            document.getElementById('resetBtn').addEventListener('click', () => stackDojo.reset());
 
-    document.getElementById('pushBtn').addEventListener('click', () => stackDojo.push());
-    document.getElementById('popBtn').addEventListener('click', () => stackDojo.pop());
-    document.getElementById('peekBtn').addEventListener('click', () => stackDojo.peek());
-    document.getElementById('sizeBtn').addEventListener('click', () => stackDojo.getSize());
-    document.getElementById('resetBtn').addEventListener('click', () => stackDojo.reset());
+            document.getElementById('valueInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') stackDojo.push();
+            });
 
-    document.getElementById('valueInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') stackDojo.push();
-    });
-
-    console.log('%c📚 STACK OPERATIONS DOJO 📚\nPractice Push, Pop, and Peek with live visualization!', 'color: #00d4ff; font-size: 14px; font-weight: bold;');
-</script>
+            console.log('%c📚 STACK OPERATIONS DOJO 📚\nPractice Push, Pop, and Peek with live visualization!', 'color: #00d4ff; font-size: 14px; font-weight: bold;');
+        </script>
 </body>
+
 </html>
